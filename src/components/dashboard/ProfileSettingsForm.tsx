@@ -142,56 +142,56 @@ export function ProfileSettingsForm({
   };
 
   return (
-    <div className="space-y-8">
-      {/* 1. Informations du Compte & Statut */}
-      <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-brand-gold" />
+    <div className="space-y-6 max-w-4xl">
+      {/* 1. Account Status Pill Bar */}
+      <div className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-3">
+        <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Statut du Compte & Droits d'Accès</span>
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
-          <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
-            <span className="text-slate-400 block text-[11px]">Rôle Attribué</span>
-            <span className="font-bold text-white text-sm">{user.role}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60">
+            <span className="text-slate-400 block text-[11px] font-medium">Rôle Attribué</span>
+            <span className="font-bold text-[#16385c] text-sm">{user.role}</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
-            <span className="text-slate-400 block text-[11px]">État du Compte</span>
-            <span className="font-bold text-emerald-400 text-sm">Actif & Vérifié</span>
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60">
+            <span className="text-slate-400 block text-[11px] font-medium">État du Compte</span>
+            <span className="font-bold text-emerald-600 text-sm">Actif & Sécurisé</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/60">
-            <span className="text-slate-400 block text-[11px]">Identifiant Unique</span>
-            <span className="font-mono text-slate-300 text-[11px] truncate block">
+          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/60">
+            <span className="text-slate-400 block text-[11px] font-medium">Identifiant</span>
+            <span className="font-mono text-slate-600 text-[11px] truncate block pt-0.5">
               {user.id}
             </span>
           </div>
         </div>
       </div>
 
-      {/* 2. Formulaire des Informations Personnelles */}
-      <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-5">
+      {/* 2. Coordonnées Personnelles Form */}
+      <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-4">
         <div>
-          <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <User className="w-5 h-5 text-teal-400" />
+          <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <User className="w-4 h-4 text-blue-600" />
             <span>Coordonnées Personnelles</span>
           </h2>
           <p className="text-xs text-slate-400 pt-0.5">
-            Mettez à jour votre nom ou votre numéro de téléphone (utilisé pour les versements Mobile Money).
+            Mettez à jour votre nom ou numéro Orange / MTN pour les notifications et règlements.
           </p>
         </div>
 
         {profileError && (
-          <div className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-200 flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
             <span>{profileError}</span>
           </div>
         )}
 
         {profileSuccess && (
-          <div className="p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-xs text-emerald-200 flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
             <span>{profileSuccess}</span>
           </div>
         )}
@@ -199,7 +199,7 @@ export function ProfileSettingsForm({
         <form onSubmit={handleUpdateProfile} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Nom complet
               </label>
               <div className="relative">
@@ -209,13 +209,13 @@ export function ProfileSettingsForm({
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                  className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Adresse email (Non modifiable)
               </label>
               <div className="relative">
@@ -224,13 +224,13 @@ export function ProfileSettingsForm({
                   type="email"
                   disabled
                   value={user.email}
-                  className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-white/10 bg-white/5 text-slate-400 cursor-not-allowed"
+                  className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Numéro de téléphone
               </label>
               <div className="relative">
@@ -240,13 +240,13 @@ export function ProfileSettingsForm({
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="620 00 00 00"
-                  className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                  className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Ville de résidence
               </label>
               <div className="relative">
@@ -256,7 +256,7 @@ export function ProfileSettingsForm({
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Conakry"
-                  className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                  className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
                 />
               </div>
             </div>
@@ -264,28 +264,28 @@ export function ProfileSettingsForm({
 
           {user.role === "PARENT" && (
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
-                Quartier / Adresse de domicile (pour les cours à domicile)
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Quartier / Adresse (pour les cours à domicile)
               </label>
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="ex: Kipé, près du centre médical"
-                className="w-full px-4 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                className="w-full px-4 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
               />
             </div>
           )}
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end pt-1">
             <button
               type="submit"
               disabled={isUpdatingProfile}
-              className="px-6 py-2.5 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-60"
+              className="px-5 py-2.5 rounded-full bg-[#16385c] hover:bg-[#122b49] text-white font-semibold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-60"
             >
               {isUpdatingProfile ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   <span>Enregistrement...</span>
                 </>
               ) : (
@@ -296,11 +296,11 @@ export function ProfileSettingsForm({
         </form>
       </div>
 
-      {/* 3. Modification de Mot de Passe */}
-      <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-5">
+      {/* 3. Sécurité & Mot de Passe */}
+      <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-4">
         <div>
-          <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <Lock className="w-5 h-5 text-amber-400" />
+          <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+            <Lock className="w-4 h-4 text-amber-500" />
             <span>Sécurité & Mot de Passe</span>
           </h2>
           <p className="text-xs text-slate-400 pt-0.5">
@@ -309,25 +309,25 @@ export function ProfileSettingsForm({
         </div>
 
         {passwordError && (
-          <div className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-200 flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
             <span>{passwordError}</span>
           </div>
         )}
 
         {passwordSuccess && (
-          <div className="p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-xs text-emerald-200 flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-700 flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
             <span>{passwordSuccess}</span>
           </div>
         )}
 
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-200 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Mot de passe actuel
             </label>
-            <div className="relative">
+            <div className="relative max-w-md">
               <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type={showPassword ? "text" : "password"}
@@ -335,12 +335,12 @@ export function ProfileSettingsForm({
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-10 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                className="w-full pl-10 pr-10 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -349,7 +349,7 @@ export function ProfileSettingsForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Nouveau mot de passe
               </label>
               <input
@@ -358,12 +358,12 @@ export function ProfileSettingsForm({
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Au moins 8 caractères"
-                className="w-full px-4 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                className="w-full px-4 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-200 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Confirmer le nouveau mot de passe
               </label>
               <input
@@ -372,20 +372,20 @@ export function ProfileSettingsForm({
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 text-sm rounded-xl border border-white/15 bg-white/5 text-white focus:outline-none focus:ring-2 focus:ring-[#e59a38] transition-all"
+                className="w-full px-4 py-2 text-xs rounded-xl border border-slate-200/90 text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#16385c] transition-all"
               />
             </div>
           </div>
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end pt-1">
             <button
               type="submit"
               disabled={isChangingPassword}
-              className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
+              className="px-5 py-2.5 rounded-full bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
             >
               {isChangingPassword ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   <span>Modification...</span>
                 </>
               ) : (
@@ -397,19 +397,19 @@ export function ProfileSettingsForm({
       </div>
 
       {/* 4. Zone Déconnexion */}
-      <div className="p-6 rounded-3xl bg-rose-950/20 border border-rose-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 rounded-3xl bg-rose-50/60 border border-rose-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="text-sm font-bold text-white">Fermer votre session</div>
-          <p className="text-xs text-slate-300">
+          <div className="text-xs font-bold text-slate-800">Fermer votre session</div>
+          <p className="text-[11px] text-slate-500">
             Déconnectez-vous de votre compte sur cet appareil.
           </p>
         </div>
         <button
           type="button"
           onClick={handleLogout}
-          className="px-6 py-2.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-200 font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          className="px-5 py-2 rounded-xl bg-white hover:bg-rose-100/50 border border-rose-200 text-rose-600 font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-3.5 h-3.5" />
           <span>Se déconnecter</span>
         </button>
       </div>

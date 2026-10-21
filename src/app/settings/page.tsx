@@ -2,7 +2,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { getCurrentUser } from "@/lib/auth/session";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { LightDashboardLayout } from "@/components/dashboard/LightDashboardLayout";
 import { ProfileSettingsForm } from "@/components/dashboard/ProfileSettingsForm";
 
 export const dynamic = "force-dynamic";
@@ -33,16 +33,14 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      <DashboardHeader user={user} />
-
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <LightDashboardLayout user={user}>
+      <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl font-black text-slate-800 font-heading tracking-tight">
             Paramètres du Compte
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 pt-1">
-            Gérez vos informations personnelles, vos coordonnées et la sécurité de votre mot de passe.
+          <p className="text-xs text-slate-400">
+            Gérez vos coordonnées, informations personnelles et la sécurité de votre mot de passe.
           </p>
         </div>
 
@@ -51,7 +49,7 @@ export default async function SettingsPage() {
           initialAddress={address}
           initialCity={city}
         />
-      </main>
-    </div>
+      </div>
+    </LightDashboardLayout>
   );
 }

@@ -8,19 +8,19 @@ import { Footer } from "@/components/layout/Footer";
 export function PublicLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Hide global public navbar and footer on dedicated authentication routes
-  const isAuthRoute =
+  // Hide global public navbar and footer on dashboard and authentication routes
+  const isDashboardOrAuthRoute =
+    pathname.startsWith("/parent") ||
+    pathname.startsWith("/teacher") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/settings") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password");
 
-  if (isAuthRoute) {
-    return (
-      <main className="min-h-screen flex flex-col bg-slate-900 text-white selection:bg-amber-500 selection:text-slate-950">
-        {children}
-      </main>
-    );
+  if (isDashboardOrAuthRoute) {
+    return <main className="min-h-screen flex flex-col">{children}</main>;
   }
 
   return (
