@@ -54,6 +54,20 @@
     "nextSession": "Next lesson",
     "sessionSchedule": "Today at 4:30 PM • Conakry"
   },
+  "marquee": {
+    "curriculum": "Mathematics, Physics, French • Primary to High School Graduation",
+    "vetted": "University Diplomas & National IDs Manually Verified",
+    "payments": "Secure Payments via Orange Money & MTN Guinea",
+    "satisfaction": "98.4% Academic Progress & Family Satisfaction",
+    "reports": "Structured Pedagogical Report After Every Session",
+    "locations": "Conakry (Ratoma, Matoto, Dixinn, Kaloum) & Online",
+    "fairModel": "Fair Model SRD V2.0: 85% to Tutor / 15% Platform"
+  },
+  "showcase": {
+    "badge": "Real-World Experience",
+    "title": "A vibrant connection between parents and tutors",
+    "subtitle": "Discover how Monsieur Fanyi simplifies finding reliable teachers for families in Conakry."
+  },
   "trust": {
     "tutorsTitle": "Vetted Tutors",
     "tutorsDesc": "IDs and university diplomas manually verified by our team.",

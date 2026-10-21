@@ -61,35 +61,70 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   * {
     @apply border-border;
   }
+
+  /* Décalage élégant pour le scroll vers les ancres sous la barre fixe */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
   body {
     @apply bg-background text-foreground antialiased font-sans;
     min-height: 100vh;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;
   }
 }
 
-/* Utilitaires visuels sophistiqués */
-.bg-radial-gradient-hero {
-  background: radial-gradient(circle at 70% 30%, rgba(37, 99, 235, 0.12) 0%, rgba(13, 148, 136, 0.08) 35%, transparent 70%);
+/* Gradients d'ambiance et maillages vivants */
+.bg-radial-mesh {
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
+    radial-gradient(at 85% 25%, rgba(13, 148, 136, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(245, 158, 11, 0.05) 0px, transparent 60%);
+}
+
+.bg-radial-dark-mesh {
+  background-image: 
+    radial-gradient(at 20% 20%, rgba(37, 99, 235, 0.25) 0px, transparent 55%),
+    radial-gradient(at 80% 30%, rgba(13, 148, 136, 0.22) 0px, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(233, 180, 76, 0.15) 0px, transparent 60%);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
 }
 
 .glass-card-dark {
   background: rgba(16, 35, 63, 0.85);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Pause du bandeau défilant au survol */
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
 }
 
 /* Animations et respect strict de prefers-reduced-motion */

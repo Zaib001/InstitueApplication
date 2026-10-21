@@ -74,20 +74,51 @@ const config: Config = {
         "premium-hover": "0 20px 40px -15px rgba(16, 35, 63, 0.14), 0 8px 12px -3px rgba(16, 35, 63, 0.06)",
         glow: "0 0 40px -10px rgba(37, 99, 235, 0.25)",
         "glow-teal": "0 0 35px -8px rgba(13, 148, 136, 0.22)",
+        "glow-gold": "0 0 30px -5px rgba(245, 158, 11, 0.3)",
       },
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-6px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+          "50%": { transform: "translateY(-12px) rotate(1.5deg)" },
         },
         "pulse-subtle": {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.85" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "marquee-reverse": {
+          "0%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
+        blob: {
+          "0%, 100%": { transform: "translate(0px, 0px) scale(1)" },
+          "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+          "66%": { transform: "translate(-20px, 20px) scale(0.95)" },
+        },
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         float: "float 5s ease-in-out infinite",
+        "float-slow": "float-slow 7s ease-in-out infinite",
         "pulse-subtle": "pulse-subtle 4s ease-in-out infinite",
+        marquee: "marquee 35s linear infinite",
+        "marquee-fast": "marquee 22s linear infinite",
+        "marquee-reverse": "marquee-reverse 35s linear infinite",
+        blob: "blob 10s infinite",
+        "spin-slow": "spin-slow 25s linear infinite",
       },
     },
   },

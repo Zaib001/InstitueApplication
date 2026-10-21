@@ -54,6 +54,20 @@
     "nextSession": "Prochaine séance",
     "sessionSchedule": "Aujourd'hui à 16h30 • Conakry"
   },
+  "marquee": {
+    "curriculum": "Mathématiques, Physique, Français • Primaire au Bac Unique",
+    "vetted": "Diplômes Universitaires & CNI Contrôlés Manuellement",
+    "payments": "Paiements Sécurisés Orange Money & MTN Guinée",
+    "satisfaction": "98.4 % de Progression et Satisfaction des Familles",
+    "reports": "Rapport Pédagogique Détaillé après Chaque Séance",
+    "locations": "Conakry (Ratoma, Matoto, Dixinn, Kaloum) & En Ligne",
+    "fairModel": "Modèle Équitable SRD V2.0 : 85% au Professeur / 15% Plateforme"
+  },
+  "showcase": {
+    "badge": "Expérience Concrète",
+    "title": "Une mise en relation vivante entre parents et professeurs",
+    "subtitle": "Découvrez comment Monsieur Fanyi simplifie la recherche d'enseignants fiables pour les familles à Conakry."
+  },
   "trust": {
     "tutorsTitle": "Professeurs Vérifiés",
     "tutorsDesc": "Pièces d'identité et diplômes universitaires certifiés manuellement.",
