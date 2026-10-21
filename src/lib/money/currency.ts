@@ -33,6 +33,25 @@ export interface PackageProgressReconciliation {
 }
 
 /**
+ * Calcule le prix d'une séance au tarif horaire au prorata de sa durée en minutes.
+ * Conforme au SRD V2.0 : calcul entier en GNF.
+ * Exemple : 50 000 GNF / heure pour 90 minutes = 75 000 GNF.
+ */
+export function calculateHourlySessionPrice(
+  hourlyRateGnf: number,
+  durationMinutes: number
+): number {
+  if (!Number.isInteger(hourlyRateGnf) || hourlyRateGnf <= 0) {
+    throw new Error("Le tarif horaire doit être un entier positif en GNF.");
+  }
+  if (!Number.isInteger(durationMinutes) || durationMinutes <= 0) {
+    throw new Error("La durée de la séance doit être un entier positif en minutes.");
+  }
+
+  return Math.round((hourlyRateGnf * durationMinutes) / 60);
+}
+
+/**
  * Alloue le montant total d'un forfait mensuel sur N séances avec division entière
  * et distribution déterministe du reste arithmétique sur les premières séances
  * afin que la somme soit STRICTEMENT égale au total.

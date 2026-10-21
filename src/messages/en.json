@@ -29,7 +29,13 @@
     "parentPortal": "Parent Portal",
     "teacherPortal": "Tutor Portal",
     "adminPortal": "Admin Dashboard",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "topBanner": "Certified Tutoring Platform in Guinea — Secure Orange Money & MTN Payments",
+    "logoSubtitle": "Academic Excellence • Guinea",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu",
+    "switchFr": "Switch to French",
+    "switchEn": "Switch to English"
   },
   "hero": {
     "badge": "Certified Platform — Republic of Guinea",
@@ -40,6 +46,69 @@
     "statTutors": "Vetted tutors with certified degrees",
     "statCommission": "Transparent 15% platform commission",
     "statCurriculum": "Aligned with Guinean national curriculum"
+  },
+  "howItWorks": {
+    "title": "A simple, transparent and secure connection",
+    "subtitle": "Every step is designed to protect parents' investment and promote teachers' excellence.",
+    "step1Title": "Post your need",
+    "step1Desc": "Specify your child's grade, subject (Math, French, Physics...), budget, and neighborhood in Conakry or online.",
+    "step2Title": "Choose your tutor",
+    "step2Desc": "Receive applications from tutors whose degrees and identity have been manually verified by administration.",
+    "step3Title": "Confirm after each lesson",
+    "step3Desc": "The tutor submits a lesson report. Payout only occurs IF you confirm that the session took place."
+  },
+  "simulator": {
+    "badge": "Official Pricing Example — SRD V2.0",
+    "title": "Zero surprises: Exact 15% / 85% breakdown",
+    "subtitle": "Monthly packages are split into exact per-session unit value. A session is only paid to the tutor when completed and confirmed.",
+    "bulletPackage": "Standard monthly package: 400,000 GNF for 8 sessions of 60 min",
+    "bulletUnit": "Unit value per session: 50,000 GNF",
+    "bulletPlatform": "Platform share (15%): 7,500 GNF / session",
+    "bulletTeacher": "Tutor net share (85%): 42,500 GNF / session",
+    "cardTitle": "Simulation: 3 validated sessions out of 8",
+    "cardBadge": "SRD Compliant",
+    "rowGross": "Gross earned (3 sessions):",
+    "rowPlatform": "Monsieur Fanyi Commission (15%):",
+    "rowTeacher": "Net amount due to tutor (85%):",
+    "rowUnearned": "5 remaining unearned sessions:",
+    "footnote": "* The 250,000 GNF remain held and are never paid to the tutor until lessons are completed and confirmed by the parent."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about how Monsieur Fanyi works.",
+    "q1": "How are tutors verified?",
+    "a1": "Every tutor must provide official identification (National ID or Passport) and university diplomas. Our admin team manually reviews and verifies every profile before authorizing applications.",
+    "q2": "What payment methods are supported in Guinea?",
+    "a2": "The platform is designed for Orange Money Guinea and MTN Mobile Money. As part of this rollout, transactions are audited with full traceability and manual reconciliation.",
+    "q3": "What happens if a lesson does not take place?",
+    "a3": "If a tutor did not show up or the lesson did not happen, the parent can contest the session with one click. Funds remain protected and are not released. The administrator reviews and can reschedule or refund."
+  },
+  "finalCta": {
+    "title": "Ready to help your child thrive this week?",
+    "subtitle": "Sign up for free and receive the first proposals from certified tutors in Conakry.",
+    "btnParent": "Create Parent Account",
+    "btnTeacher": "Apply as Tutor"
+  },
+  "footer": {
+    "mission": "The leading platform for academic tutoring and private lessons in Guinea. Certified matching between demanding parents and qualified teachers.",
+    "curriculumNorms": "Compliant with Guinean educational system standards",
+    "parentsSection": "Parents",
+    "howToBook": "How to book a lesson",
+    "createRequest": "Post a tutoring request",
+    "packagesGrid": "Monthly packages grid",
+    "securePayments": "Secure payments (Orange / MTN)",
+    "teachersSection": "Tutors",
+    "applyAsTeacher": "Apply as a tutor",
+    "selectionCriteria": "Selection criteria & Degrees",
+    "remunerationRule": "Remuneration & 15% commission",
+    "teacherSpace": "Tutor portal",
+    "legalSection": "Framework & Contact",
+    "location": "Conakry, Republic of Guinea",
+    "currencyLabel": "Currency: Guinean Franc (GNF)",
+    "legalNotice": "Legal Notices (Draft)",
+    "privacy": "Data Privacy & Child Protection",
+    "copyright": "© 2026 Monsieur Fanyi — All rights reserved. Built for education in Guinea.",
+    "craftedWith": "Crafted with rigor for academic excellence"
   },
   "roles": {
     "parent": "Parent",
@@ -71,6 +140,8 @@
     "phoneLabel": "Phone number (e.g. +224 620 00 00 00)",
     "roleLabel": "I am a",
     "alreadyHaveAccount": "Already have an account?",
-    "noAccountYet": "Don't have an account yet?"
+    "noAccountYet": "Don't have an account yet?",
+    "phaseNotice": "Full server authentication will be enabled in Phase P10. You are on the certified Phase 01 baseline.",
+    "phaseNoticeRegister": "Database persistence with server RBAC will be enabled in Phases P09-P11. You are on the certified Phase 01 baseline."
   }
 }

@@ -3,6 +3,7 @@ import {
   allocatePackageSessions,
   calculateSessionCommission,
   reconcilePackageProgress,
+  calculateHourlySessionPrice,
 } from "../../src/lib/money/currency";
 
 describe("Moteur Financier GNF — Monsieur Fanyi (SRD V2.0)", () => {
@@ -61,6 +62,31 @@ describe("Moteur Financier GNF — Monsieur Fanyi (SRD V2.0)", () => {
     // Réconciliation totale parfaite
     expect(reconciliation.isFullyReconciled).toBe(true);
     expect(reconciliation.grossEarnedGnf + reconciliation.unearnedGnf).toBe(400000);
+  });
+
+  it("calcule le prix au tarif horaire au prorata de la durée (ex: 50 000 GNF/h pour 90 min = 75 000 GNF)", () => {
+    expect(calculateHourlySessionPrice(50000, 60)).toBe(50000);
+    expect(calculateHourlySessionPrice(50000, 90)).toBe(75000);
+    expect(calculateHourlySessionPrice(50000, 45)).toBe(37500);
+    expect(calculateHourlySessionPrice(50000, 120)).toBe(100000);
+  });
+
+  it("gère la réconciliation aux bornes : 0 séance approuvée et 8 séances approuvées sur 8", () => {
+    // 0 séance approuvée : 0 GNF acquis, 400 000 GNF non acquis
+    const recZero = reconcilePackageProgress(400000, 8, 0, 15);
+    expect(recZero.grossEarnedGnf).toBe(0);
+    expect(recZero.totalTeacherPayableGnf).toBe(0);
+    expect(recZero.totalPlatformCommissionGnf).toBe(0);
+    expect(recZero.unearnedGnf).toBe(400000);
+    expect(recZero.isFullyReconciled).toBe(true);
+
+    // 8 séances approuvées sur 8 : 400 000 GNF acquis, 0 GNF non acquis
+    const recFull = reconcilePackageProgress(400000, 8, 8, 15);
+    expect(recFull.grossEarnedGnf).toBe(400000);
+    expect(recFull.totalPlatformCommissionGnf).toBe(60000); // 15% de 400 000
+    expect(recFull.totalTeacherPayableGnf).toBe(340000); // 85% de 400 000
+    expect(recFull.unearnedGnf).toBe(0);
+    expect(recFull.isFullyReconciled).toBe(true);
   });
 
   it("rejette les montants flottants ou négatifs", () => {

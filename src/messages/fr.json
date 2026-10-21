@@ -29,7 +29,13 @@
     "parentPortal": "Espace Parent",
     "teacherPortal": "Espace Professeur",
     "adminPortal": "Administration",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "topBanner": "Plateforme certifiée de soutien scolaire en Guinée — Paiements sécurisés Orange Money & MTN",
+    "logoSubtitle": "Excellence Scolaire • Guinée",
+    "openMenu": "Ouvrir le menu de navigation",
+    "closeMenu": "Fermer le menu de navigation",
+    "switchFr": "Passer en Français",
+    "switchEn": "Passer en Anglais"
   },
   "hero": {
     "badge": "Plateforme Certifiée — République de Guinée",
@@ -40,6 +46,69 @@
     "statTutors": "Professeurs vérifiés avec diplômes",
     "statCommission": "15 % de commission transparente",
     "statCurriculum": "Conforme au programme national guinéen"
+  },
+  "howItWorks": {
+    "title": "Une mise en relation simple, transparente et sécurisée",
+    "subtitle": "Chaque étape est pensée pour protéger l'investissement des parents et valoriser l'excellence des enseignants.",
+    "step1Title": "Publiez votre besoin",
+    "step1Desc": "Indiquez la classe de votre enfant, la matière (Maths, Français, Physique...), le budget et votre quartier à Conakry ou en ligne.",
+    "step2Title": "Choisissez votre professeur",
+    "step2Desc": "Recevez les candidatures de professeurs dont les diplômes et l'identité ont été vérifiés manuellement par l'administration.",
+    "step3Title": "Validez après chaque cours",
+    "step3Desc": "Le professeur soumet son compte-rendu. Le reversement n'a lieu QUE si vous confirmez que la séance a bien eu lieu."
+  },
+  "simulator": {
+    "badge": "Exemple Officiel de Tarification — SRD V2.0",
+    "title": "Zéro mauvaise surprise : Répartition exacte 15 % / 85 %",
+    "subtitle": "Les forfaits mensuels sont fractionnés en valeur unitaire exacte par séance. Une séance n'est payée au professeur que lorsqu'elle est réalisée et confirmée.",
+    "bulletPackage": "Prix forfait mensuel type : 400 000 GNF pour 8 séances de 60 min",
+    "bulletUnit": "Valeur d'une séance unitaire : 50 000 GNF",
+    "bulletPlatform": "Part plateforme (15 %) : 7 500 GNF / séance",
+    "bulletTeacher": "Part nette professeur (85 %) : 42 500 GNF / séance",
+    "cardTitle": "Simulation : 3 séances validées sur 8",
+    "cardBadge": "Conforme SRD",
+    "rowGross": "Montant brut acquis (3 séances) :",
+    "rowPlatform": "Commission Monsieur Fanyi (15 %) :",
+    "rowTeacher": "Montant net dû au professeur (85 %) :",
+    "rowUnearned": "5 séances restantes non acquises :",
+    "footnote": "* Les 250 000 GNF restent bloqués et ne sont jamais reversés au professeur tant que les séances ne sont pas réalisées et validées par le parent."
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Tout ce que vous devez savoir sur le fonctionnement de Monsieur Fanyi.",
+    "q1": "Comment les professeurs sont-ils vérifiés ?",
+    "a1": "Chaque enseignant doit fournir sa pièce d'identité officielle (CNI ou Passeport) et ses diplômes universitaires. Notre équipe administrative valide manuellement chaque dossier avant d'autoriser le professeur à postuler.",
+    "q2": "Quels sont les moyens de paiement acceptés en Guinée ?",
+    "a2": "La plateforme est conçue pour Orange Money Guinée et MTN Mobile Money. Dans le cadre de ce lancement, les transactions sont auditées et suivies avec traçabilité et rapprochement comptable manuel.",
+    "q3": "Que se passe-t-il si un cours n'a pas lieu ?",
+    "a3": "Si le professeur ne s'est pas présenté ou si le cours n'a pas été donné, le parent peut contester la séance en un clic. L'argent reste protégé et n'est pas versé au professeur. L'administrateur arbitre et peut reprogrammer ou rembourser la séance."
+  },
+  "finalCta": {
+    "title": "Prêt à faire progresser votre enfant dès cette semaine ?",
+    "subtitle": "Inscrivez-vous gratuitement et recevez les premières propositions de professeurs certifiés à Conakry.",
+    "btnParent": "Créer mon compte parent",
+    "btnTeacher": "Postuler comme enseignant"
+  },
+  "footer": {
+    "mission": "La plateforme de référence pour le soutien scolaire et les cours particuliers en Guinée. Rapprochement certifié entre parents exigeants et enseignants qualifiés.",
+    "curriculumNorms": "Conforme aux normes du système éducatif guinéen",
+    "parentsSection": "Parents d'élèves",
+    "howToBook": "Comment réserver un cours",
+    "createRequest": "Créer une demande de soutien",
+    "packagesGrid": "Grille des forfaits mensuels",
+    "securePayments": "Paiements sécurisés (Orange / MTN)",
+    "teachersSection": "Enseignants",
+    "applyAsTeacher": "Postuler comme professeur",
+    "selectionCriteria": "Critères de sélection & Diplômes",
+    "remunerationRule": "Rémunération & Commission 15 %",
+    "teacherSpace": "Espace enseignant",
+    "legalSection": "Cadre & Contact",
+    "location": "Conakry, République de Guinée",
+    "currencyLabel": "Devise : Franc Guinéen (GNF)",
+    "legalNotice": "Mentions Légales (Projet)",
+    "privacy": "Protection des données & Enfants",
+    "copyright": "© 2026 Monsieur Fanyi — Tous droits réservés. Développé pour l'éducation en Guinée.",
+    "craftedWith": "Fait avec rigueur pour l'excellence académique"
   },
   "roles": {
     "parent": "Parent d'élève",
@@ -71,6 +140,8 @@
     "phoneLabel": "Numéro de téléphone (ex: +224 620 00 00 00)",
     "roleLabel": "Je suis un",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "noAccountYet": "Pas encore de compte ?"
+    "noAccountYet": "Pas encore de compte ?",
+    "phaseNotice": "Le module d'authentification serveur complet sera activé lors de la Phase P10. Vous êtes sur le socle certifié Phase 01.",
+    "phaseNoticeRegister": "L'enregistrement effectif en base de données avec RBAC sera activé lors des phases P09-P11. Vous êtes sur le socle certifié Phase 01."
   }
 }

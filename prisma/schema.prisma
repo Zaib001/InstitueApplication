@@ -138,9 +138,10 @@ model User {
   parentProfile   ParentProfile?
   teacherProfile  TeacherProfile?
   studentProfile  StudentProfile?
-  auditLogs       AuditLog[]
-  notifications   Notification[]
-  sentMessages    ClassroomMessage[]
+  auditLogs           AuditLog[]
+  notifications       Notification[]
+  sentMessages        ClassroomMessage[]
+  uploadedAttachments Attachment[]
 
   @@index([role])
   @@index([email])
@@ -199,6 +200,7 @@ model TeacherProfile {
 
   documents           TeacherDocument[]
   pricingOffers       TeacherPricingOffer[]
+  availabilities      Availability[]
   applications        TeacherApplication[]
   classrooms          Classroom[]
   earnings            TeacherEarning[]
@@ -323,6 +325,7 @@ model Classroom {
   sessions          LessonSession[]
   messages          ClassroomMessage[]
   orders            PaymentOrder[]
+  attachments       Attachment[]
 
   @@index([teacherProfileId])
   @@index([studentId])
@@ -345,6 +348,7 @@ model LessonSession {
   approval            LessonApproval?
   dispute             LessonDispute?
   earning             TeacherEarning?
+  refundCases         RefundCase[]
 
   @@index([classroomId])
   @@index([status])
@@ -383,6 +387,7 @@ model LessonDispute {
   status        DisputeStatus @default(OPEN)
   adminNote     String?
   resolvedAt    DateTime?
+  refundCase    RefundCase?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -398,6 +403,7 @@ model ClassroomMessage {
   sender      User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
   content     String
   attachmentUrl String?
+  attachments   Attachment[]
   createdAt   DateTime  @default(now())
 
   @@index([classroomId])
@@ -433,6 +439,7 @@ model PaymentOrder {
 
   attempts        PaymentAttempt[]
   ledgerEntries   PaymentLedgerEntry[]
+  refundCases     RefundCase[]
 
   @@index([parentUserId])
   @@index([status])
@@ -566,4 +573,65 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@index([entityType, entityId])
+}
+
+enum RefundStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  PROCESSED
+}
+
+model Availability {
+  id                String         @id @default(cuid())
+  teacherProfileId  String
+  teacherProfile    TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  dayOfWeek         Int            // 0 = Dimanche, 1 = Lundi, ..., 6 = Samedi
+  startTime         String         // ex: "08:00"
+  endTime           String         // ex: "12:00"
+  isRecurring       Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+
+  @@index([teacherProfileId])
+  @@index([dayOfWeek])
+}
+
+model Attachment {
+  id            String            @id @default(cuid())
+  classroomId   String?
+  classroom     Classroom?        @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  messageId     String?
+  message       ClassroomMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  uploaderId    String
+  uploader      User              @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  fileName      String
+  fileUrl       String
+  mimeType      String
+  fileSizeBytes Int
+  createdAt     DateTime          @default(now())
+
+  @@index([classroomId])
+  @@index([messageId])
+  @@index([uploaderId])
+}
+
+model RefundCase {
+  id                 String         @id @default(cuid())
+  orderId            String
+  order              PaymentOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  sessionId          String?
+  session            LessonSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  disputeId          String?        @unique
+  dispute            LessonDispute? @relation(fields: [disputeId], references: [id], onDelete: SetNull)
+  requestedAmountGnf Int
+  approvedAmountGnf  Int?
+  status             RefundStatus   @default(REQUESTED)
+  reason             String
+  adminDecisionNotes String?
+  processedAt        DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([orderId])
+  @@index([status])
 }

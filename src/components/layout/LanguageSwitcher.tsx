@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useTranslation, SupportedLocale } from "@/lib/i18n";
+import { useTranslation } from "@/lib/i18n";
 import { Globe } from "lucide-react";
 
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
@@ -20,7 +20,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
               ? "bg-brand-navy text-white shadow-xs font-semibold"
               : "text-muted-foreground hover:text-foreground"
           }`}
-          aria-label="Passer en Français"
+          aria-label={t("nav.switchFr", "Passer en Français")}
           aria-pressed={locale === "fr"}
         >
           FR
@@ -33,7 +33,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
               ? "bg-brand-navy text-white shadow-xs font-semibold"
               : "text-muted-foreground hover:text-foreground"
           }`}
-          aria-label="Switch to English"
+          aria-label={t("nav.switchEn", "Passer en Anglais")}
           aria-pressed={locale === "en"}
         >
           EN
