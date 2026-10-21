@@ -340,7 +340,15 @@
     "phoneLabel": "Phone number (e.g. +224 620 00 00 00)",
     "roleLabel": "I am a",
     "alreadyHaveAccount": "Already have an account?",
+    "alreadyAccount": "Already have an account?",
     "noAccountYet": "Don't have an account yet?",
+    "forgotPassword": "Forgot password?",
+    "resetPasswordTitle": "New password",
+    "newPasswordLabel": "New password",
+    "dashboardParent": "Parent Portal",
+    "dashboardTeacher": "Teacher Portal",
+    "dashboardAdmin": "Admin Console",
+    "accountSettings": "Account Settings",
     "phaseNotice": "Full server authentication will be enabled in Phase P10. You are on the certified Phase 01 baseline.",
     "phaseNoticeRegister": "Database persistence with server RBAC will be enabled in Phases P09-P11. You are on the certified Phase 01 baseline."
   }

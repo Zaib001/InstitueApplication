@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
@@ -15,16 +16,24 @@ import {
   CheckCircle2,
   Sparkles,
   AlertCircle,
+  Eye,
+  EyeOff,
+  Loader2,
 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginContent() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
@@ -33,12 +42,29 @@ export default function LoginPage() {
       return;
     }
 
-    setStatusMessage(
-      t(
-        "auth.phaseNotice",
-        "Le module d'authentification serveur complet sera activé lors de la Phase P10. Vous êtes sur le socle certifié Phase 01."
-      )
-    );
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, callbackUrl }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMessage(data.error || "Adresse email ou mot de passe incorrect.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Hard redirect to ensure cookies and middleware sync cleanly
+      window.location.href = data.redirectUrl || "/parent/dashboard";
+    } catch {
+      setErrorMessage("Une erreur de communication est survenue. Veuillez réessayer.");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -59,7 +85,7 @@ export default function LoginPage() {
       <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-6 relative z-10">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-200 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full border border-white/20 shadow-xs group"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-200 hover:text-white transition-all bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full border border-white/20 shadow-xs group cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
           <span>{t("common.back", "Retour à l'accueil")}</span>
@@ -99,19 +125,16 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Messages de statut & d'erreur */}
+          {/* Messages d'erreur */}
           {errorMessage && (
-            <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs text-rose-200 flex items-start gap-2.5">
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-xs text-rose-200 flex items-start gap-2.5"
+            >
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" aria-hidden="true" />
               <span>{errorMessage}</span>
-            </div>
-          )}
-
-          {statusMessage && (
-            <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-2.5">
-              <ShieldCheck className="w-4 h-4 text-[#e59a38] shrink-0 mt-0.5" aria-hidden="true" />
-              <span>{statusMessage}</span>
-            </div>
+            </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -131,7 +154,8 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nom.prenom@exemple.com"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-white/15 bg-white/5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#e59a38] focus:border-transparent transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-white/15 bg-white/5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#e59a38] focus:border-transparent transition-all disabled:opacity-50"
                 />
               </div>
             </div>
@@ -144,27 +168,52 @@ export default function LoginPage() {
                 >
                   {t("auth.passwordLabel", "Mot de passe")}
                 </label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-[#e59a38] hover:text-[#f5af52] transition-colors font-medium"
+                >
+                  {t("auth.forgotPassword", "Mot de passe oublié ?")}
+                </Link>
               </div>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" aria-hidden="true" />
                 <input
                   id="login-password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-white/15 bg-white/5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#e59a38] focus:border-transparent transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-10 pr-11 py-2.5 text-sm rounded-xl border border-white/15 bg-white/5 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#e59a38] focus:border-transparent transition-all disabled:opacity-50"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 px-6 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+              disabled={isLoading}
+              className="w-full py-3.5 px-6 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <span>{t("nav.login", "Connexion")}</span>
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Connexion en cours...</span>
+                </>
+              ) : (
+                <>
+                  <span>{t("nav.login", "Connexion")}</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </>
+              )}
             </button>
           </form>
 
@@ -216,5 +265,13 @@ export default function LoginPage() {
         © 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée
       </footer>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#10243d]" />}>
+      <LoginContent />
+    </Suspense>
   );
 }
