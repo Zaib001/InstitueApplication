@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { SectionContainer } from "./SectionContainer";
 import { SectionHeading } from "./SectionHeading";
-import { ChevronDown, HelpCircle, ShieldCheck } from "lucide-react";
+import { ChevronDown, HelpCircle } from "lucide-react";
 
 export function FAQSection() {
   const { t } = useTranslation();
@@ -67,22 +68,23 @@ export function FAQSection() {
         )}
       />
 
-      <div className="space-y-4">
+      <div className="space-y-3.5">
         {faqs.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
-            <div
+            <motion.div
               key={index}
+              initial={false}
               className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
                 isOpen
-                  ? "bg-slate-50/70 border-brand-blue/30 shadow-xs"
+                  ? "bg-slate-50/80 border-[#16385c]/30 shadow-sm"
                   : "bg-white border-slate-200/80 hover:border-slate-300"
               }`}
             >
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
+                className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none cursor-pointer"
                 aria-expanded={isOpen}
               >
                 <span className="font-bold text-sm sm:text-base text-brand-navy flex items-center gap-3">
@@ -91,20 +93,32 @@ export function FAQSection() {
                   </span>
                   {faq.q}
                 </span>
-                <ChevronDown
-                  className={`w-5 h-5 text-brand-muted shrink-0 transition-transform duration-200 ${
-                    isOpen ? "rotate-180 text-brand-blue" : ""
-                  }`}
-                  aria-hidden="true"
-                />
+                <motion.div
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="shrink-0 text-brand-muted"
+                >
+                  <ChevronDown className="w-5 h-5" aria-hidden="true" />
+                </motion.div>
               </button>
 
-              {isOpen && (
-                <div className="px-5 pb-5 sm:px-6 sm:pb-6 text-xs sm:text-sm text-brand-muted leading-relaxed pl-14 border-t border-slate-100 pt-3">
-                  {faq.a}
-                </div>
-              )}
-            </div>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="content"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 text-xs sm:text-sm text-brand-muted leading-relaxed pl-14 border-t border-slate-100 pt-3">
+                      {faq.a}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           );
         })}
       </div>

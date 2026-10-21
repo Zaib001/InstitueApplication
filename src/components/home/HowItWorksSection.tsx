@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { SectionContainer } from "./SectionContainer";
 import { SectionHeading } from "./SectionHeading";
@@ -35,7 +36,7 @@ export function HowItWorksSection() {
         "howItWorks.step2Desc",
         "Recevez les candidatures de professeurs dont les diplômes et l'identité ont été vérifiés manuellement par l'administration."
       ),
-      highlight: true, // Carte mise en valeur comme dans la référence Image 3
+      highlight: true,
     },
     {
       number: "03",
@@ -73,19 +74,20 @@ export function HowItWorksSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
         {steps.map((step, index) => (
-          <div
+          <motion.div
             key={index}
-            className={`relative rounded-3xl p-7 transition-all duration-300 flex flex-col justify-between ${
+            whileHover={{ y: -8, transition: { duration: 0.25 } }}
+            className={`relative rounded-3xl p-7 transition-shadow duration-300 flex flex-col justify-between ${
               step.highlight
-                ? "bg-gradient-to-b from-brand-blue to-brand-blue-deep text-white shadow-xl shadow-brand-blue/20 transform lg:-translate-y-2 border border-blue-400/40"
-                : "bg-white text-brand-charcoal border border-slate-200 shadow-premium hover:shadow-premium-hover hover:-translate-y-1"
+                ? "bg-gradient-to-b from-[#16385c] to-[#0f243c] text-white shadow-xl shadow-brand-blue/20 lg:-translate-y-2 border border-amber-400/30"
+                : "bg-white text-brand-charcoal border border-slate-200 shadow-premium hover:shadow-premium-hover"
             }`}
           >
             {/* Numérotation de l'étape */}
             <div className="flex items-center justify-between mb-6">
               <span
                 className={`text-2xl font-black font-heading ${
-                  step.highlight ? "text-white/40" : "text-slate-300"
+                  step.highlight ? "text-amber-400/80" : "text-slate-300"
                 }`}
               >
                 {step.number}
@@ -93,7 +95,7 @@ export function HowItWorksSection() {
               <div
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-xs ${
                   step.highlight
-                    ? "bg-white/15 text-white backdrop-blur-xs"
+                    ? "bg-white/10 text-white backdrop-blur-xs"
                     : "bg-slate-50 border border-slate-100"
                 }`}
               >
@@ -112,26 +114,26 @@ export function HowItWorksSection() {
               </h3>
               <p
                 className={`text-xs sm:text-sm leading-relaxed ${
-                  step.highlight ? "text-blue-100" : "text-brand-muted"
+                  step.highlight ? "text-slate-200" : "text-brand-muted"
                 }`}
               >
                 {step.desc}
               </p>
             </div>
 
-            {/* Indicateur de flux */}
+            {/* Indicateur de flux traduit */}
             <div className="pt-6 mt-4 border-t border-slate-100/20 flex items-center text-xs font-semibold">
-              <span className={step.highlight ? "text-white" : "text-brand-blue"}>
-                Étape {index + 1} sur 4
+              <span className={step.highlight ? "text-amber-400" : "text-brand-blue"}>
+                {t("howItWorks.stepPrefix", "Étape")} {index + 1} {t("howItWorks.stepOf", "sur")} 4
               </span>
               <ArrowRight
                 className={`w-3.5 h-3.5 ml-2 ${
-                  step.highlight ? "text-white" : "text-brand-blue"
+                  step.highlight ? "text-amber-400" : "text-brand-blue"
                 }`}
                 aria-hidden="true"
               />
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </SectionContainer>

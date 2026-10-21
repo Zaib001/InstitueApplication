@@ -119,7 +119,9 @@
     "step3Title": "Planifiez vos cours",
     "step3Desc": "Définissez le calendrier hebdomadaire en accord avec l'enseignant, à domicile ou via visioconférence sécurisée.",
     "step4Title": "Suivez et validez",
-    "step4Desc": "Le professeur soumet son compte-rendu. Le reversement n'a lieu QUE si vous confirmez que la séance a bien été effectuée."
+    "step4Desc": "Le professeur soumet son compte-rendu. Le reversement n'a lieu QUE si vous confirmez que la séance a bien été effectuée.",
+    "stepPrefix": "Étape",
+    "stepOf": "sur"
   },
   "subjects": {
     "badge": "Programme National Guinéen",

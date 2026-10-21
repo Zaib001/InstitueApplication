@@ -119,7 +119,9 @@
     "step3Title": "Schedule your lessons",
     "step3Desc": "Set your weekly calendar with the tutor, at home or via secure video call.",
     "step4Title": "Track and confirm",
-    "step4Desc": "The tutor submits a lesson report. Payout only occurs IF you confirm that the session took place."
+    "step4Desc": "The tutor submits a lesson report. Payout only occurs IF you confirm that the session took place.",
+    "stepPrefix": "Step",
+    "stepOf": "of"
   },
   "subjects": {
     "badge": "Guinean National Curriculum",

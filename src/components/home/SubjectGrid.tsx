@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import { SectionContainer } from "./SectionContainer";
 import { SectionHeading } from "./SectionHeading";
@@ -121,59 +122,74 @@ export function SubjectGrid() {
         )}
       />
 
-      {/* Onglets de filtrage par cycle */}
+      {/* Onglets de filtrage par cycle avec transition spring */}
       <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
         {cycles.map((cycle) => (
           <button
             key={cycle.id}
             onClick={() => setSelectedCycle(cycle.id as any)}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+            className={`relative px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-200 cursor-pointer ${
               selectedCycle === cycle.id
-                ? "bg-brand-navy text-white shadow-xs"
+                ? "text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200/80"
             }`}
           >
+            {selectedCycle === cycle.id && (
+              <motion.div
+                layoutId="activeCyclePill"
+                className="absolute inset-0 rounded-full bg-brand-navy shadow-xs -z-10"
+                transition={{ type: "spring", stiffness: 500, damping: 35 }}
+              />
+            )}
             {cycle.label}
           </button>
         ))}
       </div>
 
-      {/* Grille des matières */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredSubjects.map((item) => (
-          <div
-            key={item.id}
-            className={`p-6 rounded-3xl border ${item.colorBg} shadow-premium hover:shadow-premium-hover transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between`}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-white shadow-xs flex items-center justify-center">
-                  {item.icon}
-                </div>
-                {item.popular && (
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-blue text-white">
-                    {t("subjects.popularBadge", "Très demandé")}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-base font-bold font-heading text-brand-navy mb-1.5">
-                {item.name}
-              </h3>
-              <p className="text-xs text-brand-muted leading-relaxed mb-4">
-                {item.desc}
-              </p>
-            </div>
-
-            <Link
-              href={`/register?role=parent&subject=${item.id}`}
-              className="inline-flex items-center text-xs font-bold text-brand-blue hover:text-brand-navy transition-colors pt-2 border-t border-slate-200/50"
+      {/* Grille des matières animée */}
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <AnimatePresence>
+          {filteredSubjects.map((item) => (
+            <motion.div
+              layout
+              key={item.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ y: -6, transition: { duration: 0.2 } }}
+              className={`p-6 rounded-3xl border ${item.colorBg} shadow-premium hover:shadow-premium-hover transition-shadow duration-300 flex flex-col justify-between`}
             >
-              <span>{t("subjects.findTutorFor", "Trouver un professeur")}</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-1.5" aria-hidden="true" />
-            </Link>
-          </div>
-        ))}
-      </div>
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white shadow-xs flex items-center justify-center">
+                    {item.icon}
+                  </div>
+                  {item.popular && (
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-blue text-white">
+                      {t("subjects.popularBadge", "Très demandé")}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-base font-bold font-heading text-brand-navy mb-1.5">
+                  {item.name}
+                </h3>
+                <p className="text-xs text-brand-muted leading-relaxed mb-4">
+                  {item.desc}
+                </p>
+              </div>
+
+              <Link
+                href={`/register?role=parent&subject=${item.id}`}
+                className="inline-flex items-center text-xs font-bold text-brand-blue hover:text-brand-navy transition-colors pt-2 border-t border-slate-200/50 group"
+              >
+                <span>{t("subjects.findTutorFor", "Trouver un professeur")}</span>
+                <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Link>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
     </SectionContainer>
   );
 }
