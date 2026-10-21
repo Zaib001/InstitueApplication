@@ -60,7 +60,15 @@
     "courseStatus": "Progress +28%",
     "metricSatisfaction": "Satisfaction rate",
     "nextSession": "Next lesson",
-    "sessionSchedule": "Today at 4:30 PM • Conakry"
+    "sessionSchedule": "Today at 4:30 PM • Conakry",
+    "socialProofScore": "4.9 / 5.0",
+    "socialProofText": "+350 families successfully mentored in Conakry",
+    "trustBadge1": "Certified University Graduates",
+    "trustBadge2": "Matching Guaranteed within 24h",
+    "trustBadge3": "100% Secure Orange & MTN Escrow",
+    "floatingCardTitle": "Confirmed Lesson • Mathematics",
+    "floatingCardSub": "12th Grade SM • Kipé, Conakry",
+    "floatingCardMetric": "+3.5 pts on Exams"
   },
   "marquee": {
     "curriculum": "Mathematics, Physics, French • Primary to High School Graduation",

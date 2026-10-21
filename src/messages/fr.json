@@ -60,7 +60,15 @@
     "courseStatus": "Progression +28%",
     "metricSatisfaction": "Taux de satisfaction",
     "nextSession": "Prochaine séance",
-    "sessionSchedule": "Aujourd'hui à 16h30 • Conakry"
+    "sessionSchedule": "Aujourd'hui à 16h30 • Conakry",
+    "socialProofScore": "4.9 / 5.0",
+    "socialProofText": "+350 familles accompagnées avec succès à Conakry",
+    "trustBadge1": "Professeurs Diplômés & Vérifiés",
+    "trustBadge2": "Mise en relation sous 24h",
+    "trustBadge3": "Paiement Sécurisé Orange & MTN",
+    "floatingCardTitle": "Séance Validée • Mathématiques",
+    "floatingCardSub": "Terminale SM • Kipé, Conakry",
+    "floatingCardMetric": "+3.5 pts au Bac"
   },
   "marquee": {
     "curriculum": "Mathématiques, Physique, Français • Primaire au Bac Unique",
