@@ -4,23 +4,23 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;      /* #F8FAFC warm white */
-    --foreground: 215 28% 17%;      /* #1F2937 charcoal */
+    --background: 210 40% 98%;      /* #F8FAFC warm neutral */
+    --foreground: 222 47% 11%;      /* #0F172A primary text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 17%;
+    --card: 0 0% 100%;              /* #FFFFFF pure white */
+    --card-foreground: 222 47% 11%;
 
-    --primary: 216 50% 16%;         /* #14253D Deep Navy */
+    --primary: 216 60% 15%;         /* #10233F deep primary navy */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 221 83% 53%;       /* #2563EB Academic Blue */
+    --secondary: 221 83% 53%;       /* #2563EB professional blue */
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 175 83% 34%;          /* #0F9D92 Teal */
+    --accent: 175 84% 32%;          /* #0D9488 accent teal */
     --accent-foreground: 0 0% 100%;
 
-    --muted: 210 20% 93%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 215 25% 94%;
+    --muted-foreground: 215 16% 47%;/* #64748B secondary text */
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
@@ -29,23 +29,23 @@
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 218 50% 9%;       /* #0B1523 Deep Navy Dark */
+    --background: 219 55% 10%;      /* #0B1526 dark navy */
     --foreground: 210 40% 98%;
 
-    --card: 216 45% 13%;
+    --card: 216 45% 14%;
     --card-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
-    --primary-foreground: 216 50% 16%;
+    --primary-foreground: 216 60% 15%;
 
     --secondary: 221 83% 53%;
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 175 83% 40%;
+    --accent: 175 84% 38%;
     --accent-foreground: 0 0% 100%;
 
     --muted: 217 33% 18%;
@@ -67,10 +67,32 @@
   body {
     @apply bg-background text-foreground antialiased font-sans;
     min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
   }
 }
 
-/* Animations légères et respect de prefers-reduced-motion */
+/* Utilitaires visuels sophistiqués */
+.bg-radial-gradient-hero {
+  background: radial-gradient(circle at 70% 30%, rgba(37, 99, 235, 0.12) 0%, rgba(13, 148, 136, 0.08) 35%, transparent 70%);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-card-dark {
+  background: rgba(16, 35, 63, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Animations et respect strict de prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

@@ -11,15 +11,21 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          navy: "#14253D",      // Deep navy - autorité & sérieux académique
-          "navy-dark": "#0B1523",
-          blue: "#2563EB",      // Academic blue - confiance & clarté
+          navy: "#10233F",       // Primary navy - prestige & trust
+          "navy-dark": "#0B1526",
+          blue: "#2563EB",       // Professional blue - clarity & action
+          "blue-deep": "#1D4ED8",
           "blue-light": "#3B82F6",
-          teal: "#0F9D92",      // Teal - croissance & sérénité
-          "teal-dark": "#0B736B",
-          gold: "#E9B44C",      // Or discret - excellence & distinction
-          charcoal: "#1F2937",  // Neutre foncé lisible
-          white: "#F8FAFC",     // Warm white reposant pour les yeux
+          "blue-surface": "#EFF6FF", // Light blue surface for cards/accents
+          teal: "#0D9488",       // Accent teal - growth & pedagogy
+          "teal-dark": "#0F766E",
+          "teal-light": "#14B8A6",
+          gold: "#E9B44C",       // Warm gold - excellence & ratings
+          amber: "#F59E0B",
+          charcoal: "#0F172A",   // Primary high-contrast text
+          muted: "#64748B",      // Secondary readable text
+          white: "#FFFFFF",
+          surface: "#F8FAFC",    // Warm neutral background
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,12 +58,36 @@ const config: Config = {
         },
       },
       borderRadius: {
+        "3xl": "1.5rem",
+        "2xl": "1rem",
+        xl: "0.75rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        heading: ["var(--font-heading)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "DM Sans", "Inter", "system-ui", "sans-serif"],
+      },
+      boxShadow: {
+        premium: "0 10px 30px -10px rgba(16, 35, 63, 0.08), 0 4px 6px -2px rgba(16, 35, 63, 0.04)",
+        "premium-hover": "0 20px 40px -15px rgba(16, 35, 63, 0.14), 0 8px 12px -3px rgba(16, 35, 63, 0.06)",
+        glow: "0 0 40px -10px rgba(37, 99, 235, 0.25)",
+        "glow-teal": "0 0 35px -8px rgba(13, 148, 136, 0.22)",
+      },
+      keyframes: {
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
+        "pulse-subtle": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.85" },
+        },
+      },
+      animation: {
+        float: "float 5s ease-in-out infinite",
+        "pulse-subtle": "pulse-subtle 4s ease-in-out infinite",
       },
     },
   },
