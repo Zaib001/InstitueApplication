@@ -1,0 +1,569 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
+
+enum UserRole {
+  PARENT
+  TEACHER
+  ADMIN
+  STUDENT
+}
+
+enum TeacherVerificationStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum DocumentType {
+  NATIONAL_ID
+  PASSPORT
+  DIPLOMA
+  POLICE_RECORD
+  CV
+}
+
+enum DocumentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum PricingOfferType {
+  HOURLY
+  MONTHLY_PACKAGE
+}
+
+enum TutoringMode {
+  HOME
+  ONLINE
+  HYBRID
+}
+
+enum RequestStatus {
+  DRAFT
+  OPEN
+  ASSIGNED
+  CLOSED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ClassroomStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+
+enum SessionStatus {
+  SCHEDULED
+  TEACHER_COMPLETED
+  PARENT_APPROVED
+  PARENT_DISPUTED
+  ADMIN_RESOLVED
+  CANCELLED
+}
+
+enum PaymentOrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentAttemptStatus {
+  INITIATED
+  PROCESSING
+  SUCCESS
+  FAILED
+}
+
+enum LedgerEntryType {
+  PARENT_PAYMENT
+  TEACHER_EARNING
+  PLATFORM_COMMISSION
+  TEACHER_PAYOUT
+  REFUND
+  ADJUSTMENT
+}
+
+enum DisputeStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED_VALIDATED
+  RESOLVED_REFUNDED
+  RESOLVED_RESCHEDULED
+}
+
+enum PayoutStatus {
+  REQUESTED
+  PROCESSING
+  PAID
+  FAILED
+}
+
+// ----------------------------------------------------
+// MODELS
+// ----------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  fullName      String
+  phoneNumber   String?   @unique
+  role          UserRole  @default(PARENT)
+  avatarUrl     String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  parentProfile   ParentProfile?
+  teacherProfile  TeacherProfile?
+  studentProfile  StudentProfile?
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+  sentMessages    ClassroomMessage[]
+
+  @@index([role])
+  @@index([email])
+}
+
+model ParentProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address     String?
+  city        String   @default("Conakry")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  children          StudentProfile[]
+  tutoringRequests  TutoringRequest[]
+  ratings           Rating[]
+
+  @@index([userId])
+}
+
+model StudentProfile {
+  id            String   @id @default(cuid())
+  parentId      String
+  parent        ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  userId        String?  @unique
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  fullName      String
+  gradeLevel    String
+  schoolName    String?
+  dateOfBirth   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tutoringRequests TutoringRequest[]
+  classrooms       Classroom[]
+
+  @@index([parentId])
+}
+
+model TeacherProfile {
+  id                  String                    @id @default(cuid())
+  userId              String                    @unique
+  user                User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headline            String?
+  bio                 String?
+  yearsOfExperience   Int                       @default(0)
+  city                String                    @default("Conakry")
+  serviceArea         String?
+  verificationStatus  TeacherVerificationStatus @default(DRAFT)
+  rejectionReason     String?
+  verifiedAt          DateTime?
+  hourlyRateGnf       Int?
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+
+  documents           TeacherDocument[]
+  pricingOffers       TeacherPricingOffer[]
+  applications        TeacherApplication[]
+  classrooms          Classroom[]
+  earnings            TeacherEarning[]
+  payouts             Payout[]
+  ratings             Rating[]
+
+  @@index([userId])
+  @@index([verificationStatus])
+}
+
+model TeacherDocument {
+  id                String         @id @default(cuid())
+  teacherProfileId  String
+  teacherProfile    TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  type              DocumentType
+  title             String
+  fileUrl           String
+  mimeType          String
+  fileSizeBytes     Int
+  status            DocumentStatus @default(PENDING)
+  rejectionReason   String?
+  verifiedAt        DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([teacherProfileId])
+  @@index([status])
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model GradeLevel {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  cycle       String   // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR
+  orderIndex  Int      @default(0)
+}
+
+model TeacherPricingOffer {
+  id                String           @id @default(cuid())
+  teacherProfileId  String
+  teacherProfile    TeacherProfile   @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  type              PricingOfferType @default(HOURLY)
+  title             String
+  totalPriceGnf     Int
+  sessionsCount     Int              @default(1)
+  minutesPerSession Int              @default(60)
+  description       String?
+  isActive          Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  orders            PaymentOrder[]
+
+  @@index([teacherProfileId])
+}
+
+model TutoringRequest {
+  id              String        @id @default(cuid())
+  parentId        String
+  parent          ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  studentId       String
+  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectName     String
+  gradeLevelName  String
+  mode            TutoringMode  @default(HOME)
+  frequency       String?       // ex: 2 fois par semaine
+  budgetGnf       Int
+  city            String        @default("Conakry")
+  neighborhood    String?
+  description     String
+  status          RequestStatus @default(OPEN)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  applications    TeacherApplication[]
+  classroom       Classroom?
+
+  @@index([parentId])
+  @@index([studentId])
+  @@index([status])
+}
+
+model TeacherApplication {
+  id                String             @id @default(cuid())
+  requestId         String
+  request           TutoringRequest    @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  teacherProfileId  String
+  teacherProfile    TeacherProfile     @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  pitchMessage      String?
+  proposedRateGnf   Int?
+  status            ApplicationStatus  @default(SUBMITTED)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@unique([requestId, teacherProfileId])
+  @@index([requestId])
+  @@index([teacherProfileId])
+  @@index([status])
+}
+
+model Classroom {
+  id                String          @id @default(cuid())
+  requestId         String?         @unique
+  request           TutoringRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  teacherProfileId  String
+  teacherProfile    TeacherProfile  @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
+  studentId         String
+  student           StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  subjectName       String
+  externalVideoUrl  String?
+  status            ClassroomStatus @default(ACTIVE)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  sessions          LessonSession[]
+  messages          ClassroomMessage[]
+  orders            PaymentOrder[]
+
+  @@index([teacherProfileId])
+  @@index([studentId])
+}
+
+model LessonSession {
+  id                  String        @id @default(cuid())
+  classroomId         String
+  classroom           Classroom     @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  scheduledStart      DateTime
+  scheduledEnd        DateTime
+  durationMinutes     Int           @default(60)
+  allocatedAmountGnf  Int           @default(0)
+  isFunded            Boolean       @default(false)
+  status              SessionStatus @default(SCHEDULED)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  report              LessonReport?
+  approval            LessonApproval?
+  dispute             LessonDispute?
+  earning             TeacherEarning?
+
+  @@index([classroomId])
+  @@index([status])
+}
+
+model LessonReport {
+  id            String        @id @default(cuid())
+  sessionId     String        @unique
+  session       LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  topicsCovered String
+  studentEffort String?
+  homeworkGiven String?
+  teacherNotes  String?
+  submittedAt   DateTime      @default(now())
+
+  @@index([sessionId])
+}
+
+model LessonApproval {
+  id            String        @id @default(cuid())
+  sessionId     String        @unique
+  session       LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  approvedBy    String
+  approvedAt    DateTime      @default(now())
+  feedbackNote  String?
+
+  @@index([sessionId])
+}
+
+model LessonDispute {
+  id            String        @id @default(cuid())
+  sessionId     String        @unique
+  session       LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  openedBy      String
+  reason        String
+  status        DisputeStatus @default(OPEN)
+  adminNote     String?
+  resolvedAt    DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([sessionId])
+  @@index([status])
+}
+
+model ClassroomMessage {
+  id          String    @id @default(cuid())
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  senderId    String
+  sender      User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content     String
+  attachmentUrl String?
+  createdAt   DateTime  @default(now())
+
+  @@index([classroomId])
+  @@index([senderId])
+}
+
+// ----------------------------------------------------
+// FINANCIAL ENGINE & COMMISSION
+// ----------------------------------------------------
+
+model CommissionRule {
+  id              String   @id @default(cuid())
+  ratePercentage  Int      @default(15) // SRD V2.0 : 15 %
+  description     String?
+  effectiveFrom   DateTime @default(now())
+  createdByAdmin  String
+  createdAt       DateTime @default(now())
+
+  @@index([effectiveFrom])
+}
+
+model PaymentOrder {
+  id              String             @id @default(cuid())
+  classroomId     String?
+  classroom       Classroom?         @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  pricingOfferId  String?
+  pricingOffer    TeacherPricingOffer? @relation(fields: [pricingOfferId], references: [id], onDelete: SetNull)
+  parentUserId    String
+  totalAmountGnf  Int
+  status          PaymentOrderStatus @default(PENDING)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  attempts        PaymentAttempt[]
+  ledgerEntries   PaymentLedgerEntry[]
+
+  @@index([parentUserId])
+  @@index([status])
+}
+
+model PaymentAttempt {
+  id                String               @id @default(cuid())
+  orderId           String
+  order             PaymentOrder         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider          String               // ORANGE_MONEY, MTN_MOMO, MANUAL_RECONCILE
+  idempotencyKey    String               @unique
+  providerReference String?
+  amountGnf         Int
+  status            PaymentAttemptStatus @default(INITIATED)
+  rawResponse       String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  providerEvents    PaymentProviderEvent[]
+
+  @@index([orderId])
+  @@index([providerReference])
+}
+
+model PaymentProviderEvent {
+  id                String         @id @default(cuid())
+  attemptId         String
+  attempt           PaymentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  eventName         String
+  payloadJson       String
+  signatureReceived String?
+  createdAt         DateTime       @default(now())
+
+  @@index([attemptId])
+}
+
+model TeacherEarning {
+  id                    String        @id @default(cuid())
+  teacherProfileId      String
+  teacherProfile        TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
+  sessionId             String        @unique
+  session               LessonSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  grossAmountGnf        Int
+  commissionRatePercent Int           @default(15)
+  platformCommissionGnf Int
+  teacherNetGnf         Int
+  isPaidOut             Boolean       @default(false)
+  payoutId              String?
+  payout                Payout?       @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+  createdAt             DateTime      @default(now())
+
+  @@index([teacherProfileId])
+  @@index([sessionId])
+  @@index([isPaidOut])
+}
+
+model Payout {
+  id                String         @id @default(cuid())
+  teacherProfileId  String
+  teacherProfile    TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
+  amountGnf         Int
+  paymentReference  String         @unique // Référence opérateur unique pour bloquer le double-versement
+  beneficiaryName   String
+  beneficiaryPhone  String
+  channel           String         // ORANGE_MONEY, MTN_MOMO, CASH, BANK
+  status            PayoutStatus   @default(PAID)
+  recordedByAdmin   String
+  createdAt         DateTime       @default(now())
+
+  earnings          TeacherEarning[]
+
+  @@index([teacherProfileId])
+  @@index([paymentReference])
+}
+
+model PaymentLedgerEntry {
+  id            String          @id @default(cuid())
+  orderId       String?
+  order         PaymentOrder?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  type          LedgerEntryType
+  amountGnf     Int
+  description   String
+  actorId       String
+  reference     String?
+  createdAt     DateTime        @default(now())
+
+  @@index([orderId])
+  @@index([type])
+}
+
+model Rating {
+  id                String         @id @default(cuid())
+  teacherProfileId  String
+  teacherProfile    TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  parentProfileId   String
+  parentProfile     ParentProfile  @relation(fields: [parentProfileId], references: [id], onDelete: Cascade)
+  score             Int            // 1 à 5
+  comment           String?
+  isPublic          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+
+  @@unique([teacherProfileId, parentProfileId])
+  @@index([teacherProfileId])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  message     String
+  linkUrl     String?
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action      String
+  entityType  String
+  entityId    String
+  detailsJson String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType, entityId])
+}

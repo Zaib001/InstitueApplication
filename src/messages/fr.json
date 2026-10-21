@@ -1,0 +1,76 @@
+{
+  "common": {
+    "appName": "Monsieur Fanyi",
+    "appTagline": "L'excellence du soutien scolaire en Guinée",
+    "loading": "Chargement en cours...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "actions": "Actions",
+    "status": "Statut",
+    "error": "Une erreur est survenue",
+    "success": "Opération effectuée avec succès",
+    "empty": "Aucune donnée disponible",
+    "language": "Langue",
+    "french": "Français",
+    "english": "English",
+    "currency": "GNF",
+    "demoModeBadge": "Mode Démonstration Sécurisé"
+  },
+  "nav": {
+    "home": "Accueil",
+    "howItWorks": "Comment ça marche",
+    "tutors": "Nos Professeurs",
+    "pricing": "Tarifs & Forfaits",
+    "faq": "Questions fréquentes",
+    "login": "Connexion",
+    "register": "Inscription",
+    "parentPortal": "Espace Parent",
+    "teacherPortal": "Espace Professeur",
+    "adminPortal": "Administration",
+    "logout": "Déconnexion"
+  },
+  "hero": {
+    "badge": "Plateforme Certifiée — République de Guinée",
+    "title": "Donnez à vos enfants les clés de la réussite scolaire",
+    "subtitle": "Trouvez un professeur particulier rigoureusement vérifié à Conakry et dans toute la Guinée. Paiements sécurisés par Orange Money et MTN, suivi pédagogique transparent après chaque séance.",
+    "ctaParent": "Trouver un professeur pour mon enfant",
+    "ctaTeacher": "Devenir professeur Monsieur Fanyi",
+    "statTutors": "Professeurs vérifiés avec diplômes",
+    "statCommission": "15 % de commission transparente",
+    "statCurriculum": "Conforme au programme national guinéen"
+  },
+  "roles": {
+    "parent": "Parent d'élève",
+    "teacher": "Professeur particulier",
+    "student": "Élève",
+    "admin": "Administrateur"
+  },
+  "finance": {
+    "currencyName": "Franc Guinéen",
+    "hourlyRate": "Tarif horaire",
+    "monthlyPackage": "Forfait mensuel",
+    "sessionUnitValue": "Valeur par séance",
+    "sessionsCount": "Nombre de séances",
+    "minutesPerSession": "Durée par séance",
+    "earned": "Revenus acquis",
+    "pending": "En attente de réalisation / validation",
+    "disputed": "En litige",
+    "payout": "Reversement manuel",
+    "platformCommission": "Commission Monsieur Fanyi (15 %)",
+    "teacherShare": "Part professeur (85 %)"
+  },
+  "auth": {
+    "loginTitle": "Accédez à votre espace sécurisé",
+    "registerTitle": "Créer un compte Monsieur Fanyi",
+    "emailLabel": "Adresse email",
+    "passwordLabel": "Mot de passe",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "fullNameLabel": "Nom et prénom",
+    "phoneLabel": "Numéro de téléphone (ex: +224 620 00 00 00)",
+    "roleLabel": "Je suis un",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "noAccountYet": "Pas encore de compte ?"
+  }
+}

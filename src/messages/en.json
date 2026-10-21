@@ -1,0 +1,76 @@
+{
+  "common": {
+    "appName": "Monsieur Fanyi",
+    "appTagline": "Academic Tutoring Excellence in Guinea",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "actions": "Actions",
+    "status": "Status",
+    "error": "An error occurred",
+    "success": "Operation completed successfully",
+    "empty": "No data available",
+    "language": "Language",
+    "french": "Français",
+    "english": "English",
+    "currency": "GNF",
+    "demoModeBadge": "Secure Demo Mode"
+  },
+  "nav": {
+    "home": "Home",
+    "howItWorks": "How it works",
+    "tutors": "Our Tutors",
+    "pricing": "Pricing & Packages",
+    "faq": "FAQ",
+    "login": "Login",
+    "register": "Sign Up",
+    "parentPortal": "Parent Portal",
+    "teacherPortal": "Tutor Portal",
+    "adminPortal": "Admin Dashboard",
+    "logout": "Log Out"
+  },
+  "hero": {
+    "badge": "Certified Platform — Republic of Guinea",
+    "title": "Empower your children with academic excellence",
+    "subtitle": "Connect with thoroughly vetted private tutors in Conakry and across Guinea. Safe Orange Money and MTN payments, verified lesson progress after each class.",
+    "ctaParent": "Find a tutor for my child",
+    "ctaTeacher": "Become a Monsieur Fanyi Tutor",
+    "statTutors": "Vetted tutors with certified degrees",
+    "statCommission": "Transparent 15% platform commission",
+    "statCurriculum": "Aligned with Guinean national curriculum"
+  },
+  "roles": {
+    "parent": "Parent",
+    "teacher": "Private Tutor",
+    "student": "Student",
+    "admin": "Administrator"
+  },
+  "finance": {
+    "currencyName": "Guinean Franc",
+    "hourlyRate": "Hourly rate",
+    "monthlyPackage": "Monthly package",
+    "sessionUnitValue": "Session unit price",
+    "sessionsCount": "Number of lessons",
+    "minutesPerSession": "Duration per lesson",
+    "earned": "Earned revenue",
+    "pending": "Pending completion / confirmation",
+    "disputed": "Disputed",
+    "payout": "Manual payout",
+    "platformCommission": "Monsieur Fanyi Commission (15%)",
+    "teacherShare": "Tutor share (85%)"
+  },
+  "auth": {
+    "loginTitle": "Access your secure portal",
+    "registerTitle": "Create your Monsieur Fanyi account",
+    "emailLabel": "Email address",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "fullNameLabel": "Full name",
+    "phoneLabel": "Phone number (e.g. +224 620 00 00 00)",
+    "roleLabel": "I am a",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccountYet": "Don't have an account yet?"
+  }
+}

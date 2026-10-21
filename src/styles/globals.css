@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;      /* #F8FAFC warm white */
+    --foreground: 215 28% 17%;      /* #1F2937 charcoal */
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+
+    --primary: 216 50% 16%;         /* #14253D Deep Navy */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 221 83% 53%;       /* #2563EB Academic Blue */
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 175 83% 34%;          /* #0F9D92 Teal */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 210 20% 93%;
+    --muted-foreground: 215 16% 47%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 218 50% 9%;       /* #0B1523 Deep Navy Dark */
+    --foreground: 210 40% 98%;
+
+    --card: 216 45% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 216 50% 16%;
+
+    --secondary: 221 83% 53%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 175 83% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 217 33% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 221 83% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    min-height: 100vh;
+  }
+}
+
+/* Animations légères et respect de prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
