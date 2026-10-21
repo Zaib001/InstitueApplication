@@ -9,16 +9,16 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
 
   return (
     <div className={`inline-flex items-center gap-1.5 text-xs font-medium ${className}`}>
-      <Globe className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+      <Globe className="w-3.5 h-3.5 text-slate-300" aria-hidden="true" />
       <span className="sr-only">{t("common.language", "Langue")}</span>
-      <div className="flex bg-muted/60 p-0.5 rounded-md border border-border">
+      <div className="flex bg-white/10 p-0.5 rounded-full border border-white/20">
         <button
           type="button"
           onClick={() => setLocale("fr")}
-          className={`px-2 py-1 rounded transition-colors ${
+          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors ${
             locale === "fr"
-              ? "bg-brand-navy text-white shadow-xs font-semibold"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-[#e59a38] text-white shadow-xs"
+              : "text-slate-300 hover:text-white"
           }`}
           aria-label={t("nav.switchFr", "Passer en Français")}
           aria-pressed={locale === "fr"}
@@ -28,10 +28,10 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         <button
           type="button"
           onClick={() => setLocale("en")}
-          className={`px-2 py-1 rounded transition-colors ${
+          className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors ${
             locale === "en"
-              ? "bg-brand-navy text-white shadow-xs font-semibold"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-[#e59a38] text-white shadow-xs"
+              : "text-slate-300 hover:text-white"
           }`}
           aria-label={t("nav.switchEn", "Passer en Anglais")}
           aria-pressed={locale === "en"}

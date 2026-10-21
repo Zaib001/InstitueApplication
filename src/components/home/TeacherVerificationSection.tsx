@@ -92,7 +92,7 @@ export function TeacherVerificationSection() {
 
             <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-emerald-700 font-semibold">
               <CheckCircle className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Contrôle obligatoire</span>
+              <span>{t("verify.mandatoryCheck", "Contrôle obligatoire")}</span>
             </div>
           </div>
         ))}
@@ -101,7 +101,10 @@ export function TeacherVerificationSection() {
       <div className="mt-8 p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 max-w-2xl mx-auto flex items-start gap-3 text-xs text-amber-900">
         <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
         <span>
-          <strong>Note de transparence :</strong> Un professeur en attente de vérification ne peut soumettre aucune candidature à une offre de soutien tant que son dossier complet n'est pas approuvé par l'administrateur.
+          {t(
+            "verify.transparencyNote",
+            "Note de transparence : Un professeur en attente de vérification ne peut soumettre aucune candidature à une offre de soutien tant que son dossier complet n'est pas approuvé par l'administrateur."
+          )}
         </span>
       </div>
     </SectionContainer>

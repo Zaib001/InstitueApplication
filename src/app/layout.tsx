@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import { I18nProvider } from "@/lib/i18n";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { PublicLayoutShell } from "@/components/layout/PublicLayoutShell";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: ["600", "700", "800", "900"],
+  display: "swap",
+});
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -47,12 +53,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${plusJakarta.variable} ${dmSans.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col bg-brand-surface text-brand-charcoal antialiased selection:bg-brand-blue selection:text-white">
+    <html
+      lang="fr"
+      className={`${playfair.variable} ${plusJakarta.variable} ${dmSans.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-screen flex flex-col bg-brand-surface text-brand-charcoal antialiased selection:bg-[#e59a38] selection:text-white">
         <I18nProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <PublicLayoutShell>{children}</PublicLayoutShell>
         </I18nProvider>
       </body>
     </html>

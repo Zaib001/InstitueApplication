@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { GraduationCap, Menu, X, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
+import { Menu, X, ChevronDown, GraduationCap } from "lucide-react";
 
 export function Navbar() {
   const { t } = useTranslation();
@@ -34,112 +34,91 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
-      {/* 1. Bandeau de Réassurance & Live Status avec point vert pulsant */}
-      <div className="bg-gradient-to-r from-brand-navy via-slate-900 to-brand-navy text-white text-xs py-1.5 px-4 text-center border-b border-white/10">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span className="font-semibold text-brand-gold">
-            {t("common.appName", "Monsieur Fanyi")} :
-          </span>
-          <span className="text-slate-200 hidden sm:inline">
-            {t("nav.topBanner", "Plateforme certifiée de soutien scolaire en Guinée — Paiements sécurisés Orange Money & MTN")}
-          </span>
-          <span className="text-slate-200 sm:hidden">
-            Soutien certifié en Guinée • Orange & MTN
-          </span>
-        </div>
-      </div>
-
-      {/* 2. Barre Principale de Navigation avec verre dépoli */}
+      {/* Barre Principale de Navigation — Style Lexicon Dark Ocean Blue */}
       <div
         className={`w-full transition-all duration-300 ${
           scrolled
-            ? "glass-nav shadow-premium border-b border-slate-200/90 py-2.5"
-            : "bg-white/95 backdrop-blur-md border-b border-slate-100 py-3.5"
+            ? "bg-[#0d1e33]/95 backdrop-blur-md border-b border-white/10 shadow-xl py-3"
+            : "bg-[#16385c] border-b border-white/5 py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           
-          {/* Logo Brand avec Animation Hover */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-navy to-brand-blue flex items-center justify-center text-white shadow-md group-hover:scale-105 group-hover:shadow-glow transition-all">
-              <GraduationCap className="w-5 h-5 text-brand-gold" aria-hidden="true" />
+          {/* Logo Brand Lexicon Style (Minimalist White + Gold Accent) */}
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white group-hover:bg-[#e59a38] transition-colors">
+              <GraduationCap className="w-4 h-4 text-white" aria-hidden="true" />
             </div>
-            <div>
-              <span className="font-extrabold text-lg tracking-tight font-heading text-brand-navy flex items-center gap-1">
-                Monsieur <span className="text-brand-blue">Fanyi</span>
-              </span>
-              <span className="block text-[10px] text-brand-muted uppercase tracking-wider font-semibold">
-                {t("nav.logoSubtitle", "Excellence Scolaire • Guinée")}
-              </span>
-            </div>
+            <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white flex items-center">
+              Monsieur<span className="text-[#e59a38] ml-1">Fanyi</span>
+            </span>
           </Link>
 
-          {/* Navigation Desktop avec défilement animé */}
+          {/* Navigation Desktop Centrée — Style Lexicon */}
           <nav
-            className="hidden md:flex items-center gap-1 text-sm font-semibold text-slate-700 bg-slate-100/70 p-1.5 rounded-full border border-slate-200/60"
+            className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-200"
             aria-label="Navigation principale"
           >
             <a
-              href="#comment-ca-marche"
-              onClick={(e) => handleNavClick(e, "comment-ca-marche")}
-              className="px-4 py-1.5 rounded-full hover:bg-white hover:text-brand-blue hover:shadow-xs transition-all cursor-pointer"
-            >
-              {t("nav.howItWorks", "Comment ça marche")}
-            </a>
-            <a
               href="#professeurs"
               onClick={(e) => handleNavClick(e, "professeurs")}
-              className="px-4 py-1.5 rounded-full hover:bg-white hover:text-brand-blue hover:shadow-xs transition-all cursor-pointer"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               {t("nav.tutors", "Nos Professeurs")}
             </a>
+
+            <a
+              href="#comment-ca-marche"
+              onClick={(e) => handleNavClick(e, "comment-ca-marche")}
+              className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <span>{t("nav.howItWorks", "Comment ça marche")}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-300" aria-hidden="true" />
+            </a>
+
             <a
               href="#tarifs"
               onClick={(e) => handleNavClick(e, "tarifs")}
-              className="px-4 py-1.5 rounded-full hover:bg-white hover:text-brand-blue hover:shadow-xs transition-all cursor-pointer"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               {t("nav.pricing", "Tarifs")}
             </a>
+
             <a
               href="#faq"
               onClick={(e) => handleNavClick(e, "faq")}
-              className="px-4 py-1.5 rounded-full hover:bg-white hover:text-brand-blue hover:shadow-xs transition-all cursor-pointer"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               {t("nav.faq", "FAQ")}
             </a>
           </nav>
 
-          {/* Actions & Boutons à Droite */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Actions & Boutons à Droite — Log in & Join for Free (Amber Pill Button) */}
+          <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
 
             <Link
               href="/login"
-              className="text-xs font-bold text-slate-700 hover:text-brand-blue px-3.5 py-2 rounded-xl hover:bg-slate-50 transition-colors"
+              className="text-sm font-medium text-slate-200 hover:text-white transition-colors px-2 py-1"
             >
               {t("nav.login", "Connexion")}
             </Link>
 
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 px-4 py-2.5 rounded-xl shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 transition-all transform hover:-translate-y-0.5"
+              className="px-6 py-2.5 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-xs sm:text-sm shadow-md transition-all transform hover:scale-105 active:scale-95"
             >
-              <span>{t("nav.register", "Inscription")}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-950" aria-hidden="true" />
+              {t("nav.register", "Inscription")}
             </Link>
           </div>
 
-          {/* Bouton Hamburger Mobile */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Bouton Mobile */}
+          <div className="flex md:hidden items-center gap-3">
             <LanguageSwitcher />
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-800 hover:bg-slate-100 transition-colors"
+              className="p-2 rounded-xl text-white hover:bg-white/10 transition-colors"
               aria-label={mobileMenuOpen ? t("nav.closeMenu", "Fermer") : t("nav.openMenu", "Menu")}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation-menu"
@@ -151,55 +130,55 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* 3. Menu Mobile Déroulant avec Animation */}
+      {/* Menu Mobile Déroulant */}
       {mobileMenuOpen && (
         <div
           id="mobile-navigation-menu"
-          className="md:hidden border-b border-slate-200 bg-white/98 backdrop-blur-xl px-5 pt-4 pb-7 space-y-4 shadow-xl"
+          className="md:hidden border-b border-slate-800 bg-[#0d1e33]/98 backdrop-blur-xl px-5 pt-4 pb-7 space-y-4 shadow-2xl"
         >
-          <nav className="flex flex-col space-y-1 text-sm font-semibold" aria-label="Navigation mobile">
-            <a
-              href="#comment-ca-marche"
-              onClick={(e) => handleNavClick(e, "comment-ca-marche")}
-              className="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800"
-            >
-              {t("nav.howItWorks", "Comment ça marche")}
-            </a>
+          <nav className="flex flex-col space-y-2 text-sm font-semibold text-slate-200" aria-label="Navigation mobile">
             <a
               href="#professeurs"
               onClick={(e) => handleNavClick(e, "professeurs")}
-              className="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800"
+              className="px-3.5 py-2.5 rounded-xl hover:bg-white/10 text-white"
             >
               {t("nav.tutors", "Nos Professeurs")}
             </a>
             <a
+              href="#comment-ca-marche"
+              onClick={(e) => handleNavClick(e, "comment-ca-marche")}
+              className="px-3.5 py-2.5 rounded-xl hover:bg-white/10 text-white"
+            >
+              {t("nav.howItWorks", "Comment ça marche")}
+            </a>
+            <a
               href="#tarifs"
               onClick={(e) => handleNavClick(e, "tarifs")}
-              className="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800"
+              className="px-3.5 py-2.5 rounded-xl hover:bg-white/10 text-white"
             >
               {t("nav.pricing", "Tarifs")}
             </a>
             <a
               href="#faq"
               onClick={(e) => handleNavClick(e, "faq")}
-              className="px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800"
+              className="px-3.5 py-2.5 rounded-xl hover:bg-white/10 text-white"
             >
               {t("nav.faq", "FAQ")}
             </a>
           </nav>
 
-          <div className="pt-4 border-t border-slate-200 flex flex-col gap-2.5">
+          <div className="pt-4 border-t border-slate-700/60 flex flex-col gap-2.5">
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2.5 text-xs font-bold text-slate-800 border border-slate-300 rounded-xl"
+              className="w-full text-center py-2.5 text-xs font-bold text-white border border-white/20 rounded-full"
             >
               {t("nav.login", "Connexion")}
             </Link>
             <Link
               href="/register"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-2.5 text-xs font-bold text-slate-950 bg-amber-500 rounded-xl shadow-xs"
+              className="w-full text-center py-2.5 text-xs font-bold text-white bg-[#e59a38] rounded-full shadow-md"
             >
               {t("nav.register", "Inscription")}
             </Link>

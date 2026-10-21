@@ -76,14 +76,14 @@ export function BecomeTeacherSection() {
             <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Link
                 href="/register?role=teacher"
-                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-teal-500/25 transition-all transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-sm sm:text-base shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5"
               >
                 <span>{t("teacherRecruit.cta", "Postuler comme professeur")}</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Link>
 
               <span className="text-xs text-slate-400 text-center sm:text-left">
-                Inscription gratuite • Dossier examiné sous 48h
+                {t("teacherRecruit.subtextNote", "Inscription gratuite • Dossier examiné sous 48h")}
               </span>
             </div>
           </div>
@@ -92,31 +92,44 @@ export function BecomeTeacherSection() {
           <div className="lg:col-span-5 flex justify-center">
             <div className="w-full max-w-sm p-6 rounded-3xl glass-card-dark shadow-2xl border border-white/15 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                <span className="text-xs font-bold text-slate-200">Revenus d'un Enseignant Type</span>
+                <span className="text-xs font-bold text-slate-200">
+                  {t("teacherRecruit.sampleTitle", "Revenus d'un Enseignant Type")}
+                </span>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Part 85%
+                  {t("teacherRecruit.sampleShare", "Part 85%")}
                 </span>
               </div>
 
               <div className="space-y-3 text-xs">
                 <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex justify-between items-center">
-                  <span className="text-slate-300">3 Élèves réguliers (2x/sem) :</span>
-                  <span className="font-bold text-white">24 séances / mois</span>
+                  <span className="text-slate-300">
+                    {t("teacherRecruit.sampleStudents", "3 Élèves réguliers (2x/sem) :")}
+                  </span>
+                  <span className="font-bold text-white">
+                    {t("teacherRecruit.sampleSessions", "24 séances / mois")}
+                  </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex justify-between items-center">
-                  <span className="text-slate-300">Chiffre d'affaires brut :</span>
+                  <span className="text-slate-300">
+                    {t("teacherRecruit.sampleGross", "Chiffre d'affaires brut :")}
+                  </span>
                   <span className="font-bold text-slate-200">1 200 000 GNF</span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/30 flex justify-between items-center">
-                  <span className="text-teal-300 font-semibold">Net versé au professeur :</span>
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center">
+                  <span className="text-amber-300 font-semibold">
+                    {t("teacherRecruit.sampleNet", "Net versé au professeur :")}
+                  </span>
                   <span className="font-extrabold text-base text-brand-gold">1 020 000 GNF</span>
                 </div>
               </div>
 
               <p className="text-[10px] text-slate-400 italic">
-                * Reversements manuels enregistrés avec traçabilité complète sur votre numéro Orange Money ou MTN Mobile Money.
+                {t(
+                  "teacherRecruit.samplePayoutNote",
+                  "* Reversements manuels enregistrés avec traçabilité complète sur votre numéro Orange Money ou MTN Mobile Money."
+                )}
               </p>
             </div>
           </div>

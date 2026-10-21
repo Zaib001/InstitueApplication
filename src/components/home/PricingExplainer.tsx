@@ -57,13 +57,18 @@ export function PricingExplainer() {
               </div>
               <div>
                 <h3 className="font-bold text-base text-brand-navy">
-                  Cours à l'Heure (À la carte)
+                  {t("pricing.hourlyTitle", "Cours à l'Heure (À la carte)")}
                 </h3>
-                <p className="text-xs text-brand-muted">Pour une révision ponctuelle ou un renforcement ciblé</p>
+                <p className="text-xs text-brand-muted">
+                  {t("pricing.hourlySubtitle", "Pour une révision ponctuelle ou un renforcement ciblé")}
+                </p>
               </div>
             </div>
             <p className="text-xs text-brand-charcoal leading-relaxed pl-13">
-              Tarif fixé librement par le professeur en GNF entier. Durée standard de 60, 90 ou 120 minutes avec calcul au prorata exact.
+              {t(
+                "pricing.hourlyDesc",
+                "Tarif fixé librement par le professeur en GNF entier. Durée standard de 60, 90 ou 120 minutes avec calcul au prorata exact."
+              )}
             </p>
           </div>
 
@@ -74,22 +79,30 @@ export function PricingExplainer() {
               </div>
               <div>
                 <h3 className="font-bold text-base text-brand-navy">
-                  Forfait Mensuel (Recommandé)
+                  {t("pricing.packageTitle", "Forfait Mensuel (Recommandé)")}
                 </h3>
-                <p className="text-xs text-brand-muted">Pour une progression continue tout au long de l'année</p>
+                <p className="text-xs text-brand-muted">
+                  {t("pricing.packageSubtitle", "Pour une progression continue tout au long de l'année")}
+                </p>
               </div>
             </div>
             <p className="text-xs text-brand-charcoal leading-relaxed pl-13">
-              Précise le montant total, le nombre de séances et leur durée. La valeur unitaire est allouée sans perte arithmétique.
+              {t(
+                "pricing.packageDesc",
+                "Précise le montant total, le nombre de séances et leur durée. La valeur unitaire est allouée sans perte arithmétique."
+              )}
             </p>
           </div>
 
           <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200/60 text-xs text-teal-900 flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-brand-teal shrink-0 mt-0.5" aria-hidden="true" />
             <div>
-              <strong>Séquestre Interne Protecteur :</strong>
+              <strong>{t("pricing.escrowTitle", "Séquestre Interne Protecteur :")}</strong>
               <p className="mt-0.5 text-[11px] leading-relaxed">
-                Tant que vous ne cliquez pas sur « Confirmer » après la séance, les fonds restent conservés sur le compte de la classe. En cas de contestation, l'administrateur arbitre.
+                {t(
+                  "pricing.escrowDesc",
+                  "Tant que vous ne cliquez pas sur « Confirmer » après la séance, les fonds restent conservés sur le compte de la classe. En cas de contestation, l'administrateur arbitre."
+                )}
               </p>
             </div>
           </div>
@@ -101,19 +114,23 @@ export function PricingExplainer() {
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Calculator className="w-4 h-4 text-brand-gold" />
-                Simulateur Financier en Francs Guinéens (GNF)
+                {t("pricing.simTitle", "Simulateur Financier en Francs Guinéens (GNF)")}
               </h3>
-              <p className="text-xs text-slate-400">Règle contractuelle 15 % plateforme / 85 % enseignant</p>
+              <p className="text-xs text-slate-400">
+                {t("pricing.simSubtitle", "Règle contractuelle 15 % plateforme / 85 % enseignant")}
+              </p>
             </div>
             <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              Arithmétique Entière Stricte
+              {t("pricing.simStrictBadge", "Arithmétique Entière Stricte")}
             </span>
           </div>
 
           {/* Contrôles du simulateur */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
-              <label htmlFor="package-total-amount" className="block text-slate-400 mb-1">Montant Forfait (GNF)</label>
+              <label htmlFor="package-total-amount" className="block text-slate-400 mb-1">
+                {t("pricing.labelPackageAmount", "Montant Forfait (GNF)")}
+              </label>
               <select
                 id="package-total-amount"
                 value={packageAmountGnf}
@@ -122,14 +139,16 @@ export function PricingExplainer() {
               >
                 <option value={200000}>200 000 GNF</option>
                 <option value={300000}>300 000 GNF</option>
-                <option value={400000}>400 000 GNF (Standard)</option>
+                <option value={400000}>400 000 GNF</option>
                 <option value={600000}>600 000 GNF</option>
                 <option value={800000}>800 000 GNF</option>
               </select>
             </div>
 
             <div>
-              <label htmlFor="package-sessions-count" className="block text-slate-400 mb-1">Nombre de Séances</label>
+              <label htmlFor="package-sessions-count" className="block text-slate-400 mb-1">
+                {t("pricing.labelSessionsCount", "Nombre de Séances")}
+              </label>
               <select
                 id="package-sessions-count"
                 value={sessionsCount}
@@ -140,15 +159,17 @@ export function PricingExplainer() {
                 }}
                 className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue"
               >
-                <option value={4}>4 séances</option>
-                <option value={8}>8 séances (2x/sem)</option>
-                <option value={12}>12 séances (3x/sem)</option>
-                <option value={16}>16 séances</option>
+                <option value={4}>4 {t("pricing.sessionsWord", "séances")}</option>
+                <option value={8}>8 {t("pricing.sessionsWord", "séances")}</option>
+                <option value={12}>12 {t("pricing.sessionsWord", "séances")}</option>
+                <option value={16}>16 {t("pricing.sessionsWord", "séances")}</option>
               </select>
             </div>
 
             <div>
-              <label htmlFor="approved-sessions-count" className="block text-slate-400 mb-1">Séances Validées</label>
+              <label htmlFor="approved-sessions-count" className="block text-slate-400 mb-1">
+                {t("pricing.labelApprovedCount", "Séances Validées")}
+              </label>
               <select
                 id="approved-sessions-count"
                 value={approvedCount}
@@ -157,7 +178,7 @@ export function PricingExplainer() {
               >
                 {Array.from({ length: sessionsCount + 1 }, (_, i) => (
                   <option key={i} value={i}>
-                    {i} validée{i > 1 ? "s" : ""}
+                    {i} {i > 1 ? t("pricing.validatedPlural", "validées") : t("pricing.validatedWord", "validée")}
                   </option>
                 ))}
               </select>
@@ -167,7 +188,7 @@ export function PricingExplainer() {
           {/* Grille de répartition des résultats */}
           <div className="space-y-3 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 text-xs">
             <div className="flex justify-between items-center py-1">
-              <span className="text-slate-400">Valeur unitaire par séance :</span>
+              <span className="text-slate-400">{t("pricing.unitPerSession", "Valeur unitaire par séance :")}</span>
               <span className="font-bold text-white">
                 {formatCurrencyGNF(allocation.baseUnitAmountGnf)}
               </span>
@@ -175,7 +196,7 @@ export function PricingExplainer() {
 
             <div className="flex justify-between items-center py-1 border-t border-slate-700/40">
               <span className="text-slate-400">
-                Montant brut acquis ({approvedCount}/{sessionsCount} séances) :
+                {t("pricing.grossEarned", "Montant brut acquis :")} ({approvedCount}/{sessionsCount} {t("pricing.sessionsWord", "séances")})
               </span>
               <span className="font-bold text-brand-gold">
                 {formatCurrencyGNF(reconciliation.grossEarnedGnf)}
@@ -183,21 +204,21 @@ export function PricingExplainer() {
             </div>
 
             <div className="flex justify-between items-center py-1">
-              <span className="text-slate-400">Commission Monsieur Fanyi (15 %) :</span>
+              <span className="text-slate-400">{t("pricing.commissionPlatform", "Commission Monsieur Fanyi (15 %) :")}</span>
               <span className="font-semibold text-blue-400">
                 {formatCurrencyGNF(reconciliation.totalPlatformCommissionGnf)}
               </span>
             </div>
 
             <div className="flex justify-between items-center py-1">
-              <span className="text-slate-400">Net dû au professeur (85 %) :</span>
+              <span className="text-slate-400">{t("pricing.netTeacher", "Net dû au professeur (85 %) :")}</span>
               <span className="font-bold text-emerald-400">
                 {formatCurrencyGNF(reconciliation.totalTeacherPayableGnf)}
               </span>
             </div>
 
             <div className="flex justify-between items-center py-2 px-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300">
-              <span>{sessionsCount - approvedCount} séances restantes non acquises :</span>
+              <span>{sessionsCount - approvedCount} {t("pricing.remainingUnearned", "séances restantes non acquises :")}</span>
               <span className="font-bold">{formatCurrencyGNF(reconciliation.unearnedGnf)}</span>
             </div>
           </div>

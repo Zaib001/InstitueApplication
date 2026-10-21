@@ -66,6 +66,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        serif: ["var(--font-serif)", "Playfair Display", "Georgia", "serif"],
         heading: ["var(--font-heading)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
         sans: ["var(--font-body)", "DM Sans", "Inter", "system-ui", "sans-serif"],
       },
@@ -74,7 +75,7 @@ const config: Config = {
         "premium-hover": "0 20px 40px -15px rgba(16, 35, 63, 0.14), 0 8px 12px -3px rgba(16, 35, 63, 0.06)",
         glow: "0 0 40px -10px rgba(37, 99, 235, 0.25)",
         "glow-teal": "0 0 35px -8px rgba(13, 148, 136, 0.22)",
-        "glow-gold": "0 0 30px -5px rgba(245, 158, 11, 0.3)",
+        "glow-gold": "0 0 30px -5px rgba(229, 154, 56, 0.4)",
       },
       keyframes: {
         float: {
@@ -84,6 +85,10 @@ const config: Config = {
         "float-slow": {
           "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
           "50%": { transform: "translateY(-12px) rotate(1.5deg)" },
+        },
+        "float-infinite": {
+          "0%, 100%": { transform: "translateY(0px) scale(1) rotate(0deg)" },
+          "50%": { transform: "translateY(-16px) scale(1.015) rotate(1deg)" },
         },
         "pulse-subtle": {
           "0%, 100%": { opacity: "1" },
@@ -113,6 +118,7 @@ const config: Config = {
       animation: {
         float: "float 5s ease-in-out infinite",
         "float-slow": "float-slow 7s ease-in-out infinite",
+        "float-infinite": "float-infinite 6s ease-in-out infinite",
         "pulse-subtle": "pulse-subtle 4s ease-in-out infinite",
         marquee: "marquee 35s linear infinite",
         "marquee-fast": "marquee 22s linear infinite",

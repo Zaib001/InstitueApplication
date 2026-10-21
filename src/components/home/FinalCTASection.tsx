@@ -45,15 +45,15 @@ export function FinalCTASection() {
           <div className="pt-4 flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4">
             <Link
               href="/register?role=parent"
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-base shadow-lg shadow-amber-500/20 hover:shadow-amber-500/35 transition-all transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-base shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5"
             >
               <span>{t("finalCta.btnParent", "Trouver un professeur pour mon enfant")}</span>
-              <ArrowRight className="w-5 h-5 text-slate-950" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5 text-white" aria-hidden="true" />
             </Link>
 
             <Link
               href="/register?role=teacher"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-base transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-base transition-colors"
             >
               <GraduationCap className="w-5 h-5 text-brand-teal" aria-hidden="true" />
               <span>{t("finalCta.btnTeacher", "Postuler comme enseignant")}</span>
@@ -62,16 +62,16 @@ export function FinalCTASection() {
 
           <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300">
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-brand-teal" />
-              <span>Inscription sans frais d'entrée</span>
+              <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
+              <span>{t("finalCta.pill1", "Inscription sans frais d'entrée")}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-brand-teal" />
-              <span>Paiement protégé par séance</span>
+              <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
+              <span>{t("finalCta.pill2", "Paiement protégé par séance")}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-brand-teal" />
-              <span>Orange Money & MTN Guinée</span>
+              <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
+              <span>{t("finalCta.pill3", "Orange Money & MTN Guinée")}</span>
             </div>
           </div>
         </div>

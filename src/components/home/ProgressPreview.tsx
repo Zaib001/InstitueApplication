@@ -42,13 +42,13 @@ export function ProgressPreview() {
             </div>
             <div>
               <div className="text-sm font-bold text-white flex items-center gap-2">
-                <span>Espace Parent — Ibrahima Barry</span>
+                <span>{t("progress.parentSpace", "Espace Parent — Ibrahima Barry")}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium">
-                  Actif
+                  {t("progress.active", "Actif")}
                 </span>
               </div>
               <div className="text-xs text-slate-400">
-                Élève : Mamadou Barry • Terminale Sciences Mathématiques • Conakry
+                {t("progress.studentInfo", "Élève : Mamadou Barry • Terminale Sciences Mathématiques • Conakry")}
               </div>
             </div>
           </div>
@@ -65,8 +65,8 @@ export function ProgressPreview() {
               <Clock className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
-              <div className="text-xs text-slate-400">Séances planifiées</div>
-              <div className="text-lg font-bold text-white">4 Séances en cours</div>
+              <div className="text-xs text-slate-400">{t("progress.statPlanned", "Séances planifiées")}</div>
+              <div className="text-lg font-bold text-white">{t("progress.statPlannedVal", "4 Séances en cours")}</div>
             </div>
           </div>
 
@@ -75,8 +75,8 @@ export function ProgressPreview() {
               <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
-              <div className="text-xs text-slate-400">Séances effectuées & validées</div>
-              <div className="text-lg font-bold text-white">18 Cours achevés</div>
+              <div className="text-xs text-slate-400">{t("progress.statCompleted", "Séances effectuées & validées")}</div>
+              <div className="text-lg font-bold text-white">{t("progress.statCompletedVal", "18 Cours achevés")}</div>
             </div>
           </div>
 
@@ -85,8 +85,8 @@ export function ProgressPreview() {
               <Award className="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
-              <div className="text-xs text-slate-400">Moyenne générale estimée</div>
-              <div className="text-lg font-bold text-brand-gold">15.5 / 20 (+3 pts)</div>
+              <div className="text-xs text-slate-400">{t("progress.statAverage", "Moyenne générale estimée")}</div>
+              <div className="text-lg font-bold text-brand-gold">{t("progress.statAverageVal", "15.5 / 20 (+3 pts)")}</div>
             </div>
           </div>
         </div>
@@ -98,10 +98,10 @@ export function ProgressPreview() {
           <div className="lg:col-span-7 p-5 rounded-2xl bg-slate-800/40 border border-slate-700/60 space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-sm font-bold text-white">Assiduité & Rythme d'Apprentissage</h4>
-                <p className="text-xs text-slate-400">Heures de soutien suivies sur les 30 derniers jours</p>
+                <h4 className="text-sm font-bold text-white">{t("progress.chartTitle", "Assiduité & Rythme d'Apprentissage")}</h4>
+                <p className="text-xs text-slate-400">{t("progress.chartSubtitle", "Heures de soutien suivies sur les 30 derniers jours")}</p>
               </div>
-              <span className="text-xs text-brand-teal font-semibold">100% Présence</span>
+              <span className="text-xs text-brand-teal font-semibold">{t("progress.chartPresence", "100% Présence")}</span>
             </div>
 
             {/* Représentation graphique SVG soignée inspirée de la référence */}
@@ -137,10 +137,10 @@ export function ProgressPreview() {
             </div>
 
             <div className="flex justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-700/50">
-              <span>Semaine 1</span>
-              <span>Semaine 2</span>
-              <span>Semaine 3 (Bac Blanc)</span>
-              <span>Semaine 4</span>
+              <span>{t("progress.week1", "Semaine 1")}</span>
+              <span>{t("progress.week2", "Semaine 2")}</span>
+              <span>{t("progress.week3", "Semaine 3 (Bac Blanc)")}</span>
+              <span>{t("progress.week4", "Semaine 4")}</span>
             </div>
           </div>
 
@@ -149,22 +149,22 @@ export function ProgressPreview() {
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-white flex items-center gap-1.5">
                 <MessageSquare className="w-3.5 h-3.5 text-brand-teal" />
-                Dernier Rapport Enseignant
+                {t("progress.lastReport", "Dernier Rapport Enseignant")}
               </span>
-              <span className="text-[10px] text-slate-400">Hier à 18h15</span>
+              <span className="text-[10px] text-slate-400">{t("progress.yesterdayTime", "Hier à 18h15")}</span>
             </div>
 
             <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-700/50 text-xs space-y-2">
               <div className="flex items-center justify-between text-slate-300 font-semibold">
-                <span>M. Camara (Professeur de Mathématiques)</span>
+                <span>{t("progress.teacherSubject", "M. Camara (Professeur de Mathématiques)")}</span>
                 <span className="text-brand-gold">5/5 ★</span>
               </div>
               <p className="text-slate-300 leading-relaxed text-[11px]">
-                « Très bon investissement d'Ibrahima sur la résolution des équations différentielles. Exercices d'application du Bac réussis sans aide. Trois devoirs maison assignés pour jeudi. »
+                {t("progress.reportText", "« Très bon investissement d'Ibrahima sur la résolution des équations différentielles. Exercices d'application du Bac réussis sans aide. Trois devoirs maison assignés pour jeudi. »")}
               </p>
               <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-[10px] text-slate-400">
-                <span>Notion : Analyse & Intégrales</span>
-                <span className="text-emerald-400 font-medium">Validé par le parent</span>
+                <span>{t("progress.conceptCovered", "Notion : Analyse & Intégrales")}</span>
+                <span className="text-emerald-400 font-medium">{t("progress.parentValidated", "Validé par le parent")}</span>
               </div>
             </div>
 
@@ -172,7 +172,7 @@ export function ProgressPreview() {
             <div className="space-y-2 pt-1 text-xs">
               <div>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="text-slate-300">Mathématiques</span>
+                  <span className="text-slate-300">{t("subjects.maths", "Mathématiques")}</span>
                   <span className="text-blue-400 font-bold">82%</span>
                 </div>
                 <div className="w-full bg-slate-700 rounded-full h-1.5">
@@ -182,7 +182,7 @@ export function ProgressPreview() {
 
               <div>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="text-slate-300">Physique-Chimie</span>
+                  <span className="text-slate-300">{t("subjects.physics", "Physique-Chimie")}</span>
                   <span className="text-teal-400 font-bold">74%</span>
                 </div>
                 <div className="w-full bg-slate-700 rounded-full h-1.5">
