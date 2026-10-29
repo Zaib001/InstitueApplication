@@ -7,7 +7,7 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: npm install && npx prisma generate && npm run build
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build
     startCommand: npm run render:start
     healthCheckPath: /api/health
     autoDeploy: true
@@ -47,3 +47,4 @@ databases:
     region: frankfurt
     databaseName: monsieur_fanyi
     user: monsieur_fanyi_user
+

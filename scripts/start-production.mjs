@@ -85,3 +85,4 @@ process.on("SIGTERM", () => handleTermination("SIGTERM"));
 nextProcess.on("close", (code) => {
   process.exit(code ?? 0);
 });
+

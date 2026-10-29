@@ -48,7 +48,7 @@ Si vous préférez créer les services manuellement ou utiliser une base Postgre
    - **Runtime** : `Node`
    - **Build Command** :
      ```bash
-     npm install && npx prisma generate && npm run build
+     npm install --include=dev && npx prisma generate && npm run build
      ```
    - **Start Command** :
      ```bash
@@ -95,3 +95,4 @@ Le script `scripts/start-production.mjs` prend en charge toute l'initialisation 
 - **Mise en veille après inactivité** : Les instances gratuites s'endorment après 15 minutes d'inactivité. La première requête peut prendre ~30-50 secondes le temps que l'instance se réveille.
 - **Stockage éphémère** : Le système de fichiers local sur instance gratuite est temporaire. Pour une persistance long-terme des fichiers CNI/diplômes en vraie production d'entreprise, il suffira de connecter un bucket S3 ou Cloudinary compatible.
 - **Vérification de Santé** : La route `/api/health` est configurée pour que Render détecte immédiatement la disponibilité du service.
+
