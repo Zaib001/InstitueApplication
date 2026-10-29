@@ -42,7 +42,14 @@ function ResetPasswordContent() {
   };
 
   const passwordScore = getPasswordStrength(password);
-  const strengthLabels = ["Très court", "Faible", "Moyen", "Bon", "Excellent"];
+  const strengthLabels = [
+    t("auth.strengthVeryShort", "Très court"),
+    t("auth.strengthWeak", "Faible"),
+    t("auth.strengthMedium", "Moyen"),
+    t("auth.strengthGood", "Bon"),
+    t("auth.strengthExcellent", "Excellent"),
+  ];
+
   const strengthColors = [
     "bg-slate-600",
     "bg-rose-500",
@@ -57,22 +64,26 @@ function ResetPasswordContent() {
     setSuccessMessage(null);
 
     if (!token) {
-      setErrorMessage("Jeton de réinitialisation manquant dans l'adresse. Veuillez utiliser le lien reçu.");
+      setErrorMessage(
+        t("auth.tokenMissing", "Jeton de réinitialisation manquant dans l'adresse. Veuillez utiliser le lien reçu.")
+      );
       return;
     }
 
     if (!password || !confirmPassword) {
-      setErrorMessage("Veuillez renseigner les deux champs de mot de passe.");
+      setErrorMessage(t("auth.bothPasswordsRequired", "Veuillez renseigner les deux champs de mot de passe."));
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage("Les deux mots de passe ne correspondent pas.");
+      setErrorMessage(t("auth.passwordsDoNotMatch", "Les deux mots de passe ne correspondent pas."));
       return;
     }
 
     if (passwordScore < 3) {
-      setErrorMessage("Le mot de passe doit comporter au moins 8 caractères, une majuscule, une minuscule et un chiffre.");
+      setErrorMessage(
+        t("auth.passwordTooWeak", "Le mot de passe doit comporter au moins 8 caractères, une majuscule, une minuscule et un chiffre.")
+      );
       return;
     }
 
@@ -88,15 +99,15 @@ function ResetPasswordContent() {
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMessage(data.error || "Une erreur est survenue lors de la réinitialisation.");
+        setErrorMessage(data.error || t("auth.resetError", "Une erreur est survenue lors de la réinitialisation."));
         setIsLoading(false);
         return;
       }
 
-      setSuccessMessage(data.message || "Votre mot de passe a été mis à jour avec succès.");
+      setSuccessMessage(data.message || t("auth.resetPasswordSuccess", "Votre mot de passe a été mis à jour avec succès."));
       setIsLoading(false);
     } catch {
-      setErrorMessage("Erreur de communication avec le serveur.");
+      setErrorMessage(t("auth.networkError", "Erreur de communication avec le serveur."));
       setIsLoading(false);
     }
   };
@@ -136,10 +147,10 @@ function ResetPasswordContent() {
             <KeyRound className="w-6 h-6 text-[#e59a38]" aria-hidden="true" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black font-heading text-white tracking-tight mb-2">
-            Nouveau mot de passe
+            {t("auth.resetPasswordTitle", "Nouveau mot de passe")}
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Créez un mot de passe sécurisé pour protéger votre compte Monsieur Fanyi.
+            {t("auth.resetPasswordSubtitle", "Créez un mot de passe sécurisé pour protéger votre compte Monsieur Fanyi.")}
           </p>
         </div>
 
@@ -160,7 +171,7 @@ function ResetPasswordContent() {
               href="/login"
               className="w-full py-3.5 px-6 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Se connecter avec le nouveau mot de passe</span>
+              <span>{t("auth.loginWithNewPassword", "Se connecter avec le nouveau mot de passe")}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -171,7 +182,7 @@ function ResetPasswordContent() {
                 htmlFor="reset-password"
                 className="block text-xs font-semibold text-slate-200 mb-1.5"
               >
-                Nouveau mot de passe
+                {t("auth.newPasswordLabel", "Nouveau mot de passe")}
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" aria-hidden="true" />
@@ -201,7 +212,7 @@ function ResetPasswordContent() {
                 htmlFor="reset-confirm-password"
                 className="block text-xs font-semibold text-slate-200 mb-1.5"
               >
-                Confirmer le nouveau mot de passe
+                {t("auth.confirmPasswordLabel", "Confirmer le nouveau mot de passe")}
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" aria-hidden="true" />
@@ -221,7 +232,7 @@ function ResetPasswordContent() {
             {password.length > 0 && (
               <div className="space-y-1 pt-1">
                 <div className="flex items-center justify-between text-[11px] text-slate-300">
-                  <span>Force du mot de passe :</span>
+                  <span>{t("auth.passwordStrengthLabel", "Force du mot de passe :")}</span>
                   <span className="font-semibold text-white">
                     {strengthLabels[Math.min(passwordScore, 4)]}
                   </span>
@@ -243,11 +254,11 @@ function ResetPasswordContent() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Mise à jour en cours...</span>
+                  <span>{t("auth.updatingPassword", "Mise à jour en cours...")}</span>
                 </>
               ) : (
                 <>
-                  <span>Valider le nouveau mot de passe</span>
+                  <span>{t("auth.submitNewPassword", "Valider le nouveau mot de passe")}</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </>
               )}
@@ -257,7 +268,7 @@ function ResetPasswordContent() {
       </motion.main>
 
       <footer className="text-center text-xs text-slate-400 py-3 relative z-10">
-        © 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée
+        {t("auth.footerCopyright", "© 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée")}
       </footer>
     </div>
   );

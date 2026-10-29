@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
     setSuccessMessage(null);
 
     if (!email) {
-      setErrorMessage("Veuillez renseigner votre adresse email.");
+      setErrorMessage(t("auth.emailRequired", "Veuillez renseigner votre adresse email."));
       return;
     }
 
@@ -45,26 +45,26 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMessage(data.error || "Une erreur est survenue lors de la demande.");
+        setErrorMessage(data.error || t("auth.requestError", "Une erreur est survenue lors de la demande."));
         setIsLoading(false);
         return;
       }
 
       setSuccessMessage(
         data.message ||
-          "Si un compte existe avec cette adresse, un lien de réinitialisation sécurisé vous a été envoyé."
+          t("auth.resetLinkSent", "Si un compte existe avec cette adresse, un lien de réinitialisation sécurisé vous a été envoyé.")
       );
       setEmail("");
       setIsLoading(false);
     } catch {
-      setErrorMessage("Erreur de connexion au serveur. Veuillez réessayer.");
+      setErrorMessage(t("auth.networkError", "Erreur de connexion au serveur. Veuillez réessayer."));
       setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col justify-between px-4 py-6 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-[#16385c] via-[#10243d] to-[#0a1626] text-white">
-      {/* Lignes d'ambiance en arrière-plan */}
+      {/* Background accents */}
       <div className="absolute inset-0 pointer-events-none -z-0 overflow-hidden opacity-15">
         <svg
           className="absolute -top-32 -left-32 w-[700px] h-[700px] text-cyan-300"
@@ -98,10 +98,10 @@ export default function ForgotPasswordPage() {
             <KeyRound className="w-6 h-6 text-[#e59a38]" aria-hidden="true" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black font-heading text-white tracking-tight mb-2">
-            Mot de passe oublié ?
+            {t("auth.forgotPasswordTitle", "Mot de passe oublié ?")}
           </h1>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Saisissez l'adresse email liée à votre compte Monsieur Fanyi. Nous vous enverrons un lien sécurisé valable 1 heure pour réinitialiser votre accès.
+            {t("auth.forgotPasswordSubtitle", "Saisissez l'adresse email liée à votre compte Monsieur Fanyi. Nous vous enverrons un lien sécurisé valable 1 heure pour réinitialiser votre accès.")}
           </p>
         </div>
 
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
               htmlFor="forgot-email"
               className="block text-xs font-semibold text-slate-200 mb-1.5"
             >
-              Votre adresse email
+              {t("auth.emailLabel", "Votre adresse email")}
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" aria-hidden="true" />
@@ -150,11 +150,11 @@ export default function ForgotPasswordPage() {
             {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Envoi de la demande...</span>
+                <span>{t("auth.sendingRequest", "Envoi de la demande...")}</span>
               </>
             ) : (
               <>
-                <span>Envoyer le lien de réinitialisation</span>
+                <span>{t("auth.sendResetLink", "Envoyer le lien de réinitialisation")}</span>
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </>
             )}
@@ -162,18 +162,18 @@ export default function ForgotPasswordPage() {
         </form>
 
         <div className="pt-4 border-t border-white/10 text-center text-xs text-slate-300">
-          <span>Vous vous souvenez de vos identifiants ? </span>
+          <span>{t("auth.rememberCredentials", "Vous vous souvenez de vos identifiants ? ")} </span>
           <Link
             href="/login"
             className="font-bold text-[#e59a38] hover:text-[#f5af52] transition-colors"
           >
-            Retourner à la connexion
+            {t("auth.backToLogin", "Retourner à la connexion")}
           </Link>
         </div>
       </motion.main>
 
       <footer className="text-center text-xs text-slate-400 py-3 relative z-10">
-        © 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée
+        {t("auth.footerCopyright", "© 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée")}
       </footer>
     </div>
   );

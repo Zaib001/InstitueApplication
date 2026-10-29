@@ -179,7 +179,7 @@ function RegisterContent() {
               {t("auth.registerTitle", "Créer un compte Monsieur Fanyi")}
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Rejoignez la communauté éducative de référence à Conakry et dans toute la Guinée.
+              {t("auth.registerSubtitle", "Rejoignez la communauté éducative de référence à Conakry et dans toute la Guinée.")}
             </p>
           </div>
 
@@ -284,7 +284,7 @@ function RegisterContent() {
                 className="block text-xs font-semibold text-slate-200 mb-1"
               >
                 {t("auth.phoneLabel", "Numéro de téléphone (Guinée)")}
-                {role === "PARENT" && <span className="text-slate-400 font-normal"> (facultatif)</span>}
+                {role === "PARENT" && <span className="text-slate-400 font-normal">{t("auth.phoneOptional", " (facultatif)")}</span>}
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" aria-hidden="true" />
@@ -337,7 +337,7 @@ function RegisterContent() {
                   htmlFor="register-confirm-password"
                   className="block text-xs font-semibold text-slate-200 mb-1"
                 >
-                  Confirmer le mot de passe
+                  {t("auth.confirmPasswordLabel", "Confirmer le mot de passe")}
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" aria-hidden="true" />
@@ -359,9 +359,15 @@ function RegisterContent() {
             {password.length > 0 && (
               <div className="space-y-1 pt-0.5">
                 <div className="flex items-center justify-between text-[11px] text-slate-300">
-                  <span>Force du mot de passe :</span>
+                  <span>{t("auth.passwordStrengthLabel", "Force du mot de passe :")}</span>
                   <span className="font-semibold text-white">
-                    {strengthLabels[Math.min(passwordScore, 4)]}
+                    {[
+                      t("auth.strengthVeryShort", "Très court"),
+                      t("auth.strengthWeak", "Faible"),
+                      t("auth.strengthMedium", "Moyen"),
+                      t("auth.strengthGood", "Bon"),
+                      t("auth.strengthExcellent", "Excellent"),
+                    ][Math.min(passwordScore, 4)]}
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-1 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
@@ -381,14 +387,14 @@ function RegisterContent() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Création de votre compte...</span>
+                  <span>{t("auth.creatingAccount", "Création de votre compte...")}</span>
                 </>
               ) : (
                 <>
                   <span>
                     {role === "PARENT"
-                      ? "Créer mon compte Parent"
-                      : "Créer mon compte Professeur"}
+                      ? t("auth.registerParentBtn", "Créer mon compte Parent")
+                      : t("auth.registerTeacherBtn", "Créer mon compte Professeur")}
                   </span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </>
@@ -413,17 +419,17 @@ function RegisterContent() {
           <div className="relative z-10 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-[11px] font-semibold border border-white/15">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>{role === "PARENT" ? "Espace Familles" : "Espace Enseignants"}</span>
+              <span>{role === "PARENT" ? t("nav.parentPortal", "Espace Familles") : t("nav.teacherPortal", "Espace Enseignants")}</span>
             </div>
             <h2 className="text-xl font-bold font-heading leading-snug">
               {role === "PARENT"
-                ? "Offrez à votre enfant l'encadrement qu'il mérite"
-                : "Monétisez vos compétences au meilleur tarif en Guinée"}
+                ? t("auth.sideTitleParent", "Offrez à votre enfant l'encadrement qu'il mérite")
+                : t("auth.sideTitleTeacher", "Monétisez vos compétences au meilleur tarif en Guinée")}
             </h2>
             <p className="text-xs text-slate-300 leading-relaxed">
               {role === "PARENT"
-                ? "Recherchez parmi les meilleurs enseignants vérifiés de Conakry, suivez chaque séance et payez en toute sécurité."
-                : "Rejoignez le réseau d'élite de Monsieur Fanyi : 85% de rémunération garantie et paiements ponctuels par Mobile Money."}
+                ? t("auth.sideSubParent", "Recherchez parmi les meilleurs enseignants vérifiés de Conakry, suivez chaque séance et payez en toute sécurité.")
+                : t("auth.sideSubTeacher", "Rejoignez le réseau d'élite de Monsieur Fanyi : 85% de rémunération garantie et paiements ponctuels par Mobile Money.")}
             </p>
           </div>
 
@@ -432,28 +438,28 @@ function RegisterContent() {
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
               <span>
                 {role === "PARENT"
-                  ? "Paiement bloqué jusqu'à votre validation"
-                  : "85% net par heure de cours dispensée"}
+                  ? t("auth.sidePointParent1", "Paiement bloqué jusqu'à votre validation")
+                  : t("auth.sidePointTeacher1", "85% net par heure de cours dispensée")}
               </span>
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
               <span>
                 {role === "PARENT"
-                  ? "Rapport pédagogique après chaque leçon"
-                  : "Planning flexible selon vos disponibilités"}
+                  ? t("auth.sidePointParent2", "Rapport pédagogique après chaque leçon")
+                  : t("auth.sidePointTeacher2", "Planning flexible selon vos disponibilités")}
               </span>
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
-              <span>Support dédié disponible 7j/7 à Conakry</span>
+              <span>{t("auth.sidePointParent3", "Support dédié disponible 7j/7 à Conakry")}</span>
             </div>
           </div>
         </div>
       </motion.div>
 
       <footer className="text-center text-xs text-slate-400 py-3 relative z-10">
-        © 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée
+        {t("auth.footerCopyright", "© 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée")}
       </footer>
     </div>
   );

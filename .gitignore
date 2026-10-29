@@ -37,3 +37,9 @@ next-env.d.ts
 /prisma/*.db
 /prisma/*.sqlite
 /prisma/*.sqlite-journal
+
+# local storage and uploads
+/storage/private-documents/*
+!/storage/private-documents/.gitkeep
+!/storage/private-documents/doc_sample_*.pdf
+

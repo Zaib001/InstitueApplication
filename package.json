@@ -7,13 +7,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "render:start": "node scripts/start-production.mjs",
+    "postinstall": "prisma generate",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed:admin": "npx tsx scripts/bootstrap-admin.ts"
+    "db:seed:admin": "npx tsx scripts/bootstrap-admin.ts",
+    "db:seed:all": "npx tsx scripts/seed-all-roles.ts",
+    "db:seed": "npx tsx scripts/seed-all-roles.ts"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

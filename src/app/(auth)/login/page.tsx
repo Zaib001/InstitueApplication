@@ -121,7 +121,7 @@ function LoginContent() {
               {t("auth.loginTitle", "Accédez à votre espace sécurisé")}
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Consultez vos cours, validez les séances réalisées ou gérez vos candidatures de soutien.
+              {t("auth.loginSubtitle", "Consultez vos cours, validez les séances réalisées ou gérez vos candidatures de soutien.")}
             </p>
           </div>
 
@@ -206,11 +206,11 @@ function LoginContent() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Connexion en cours...</span>
+                  <span>{t("auth.loggingIn", "Connexion en cours...")}</span>
                 </>
               ) : (
                 <>
-                  <span>{t("nav.login", "Connexion")}</span>
+                  <span>{t("auth.loginBtn", "Connexion")}</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </>
               )}
@@ -234,35 +234,35 @@ function LoginContent() {
           <div className="relative z-10 space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-[11px] font-semibold border border-white/15">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Plateforme de Confiance</span>
+              <span>{t("auth.trustedPlatform", "Plateforme de Confiance")}</span>
             </div>
             <h2 className="text-xl font-bold font-heading leading-snug">
-              L'accompagnement scolaire personnalisé à Conakry
+              {t("auth.sideTitleLogin", "L'accompagnement scolaire personnalisé à Conakry")}
             </h2>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Retrouvez l'historique complet de vos cours et vos rapports pédagogiques validés.
+              {t("auth.sideSubLogin", "Retrouvez l'historique complet de vos cours et vos rapports pédagogiques validés.")}
             </p>
           </div>
 
           <div className="relative z-10 space-y-3 pt-6 border-t border-white/10 text-xs">
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
-              <span>Professeurs vérifiés avec diplômes</span>
+              <span>{t("auth.sidePoint1", "Professeurs vérifiés avec diplômes")}</span>
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
-              <span>Séquestre protecteur Orange / MTN</span>
+              <span>{t("auth.sidePoint2", "Séquestre protecteur Orange / MTN")}</span>
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
-              <span>Conforme aux programmes guinéens</span>
+              <span>{t("auth.sidePoint3", "Conforme aux programmes guinéens")}</span>
             </div>
           </div>
         </div>
       </motion.main>
 
       <footer className="text-center text-xs text-slate-400 py-3 relative z-10">
-        © 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée
+        {t("auth.footerCopyright", "© 2026 Monsieur Fanyi • Plateforme Éducative Sécurisée en Guinée")}
       </footer>
     </div>
   );

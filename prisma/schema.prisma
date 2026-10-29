@@ -193,51 +193,99 @@ model ParentProfile {
 }
 
 model StudentProfile {
-  id            String   @id @default(cuid())
-  parentId      String
-  parent        ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
-  userId        String?  @unique
-  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  fullName      String
-  gradeLevel    String
-  schoolName    String?
-  dateOfBirth   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                String   @id @default(cuid())
+  parentId          String
+  parent            ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  userId            String?  @unique
+  user              User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  fullName          String
+  gradeLevel        String
+  cycle             String?  // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR
+  schoolName        String?
+  dateOfBirth       DateTime?
+  supportNeeds      String?  // Academic challenges & learning goals
+  preferredSubjects String[] @default([])
+  notes             String?  // Optional educational notes from parent
+  isArchived        Boolean  @default(false)
+  archivedAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   tutoringRequests TutoringRequest[]
   classrooms       Classroom[]
 
   @@index([parentId])
+  @@index([isArchived])
 }
 
 model TeacherProfile {
-  id                  String                    @id @default(cuid())
-  userId              String                    @unique
-  user                User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  headline            String?
-  bio                 String?
-  yearsOfExperience   Int                       @default(0)
-  city                String                    @default("Conakry")
-  serviceArea         String?
-  verificationStatus  TeacherVerificationStatus @default(DRAFT)
-  rejectionReason     String?
-  verifiedAt          DateTime?
-  hourlyRateGnf       Int?
-  createdAt           DateTime                  @default(now())
-  updatedAt           DateTime                  @updatedAt
+  id                             String                    @id @default(cuid())
+  userId                         String                    @unique
+  user                           User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headline                       String?
+  bio                            String?
+  yearsOfExperience              Int                       @default(0)
+  city                           String                    @default("Conakry")
+  serviceArea                    String?
+  degrees                        String?
+  institution                    String?
+  isHomeAvailable                Boolean                   @default(true)
+  isOnlineAvailable              Boolean                   @default(true)
+  hourlyRateGnf                  Int?
+  monthlyPackageRateGnf          Int?
+  monthlyPackageSessions         Int?                      @default(8)
+  monthlyPackageHoursPerSession  Int?                      @default(2)
+  verificationStatus             TeacherVerificationStatus @default(DRAFT)
+  rejectionReason                String?
+  submittedAt                    DateTime?
+  reviewedAt                     DateTime?
+  reviewerId                     String?
+  verifiedAt                     DateTime?
+  termsAccepted                  Boolean                   @default(false)
+  termsAcceptedAt                DateTime?
+  termsVersion                   String?
+  createdAt                      DateTime                  @default(now())
+  updatedAt                      DateTime                  @updatedAt
 
-  documents           TeacherDocument[]
-  pricingOffers       TeacherPricingOffer[]
-  availabilities      Availability[]
-  applications        TeacherApplication[]
-  classrooms          Classroom[]
-  earnings            TeacherEarning[]
-  payouts             Payout[]
-  ratings             Rating[]
+  subjects                       TeacherSubject[]
+  gradeLevels                    TeacherGradeLevel[]
+  documents                      TeacherDocument[]
+  pricingOffers                  TeacherPricingOffer[]
+  availabilities                 Availability[]
+  applications                   TeacherApplication[]
+  classrooms                     Classroom[]
+  earnings                       TeacherEarning[]
+  payouts                        Payout[]
+  ratings                        Rating[]
 
   @@index([userId])
   @@index([verificationStatus])
+}
+
+model TeacherSubject {
+  id               String         @id @default(cuid())
+  teacherProfileId String
+  teacherProfile   TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  subjectId        String
+  subject          Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+
+  @@unique([teacherProfileId, subjectId])
+  @@index([teacherProfileId])
+  @@index([subjectId])
+}
+
+model TeacherGradeLevel {
+  id               String         @id @default(cuid())
+  teacherProfileId String
+  teacherProfile   TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  gradeLevelId     String
+  gradeLevel       GradeLevel     @relation(fields: [gradeLevelId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+
+  @@unique([teacherProfileId, gradeLevelId])
+  @@index([teacherProfileId])
+  @@index([gradeLevelId])
 }
 
 model TeacherDocument {
@@ -260,18 +308,22 @@ model TeacherDocument {
 }
 
 model Subject {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  category    String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id              String           @id @default(cuid())
+  name            String           @unique
+  category        String?
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+
+  teacherSubjects TeacherSubject[]
 }
 
 model GradeLevel {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  cycle       String   // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR
-  orderIndex  Int      @default(0)
+  id                 String              @id @default(cuid())
+  name               String              @unique
+  cycle              String              // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR
+  orderIndex         Int                 @default(0)
+
+  teacherGradeLevels TeacherGradeLevel[]
 }
 
 model TeacherPricingOffer {

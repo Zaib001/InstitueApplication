@@ -9,9 +9,14 @@ import { Menu, X } from "lucide-react";
 interface LightDashboardLayoutProps {
   user: AuthenticatedUser;
   children: React.ReactNode;
+  hideRightProfile?: boolean;
 }
 
-export function LightDashboardLayout({ user, children }: LightDashboardLayoutProps) {
+export function LightDashboardLayout({
+  user,
+  children,
+  hideRightProfile = false,
+}: LightDashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -28,7 +33,7 @@ export function LightDashboardLayout({ user, children }: LightDashboardLayoutPro
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           <span className="font-extrabold text-[#16385c] text-sm">
-            Ed.Tech <span className="text-[#e59a38]">Fanyi</span>
+            Monsieur<span className="text-[#e59a38] ml-1">Fanyi</span>
           </span>
         </div>
 
@@ -63,9 +68,11 @@ export function LightDashboardLayout({ user, children }: LightDashboardLayoutPro
         </main>
 
         {/* Right Sidebar (Desktop only) */}
-        <div className="hidden xl:block shrink-0">
-          <LightRightProfile user={user} />
-        </div>
+        {!hideRightProfile && (
+          <div className="hidden xl:block shrink-0">
+            <LightRightProfile user={user} />
+          </div>
+        )}
       </div>
     </div>
   );
