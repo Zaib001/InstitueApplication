@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans, DM_Sans, Caveat } from "next/font/google";
 import "@/styles/globals.css";
 import { I18nProvider } from "@/lib/i18n";
 import { PublicLayoutShell } from "@/components/layout/PublicLayoutShell";
@@ -22,6 +22,13 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-handwriting",
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
@@ -55,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${playfair.variable} ${plusJakarta.variable} ${dmSans.variable}`}
+      className={`${playfair.variable} ${plusJakarta.variable} ${dmSans.variable} ${caveat.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col bg-brand-surface text-brand-charcoal antialiased selection:bg-[#e59a38] selection:text-white">

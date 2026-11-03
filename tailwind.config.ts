@@ -69,6 +69,7 @@ const config: Config = {
         serif: ["var(--font-serif)", "Playfair Display", "Georgia", "serif"],
         heading: ["var(--font-heading)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
         sans: ["var(--font-body)", "DM Sans", "Inter", "system-ui", "sans-serif"],
+        handwriting: ["var(--font-handwriting)", "Caveat", "cursive"],
       },
       boxShadow: {
         premium: "0 10px 30px -10px rgba(16, 35, 63, 0.08), 0 4px 6px -2px rgba(16, 35, 63, 0.04)",

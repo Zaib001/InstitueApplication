@@ -6,232 +6,376 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n";
 import {
-  ShieldCheck,
+  Search,
+  ArrowRight,
+  User,
+  UserCheck,
   Star,
-  Zap,
-  CheckCircle2,
+  ShieldCheck,
+  Users,
   GraduationCap,
+  Heart,
+  Sun,
   Sparkles,
-  TrendingUp,
 } from "lucide-react";
 
 export function HeroSection() {
   const { locale, t } = useTranslation();
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#16385c] via-[#153456] to-[#0f243c] text-white min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] lg:max-h-[880px] flex flex-col justify-center">
-      {/* 1. Lignes de niveau / Courbes topographiques concentriques inspirées de Lexicon */}
-      <div className="absolute inset-0 pointer-events-none -z-0 overflow-hidden opacity-25">
-        <svg
-          className="absolute -top-28 -left-28 w-[820px] h-[820px] text-cyan-300"
-          viewBox="0 0 800 800"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle cx="400" cy="400" r="180" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" />
-          <circle cx="400" cy="400" r="260" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="400" cy="400" r="340" stroke="currentColor" strokeWidth="1" strokeDasharray="6 6" />
-          <circle cx="400" cy="400" r="420" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="400" cy="400" r="500" stroke="currentColor" strokeWidth="1" />
-        </svg>
-
-        <svg
-          className="absolute -bottom-40 -right-40 w-[900px] h-[900px] text-amber-300"
-          viewBox="0 0 900 900"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <ellipse cx="450" cy="450" rx="220" ry="280" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-          <ellipse cx="450" cy="450" rx="320" ry="380" stroke="currentColor" strokeWidth="1.2" />
-          <ellipse cx="450" cy="450" rx="420" ry="480" stroke="currentColor" strokeWidth="1" strokeDasharray="5 5" />
-          <ellipse cx="450" cy="450" rx="520" ry="580" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      </div>
-
-      {/* Halo lumineux d'ambiance */}
-      <div className="absolute top-1/4 right-1/4 w-[480px] h-[480px] bg-blue-500/10 rounded-full blur-[130px] pointer-events-none -z-0" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full flex flex-col justify-center py-4 lg:py-0">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center h-full">
-          
-          {/* Colonne Gauche — Titre 2 Lignes, Boutons Pill, Paragraphe 2 Lignes, Social Proof & Trust Badges */}
-          <div className="lg:col-span-7 space-y-4 lg:space-y-6 text-left flex flex-col justify-center">
+    <div className="w-full bg-[#fdfdfd] text-slate-800 pt-3 pb-8 sm:pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* ======================================================== */}
+        {/* 1. HERO PRINCIPAL : CITATION MANDELA & ÉLÈVE EN CLASSE    */}
+        {/* ======================================================== */}
+        <section className="relative pt-4 pb-8 lg:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
-            {/* Titre Principal Editorial Serif — EXACTEMENT 2 LIGNES */}
-            <motion.h1
-              className="text-4xl sm:text-5xl lg:text-[54px] xl:text-[58px] font-serif font-bold text-white tracking-tight leading-[1.08] max-w-2xl"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
+            {/* Colonne Gauche : Titre Nelson Mandela, Description & Boutons CTA */}
+            <motion.div
+              className="lg:col-span-6 flex flex-col justify-center text-left"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {locale === "en" ? (
-                <>
-                  <span className="block">The Bridge to</span>
-                  <span className="block">
-                    Your Child's Best Self
-                    <span className="inline-block w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#e59a38] rounded-xs ml-1.5 align-baseline shadow-sm" aria-hidden="true" />
+              {/* Grand Titre Nelson Mandela avec "la seule arme" en script doré */}
+              <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-extrabold text-[#152e4d] tracking-tight leading-[1.12]">
+                <span className="block">
+                  {t("hero.quoteTitle1", "L'éducation est")}
+                </span>
+                <span className="block mt-1 sm:mt-1.5">
+                  <span className="font-handwriting text-5xl sm:text-6xl lg:text-[70px] font-bold text-[#f59e0b] drop-shadow-xs tracking-wide">
+                    {t("hero.quoteHighlight", "la seule arme")}
                   </span>
-                </>
-              ) : (
-                <>
-                  <span className="block">Le Pont vers l'Excellence</span>
-                  <span className="block">
-                    de Vos Enfants
-                    <span className="inline-block w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#e59a38] rounded-xs ml-1.5 align-baseline shadow-sm" aria-hidden="true" />
-                  </span>
-                </>
-              )}
-            </motion.h1>
+                </span>
+                <span className="block mt-1 sm:mt-1.5">
+                  {t("hero.quoteTitle2", "pour s'en sortir.")}
+                </span>
+              </h1>
 
-            {/* Boutons d'Action Pill Exactement Identiques à Lexicon */}
-            <motion.div
-              className="flex flex-wrap items-center gap-3.5 pt-1"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-            >
-              <Link
-                href="/register?role=parent"
-                className="px-7 sm:px-8 py-3 sm:py-3.5 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-sm sm:text-base shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center justify-center cursor-pointer hover:shadow-amber-500/40"
-              >
-                {t("hero.tryLesson", "Essayer un cours")}
-              </Link>
+              {/* Attribution de la citation */}
+              <p className="text-xs sm:text-sm font-semibold text-slate-500 italic mt-2.5">
+                {t("hero.quoteAuthor", "— Nelson Mandela")}
+              </p>
 
-              <a
-                href="#comment-ca-marche"
-                className="px-7 sm:px-8 py-3 sm:py-3.5 rounded-full bg-[#1c436b]/60 hover:bg-[#1c436b] text-white border border-white/20 font-semibold text-sm sm:text-base transition-all backdrop-blur-sm inline-flex items-center justify-center cursor-pointer hover:border-white/40"
-              >
-                {t("hero.howItWorks", "Comment ça marche")}
-              </a>
-            </motion.div>
+              {/* Paragraphe descriptif */}
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl mt-5 sm:mt-6">
+                {t(
+                  "hero.subparagraph",
+                  "MonsieurFanyi aide les parents à trouver le bon professeur pour leurs enfants. Des enseignants qualifiés, adaptés aux besoins de chaque élève, pour un avenir meilleur."
+                )}
+              </p>
 
-            {/* Sous-titre Réassurance — EXACTEMENT 2 LIGNES */}
-            <motion.div
-              className="text-sm sm:text-[15px] text-slate-200/90 leading-relaxed max-w-xl font-normal pt-0.5"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
-            >
-              {locale === "en" ? (
-                <>
-                  <p className="block">Access certified elite tutors in Conakry and across Guinea designed to help</p>
-                  <p className="block">your children excel academically and reach their peak potential.</p>
-                </>
-              ) : (
-                <>
-                  <p className="block">Accédez à des répétiteurs d'élite rigoureusement certifiés à Conakry et en Guinée pour</p>
-                  <p className="block">propulser l'avenir scolaire de vos enfants et révéler leur plein potentiel.</p>
-                </>
-              )}
-            </motion.div>
+              {/* Deux Boutons Pill d'Action */}
+              <div className="flex flex-wrap items-center gap-3.5 sm:gap-4 mt-7 sm:mt-8">
+                {/* CTA Primaire : Trouver un professeur (Bouton Jaune Doré) */}
+                <Link
+                  href="/parent/dashboard"
+                  className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-[#f9c450] hover:bg-[#eab308] text-slate-900 font-bold text-xs sm:text-sm shadow-md shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5 group cursor-pointer"
+                >
+                  <Search className="w-4 h-4 text-slate-900 group-hover:scale-110 transition-transform" />
+                  <span>{t("hero.btnFindTeacher", "Trouver un professeur")}</span>
+                  <ArrowRight className="w-4 h-4 text-slate-900 group-hover:translate-x-1 transition-transform" />
+                </Link>
 
-            {/* NOUVEAU BLOC ÉPURÉ & PROFESSIONNEL : Preuve Sociale & Piliers de Confiance Haut de Gamme */}
-            <motion.div
-              className="pt-2 space-y-3.5 max-w-xl"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35, ease: "easeOut" }}
-            >
-              {/* Avis & Familles satisfaites */}
-              <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 w-fit shadow-lg">
-                {/* Pile d'avatars d'enseignants / élèves vérifiés */}
-                <div className="flex -space-x-2 overflow-hidden">
-                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-[#16385c] bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
-                    M
-                  </div>
-                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-[#16385c] bg-blue-600 text-white font-bold text-xs flex items-center justify-center">
-                    B
-                  </div>
-                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-[#16385c] bg-amber-500 text-white font-bold text-xs flex items-center justify-center">
-                    D
-                  </div>
-                  <div className="inline-block h-8 w-8 rounded-full ring-2 ring-[#16385c] bg-teal-600 text-white font-bold text-xs flex items-center justify-center">
-                    C
-                  </div>
-                </div>
-
-                <div className="text-left text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <div className="flex text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                      ))}
-                    </div>
-                    <span className="font-extrabold text-white text-xs">
-                      {t("hero.socialProofScore", "4.9 / 5.0")}
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-slate-300 font-medium">
-                    {t("hero.socialProofText", "+350 familles accompagnées avec succès à Conakry")}
-                  </span>
-                </div>
+                {/* CTA Secondaire : Je suis professeur (Bouton Blanc Bordé) */}
+                <Link
+                  href="/register?role=teacher"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs sm:text-sm border border-slate-700/80 shadow-xs transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2 cursor-pointer"
+                >
+                  <User className="w-4 h-4 text-slate-700" />
+                  <span>{t("hero.btnImTeacher", "Je suis professeur")}</span>
+                </Link>
               </div>
+            </motion.div>
 
-              {/* 3 Badges de Réassurance Pilules Minimalistes */}
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1b3d63]/80 border border-white/15 text-slate-200 backdrop-blur-sm">
-                  <GraduationCap className="w-3.5 h-3.5 text-[#e59a38]" />
-                  <span className="font-semibold text-[11px]">{t("hero.trustBadge1", "Professeurs Diplômés & Vérifiés")}</span>
-                </div>
+            {/* Colonne Droite : Photo Élève en Classe avec Écriture Manuscrite "Chaque enfant peut réussir." */}
+            <motion.div
+              className="lg:col-span-6 relative w-full"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+            >
+              <div className="relative w-full aspect-[4/3] sm:aspect-[14/11] lg:aspect-[13/10] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-amber-900/10">
+                <Image
+                  src="/images/hero_classroom_girl_clean.jpg"
+                  alt="Élève souriante et attentive en classe Monsieur Fanyi"
+                  fill
+                  priority
+                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
 
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1b3d63]/80 border border-white/15 text-slate-200 backdrop-blur-sm">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="font-semibold text-[11px]">{t("hero.trustBadge2", "Mise en relation sous 24h")}</span>
-                </div>
+                {/* Léger dégradé d'ambiance pour faire ressortir le texte manuscrit */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
 
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1b3d63]/80 border border-white/15 text-slate-200 backdrop-blur-sm">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="font-semibold text-[11px]">{t("hero.trustBadge3", "Paiement Sécurisé Orange & MTN")}</span>
+                {/* Écriture Manuscrite Cursive en Haut à Droite : "Chaque enfant peut réussir." */}
+                <div className="absolute top-4 right-4 sm:top-6 sm:right-7 lg:top-7 lg:right-9 z-20 text-center select-none rotate-[-4deg] pointer-events-none">
+                  <span className="font-handwriting text-white text-2xl sm:text-3xl lg:text-4xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)] leading-tight block tracking-wide">
+                    {locale === "en" ? (
+                      <>Every child<br />can succeed.</>
+                    ) : (
+                      <>Chaque enfant<br />peut réussir.</>
+                    )}
+                  </span>
+
+                  {/* Soulignement manuscrit arc de cercle en SVG blanc */}
+                  <svg
+                    className="w-24 sm:w-32 h-5 mx-auto text-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.6)] overflow-visible -mt-1"
+                    viewBox="0 0 140 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M4 14C35 4 105 5 136 18"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+
+                  {/* Étoile scintillante dorée à droite du texte */}
+                  <div className="absolute -top-2.5 -right-3.5 text-amber-300 drop-shadow-md">
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" aria-hidden="true" />
+                  </div>
                 </div>
               </div>
             </motion.div>
 
           </div>
+        </section>
 
-          {/* Colonne Droite — Étudiante Française Sans Fond avec Effet 3D & Badge Flottant Élégant */}
-          <div className="lg:col-span-5 relative flex justify-center lg:justify-end items-end h-full">
-            <div className="relative w-full max-w-[380px] sm:max-w-[440px] lg:max-w-[500px] flex items-end justify-center">
+        {/* ======================================================== */}
+        {/* 2. BANDEAU DES 4 PILIERS DE VALEUR AVEC ACCENTS COLORÉS   */}
+        {/* ======================================================== */}
+        <section className="w-full bg-white rounded-2xl border border-slate-100 shadow-sm py-6 sm:py-8 px-4 sm:px-6 my-6 sm:my-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+            
+            {/* Pilier 1 : Des professeurs qualifiés (Bleu) */}
+            <div className="flex flex-col items-center text-center px-4 pt-4 sm:pt-0 pb-2">
+              <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-3 relative">
+                <UserCheck className="w-6 h-6" />
+                <Star className="w-3 h-3 text-amber-500 fill-amber-500 absolute top-2 right-2" />
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-[#152e4d]">
+                {t("hero.feature1Title", "Des professeurs qualifiés")}
+              </h3>
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-1 max-w-[210px] leading-relaxed">
+                {t("hero.feature1Desc", "Des enseignants vérifiés et expérimentés.")}
+              </p>
+              <div className="w-10 h-1 bg-blue-600 rounded-full mt-3.5" />
+            </div>
+
+            {/* Pilier 2 : Une recherche facile (Vert / Sarcelle) */}
+            <div className="flex flex-col items-center text-center px-4 pt-4 sm:pt-0 pb-2">
+              <div className="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center text-teal-600 mb-3">
+                <Search className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-[#152e4d]">
+                {t("hero.feature2Title", "Une recherche facile")}
+              </h3>
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-1 max-w-[210px] leading-relaxed">
+                {t("hero.feature2Desc", "Trouvez rapidement le prof qui correspond aux besoins de votre enfant.")}
+              </p>
+              <div className="w-10 h-1 bg-teal-500 rounded-full mt-3.5" />
+            </div>
+
+            {/* Pilier 3 : Un suivi rassurant (Violet) */}
+            <div className="flex flex-col items-center text-center px-4 pt-4 sm:pt-0 pb-2">
+              <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-3">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-[#152e4d]">
+                {t("hero.feature3Title", "Un suivi rassurant")}
+              </h3>
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-1 max-w-[210px] leading-relaxed">
+                {t("hero.feature3Desc", "Suivez les progrès et les cours de votre enfant en toute simplicité.")}
+              </p>
+              <div className="w-10 h-1 bg-purple-600 rounded-full mt-3.5" />
+            </div>
+
+            {/* Pilier 4 : Pour tous les niveaux (Jaune / Ambre) */}
+            <div className="flex flex-col items-center text-center px-4 pt-4 sm:pt-0 pb-2">
+              <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 mb-3">
+                <Users className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-[#152e4d]">
+                {t("hero.feature4Title", "Pour tous les niveaux")}
+              </h3>
+              <p className="text-xs sm:text-[13px] text-slate-500 mt-1 max-w-[210px] leading-relaxed">
+                {t("hero.feature4Desc", "Du primaire au lycée, toutes les matières.")}
+              </p>
+              <div className="w-10 h-1 bg-amber-500 rounded-full mt-3.5" />
+            </div>
+
+          </div>
+        </section>
+
+        {/* ======================================================== */}
+        {/* 3. SECTION CITATION D'ENGAGEMENT & COLLAGE DE 3 PHOTOS   */}
+        {/* ======================================================== */}
+        <section className="py-8 sm:py-14" id="a-propos">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            {/* Colonne Gauche : Grand Guillemet Doré, Citation Manuscrite & Texte */}
+            <div className="lg:col-span-5 flex flex-col justify-center text-left">
+              {/* Grand guillemet ouvrant doré */}
+              <div className="text-[#f59e0b] text-6xl sm:text-7xl font-serif font-bold leading-none select-none -mb-3 sm:-mb-4">
+                “
+              </div>
+
+              {/* Titre Manuscrit / Cursive */}
+              <h2 className="font-handwriting text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#1b3a60] leading-[1.25] tracking-wide">
+                {t(
+                  "hero.quote2Title",
+                  "Derrière chaque enfant qui réussit, il y a des personnes qui croient en lui."
+                )}
+              </h2>
+
+              {/* Texte explicatif */}
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed mt-5 max-w-md">
+                {t(
+                  "hero.quote2Desc",
+                  "Avec MonsieurFanyi, vous ne trouvez pas seulement un professeur, vous trouvez un partenaire pour accompagner la réussite de votre enfant."
+                )}
+              </p>
+            </div>
+
+            {/* Colonne Droite : Composition Polaroid de 3 Photos en Cartes Blanches */}
+            <div className="lg:col-span-7 relative w-full h-[360px] sm:h-[420px] flex items-center justify-center">
               
-              {/* Image Détourée Transparente avec Effet 3D et Animation Flottante Infinie */}
-              <div className="relative w-full aspect-[3/4] max-h-[calc(100vh-110px)] animate-float-infinite">
-                <Image
-                  src="/images/hero_student_transparent.png"
-                  alt="Étudiante française Monsieur Fanyi avec classeur et cahiers de cours"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 45vw, 500px"
-                  className="object-contain object-bottom drop-shadow-[0_25px_35px_rgba(0,0,0,0.55)] drop-shadow-[0_10px_20px_rgba(15,36,60,0.7)]"
-                />
+              {/* Photo 1 (Gauche, plus grande) : Professeur masculin aidant un jeune élève */}
+              <div className="absolute left-2 sm:left-6 top-6 sm:top-4 w-44 sm:w-56 aspect-[3/4] bg-white p-2.5 sm:p-3 rounded-2xl shadow-xl border border-slate-200/80 rotate-[-3deg] z-20 hover:rotate-0 hover:scale-105 transition-all duration-300">
+                <div className="relative w-full h-full rounded-xl overflow-hidden bg-slate-100">
+                  <Image
+                    src="/images/collage_teacher_boy.jpg"
+                    alt="Professeur Monsieur Fanyi aidant attentivement un élève"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                </div>
+              </div>
 
-                {/* Badge Flottant Élégant 3D à côté de l'étudiante */}
-                <motion.div
-                  className="absolute bottom-8 -left-4 sm:-left-6 p-3 rounded-2xl bg-[#122b49]/90 backdrop-blur-md border border-white/20 shadow-2xl flex items-center gap-3 z-20"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
-                >
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
-                    <CheckCircle2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <span>{t("hero.floatingCardTitle", "Séance Validée • Mathématiques")}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-300">
-                      {t("hero.floatingCardSub", "Terminale SM • Kipé, Conakry")}
-                    </div>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] border border-amber-500/30 ml-1">
-                    {t("hero.floatingCardMetric", "+3.5 pts au Bac")}
-                  </span>
-                </motion.div>
+              {/* Photo 2 (Haut Droite) : Mère / tutrice accompagnant un enfant */}
+              <div className="absolute right-2 sm:right-6 top-1 sm:top-2 w-44 sm:w-52 aspect-[4/3] bg-white p-2 sm:p-2.5 rounded-2xl shadow-lg border border-slate-200/80 rotate-[3.5deg] z-10 hover:rotate-0 hover:scale-105 transition-all duration-300">
+                <div className="relative w-full h-full rounded-xl overflow-hidden bg-slate-100">
+                  <Image
+                    src="/images/collage_mother_child.jpg"
+                    alt="Séance de travail à la maison avec l'élève"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                </div>
+              </div>
+
+              {/* Photo 3 (Bas Droite) : Enseignante souriante devant le tableau avec livres */}
+              <div className="absolute right-4 sm:right-10 bottom-2 sm:bottom-4 w-44 sm:w-52 aspect-[4/3] bg-white p-2 sm:p-2.5 rounded-2xl shadow-xl border border-slate-200/80 rotate-[-2deg] z-20 hover:rotate-0 hover:scale-105 transition-all duration-300">
+                <div className="relative w-full h-full rounded-xl overflow-hidden bg-slate-100">
+                  <Image
+                    src="/images/collage_female_teacher.jpg"
+                    alt="Enseignante certifiée devant le tableau noir"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                </div>
               </div>
 
             </div>
-          </div>
 
-        </div>
+          </div>
+        </section>
+
+        {/* ======================================================== */}
+        {/* 4. BANNIÈRE BLEUE PANORAMIQUE AVEC VAGUE & 3 VALEURS     */}
+        {/* ======================================================== */}
+        <section className="relative overflow-hidden rounded-3xl bg-[#0f2a4a] text-white shadow-2xl mt-4 sm:mt-8">
+          
+          {/* Arrière-plan paysage teinté en bleu nuit océan */}
+          <div className="absolute inset-0 opacity-30 mix-blend-overlay">
+            <Image
+              src="/images/banner_blue_bg.jpg"
+              alt="Vue panoramique"
+              fill
+              className="object-cover object-bottom"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0c233f] via-[#112d4e]/95 to-[#163a63]/90" />
+
+          <div className="relative z-10 px-6 sm:px-12 py-10 sm:py-14 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Texte de gauche : "Ensemble, donnons à chaque enfant les moyens de réussir." */}
+            <div className="lg:col-span-6 space-y-1">
+              <h2 className="text-2xl sm:text-4xl lg:text-[42px] font-bold tracking-tight text-white leading-tight">
+                <span className="block font-serif font-bold">
+                  {t("hero.bannerTitle1", "Ensemble,")}
+                </span>
+                <span className="block font-serif font-bold">
+                  {t("hero.bannerTitle2", "donnons à chaque enfant")}
+                </span>
+                <span className="block font-handwriting text-[#f9c450] text-3xl sm:text-5xl lg:text-[54px] font-bold mt-1 sm:mt-1.5 drop-shadow-xs">
+                  {t("hero.bannerHighlight", "les moyens de réussir.")}
+                </span>
+              </h2>
+
+              {/* Vaguelette / soulignement doré en SVG */}
+              <svg
+                className="w-48 sm:w-64 h-4 text-[#f9c450] -mt-1 sm:-mt-0.5"
+                viewBox="0 0 240 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 10C60 2 180 3 236 12"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+
+            {/* 3 Piliers d'Impact à droite avec icônes dorées */}
+            <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center sm:text-left">
+              
+              {/* Pilier 1 : Meilleures réussites scolaires */}
+              <div className="flex flex-col sm:items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#f9c450] mx-auto mb-2.5 shadow-xs">
+                  <GraduationCap className="w-6 h-6" />
+                </div>
+                <p className="text-xs sm:text-sm font-semibold text-white">
+                  {t("hero.bannerPillar1", "Meilleures réussites scolaires")}
+                </p>
+              </div>
+
+              {/* Pilier 2 : Plus de confiance en soi */}
+              <div className="flex flex-col sm:items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#f9c450] mx-auto mb-2.5 shadow-xs">
+                  <Heart className="w-6 h-6 fill-[#f9c450]/20" />
+                </div>
+                <p className="text-xs sm:text-sm font-semibold text-white">
+                  {t("hero.bannerPillar2", "Plus de confiance en soi")}
+                </p>
+              </div>
+
+              {/* Pilier 3 : Un avenir plus serein */}
+              <div className="flex flex-col sm:items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#f9c450] mx-auto mb-2.5 shadow-xs">
+                  <Sun className="w-6 h-6" />
+                </div>
+                <p className="text-xs sm:text-sm font-semibold text-white">
+                  {t("hero.bannerPillar3", "Un avenir plus serein")}
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
       </div>
-    </section>
+    </div>
   );
 }
