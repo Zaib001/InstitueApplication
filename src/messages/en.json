@@ -20,9 +20,10 @@
   },
   "nav": {
     "home": "Home",
-    "about": "About Us",
+    "about": "About",
     "howItWorks": "How it works",
-    "tutors": "Our Tutors",
+    "subjects": "Subjects",
+    "tutors": "Our Teachers",
     "pricing": "Pricing & Packages",
     "faq": "FAQ",
     "contact": "Contact",

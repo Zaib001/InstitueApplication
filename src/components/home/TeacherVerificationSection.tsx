@@ -56,7 +56,7 @@ export function TeacherVerificationSection() {
   ];
 
   return (
-    <SectionContainer className="bg-slate-50/60">
+    <SectionContainer id="professeurs" className="bg-slate-50/60">
       <SectionHeading
         badge={t("verify.badge", "Sélection Rigoureuse")}
         badgeIcon={<ShieldCheck className="w-3.5 h-3.5 text-brand-blue" />}

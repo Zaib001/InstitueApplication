@@ -16,7 +16,7 @@ export function FinalCTASection() {
   const { t } = useTranslation();
 
   return (
-    <SectionContainer className="pt-0">
+    <SectionContainer id="contact" className="pt-0">
       <div className="relative rounded-3xl bg-gradient-to-br from-brand-navy via-slate-900 to-brand-navy-dark text-white p-8 sm:p-12 lg:p-16 text-center shadow-2xl overflow-hidden border border-slate-800">
         {/* Cercles de diffusion de lumière */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand-blue/20 rounded-full blur-[100px] pointer-events-none" />

@@ -111,7 +111,7 @@ export function SubjectGrid() {
       : subjects.filter((s) => s.cycles.includes(selectedCycle));
 
   return (
-    <SectionContainer id="professeurs" className="bg-white">
+    <SectionContainer id="matieres" className="bg-white">
       <SectionHeading
         badge={t("subjects.badge", "Programme National Guinéen")}
         badgeIcon={<GraduationCap className="w-3.5 h-3.5 text-brand-blue" />}
