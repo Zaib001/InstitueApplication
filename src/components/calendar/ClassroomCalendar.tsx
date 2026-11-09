@@ -46,6 +46,7 @@ interface ClassroomCalendarProps {
   classrooms: ClassroomOption[];
   userRole: UserRole;
   userFullName: string;
+  initialClassroomId?: string;
 }
 
 export function ClassroomCalendar({
@@ -53,6 +54,7 @@ export function ClassroomCalendar({
   classrooms,
   userRole,
   userFullName,
+  initialClassroomId,
 }: ClassroomCalendarProps) {
   const { t, locale } = useTranslation();
 
@@ -63,7 +65,11 @@ export function ClassroomCalendar({
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
   // Filters
-  const [selectedClassroomId, setSelectedClassroomId] = useState<string>("ALL");
+  const [selectedClassroomId, setSelectedClassroomId] = useState<string>(
+    initialClassroomId && classrooms.some((c) => c.id === initialClassroomId)
+      ? initialClassroomId
+      : "ALL"
+  );
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -114,9 +120,9 @@ export function ClassroomCalendar({
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchSub = s.classroom.subjectName.toLowerCase().includes(q);
-        const matchStud = s.classroom.student.fullName.toLowerCase().includes(q);
-        const matchTeach = s.classroom.teacherProfile.user.fullName.toLowerCase().includes(q);
+        const matchSub = (s.classroom?.subjectName || "").toLowerCase().includes(q);
+        const matchStud = (s.classroom?.student?.fullName || "").toLowerCase().includes(q);
+        const matchTeach = (s.classroom?.teacherProfile?.user?.fullName || "").toLowerCase().includes(q);
         return matchSub || matchStud || matchTeach;
       }
       return true;
@@ -240,7 +246,29 @@ export function ClassroomCalendar({
 
   const handleBatchPlanned = (data: { sessions: CalendarSessionItem[] }) => {
     if (data.sessions && data.sessions.length > 0) {
-      setSessions((prev) => [...prev, ...data.sessions]);
+      const hydrated: CalendarSessionItem[] = data.sessions.map((sess) => {
+        if (sess.classroom?.subjectName) return sess;
+        const matchingClass = classrooms.find((c) => c.id === sess.classroomId);
+        return {
+          ...sess,
+          classroom: sess.classroom || {
+            id: sess.classroomId,
+            subjectName: matchingClass?.subjectName || "Séance de cours",
+            mode: "HOME" as any,
+            student: {
+              id: "",
+              fullName: matchingClass?.studentName || "Élève",
+              gradeLevel: "",
+              parent: { id: "", user: { fullName: "", phoneNumber: "" } },
+            },
+            teacherProfile: {
+              id: "",
+              user: { fullName: matchingClass?.teacherName || "Tuteur", phoneNumber: "", email: "" },
+            },
+          },
+        };
+      });
+      setSessions((prev) => [...prev, ...hydrated]);
     }
     setShowScheduleModal(false);
   };
@@ -428,7 +456,7 @@ export function ClassroomCalendar({
               </option>
               {classrooms.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.subjectName} — {c.studentName} ({c.teacherName})
+                  {c?.subjectName || "Cours"} — {c?.studentName || "Élève"} ({c?.teacherName || "Tuteur"})
                 </option>
               ))}
             </select>
@@ -528,10 +556,10 @@ export function ClassroomCalendar({
                               ? "bg-purple-50 text-purple-900 border-purple-200 hover:bg-purple-100"
                               : "bg-blue-50/80 text-[#16385c] border-blue-200 hover:bg-blue-100"
                           }`}
-                          title={`${sess.classroom.subjectName} (${timeStr})`}
+                          title={`${sess.classroom?.subjectName || "Cours"} (${timeStr})`}
                         >
                           <div className="flex items-center justify-between gap-1">
-                            <span className="font-bold truncate">{sess.classroom.subjectName}</span>
+                            <span className="font-bold truncate">{sess.classroom?.subjectName || "Cours"}</span>
                             <span className="text-[10px] opacity-75 shrink-0">{timeStr}</span>
                           </div>
                           {isPending && (
@@ -607,7 +635,7 @@ export function ClassroomCalendar({
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-extrabold text-slate-800 text-sm">
-                          {sess.classroom.subjectName}
+                          {sess.classroom?.subjectName || "Séance de cours"}
                         </span>
                         {isPending ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
@@ -638,11 +666,11 @@ export function ClassroomCalendar({
                         </span>
                         <span>•</span>
                         <span>
-                          {locale === "en" ? "Student:" : "Élève :"} {sess.classroom.student.fullName}
+                          {locale === "en" ? "Student:" : "Élève :"} {sess.classroom?.student?.fullName || "Élève"}
                         </span>
                         <span>•</span>
                         <span>
-                          {locale === "en" ? "Tutor:" : "Tuteur :"} {sess.classroom.teacherProfile.user.fullName}
+                          {locale === "en" ? "Tutor:" : "Tuteur :"} {sess.classroom?.teacherProfile?.user?.fullName || "Tuteur"}
                         </span>
                       </div>
                     </div>
@@ -725,6 +753,7 @@ export function ClassroomCalendar({
       {showScheduleModal && (
         <SchedulePackageModal
           classrooms={classrooms}
+          defaultClassroomId={selectedClassroomId !== "ALL" ? selectedClassroomId : undefined}
           onClose={() => setShowScheduleModal(false)}
           onSuccess={handleBatchPlanned}
         />

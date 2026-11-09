@@ -99,7 +99,7 @@ export function AttendanceRecordModal({
               {locale === "en" ? "Record Attendance" : "Feuille d'émargement & Présence"}
             </h3>
             <p className="text-[11px] text-slate-400">
-              Séance #{session.sessionSequence} • {session.classroom.subjectName}
+              Séance #{session.sessionSequence} • {session.classroom?.subjectName || "Cours"}
             </p>
           </div>
           <button

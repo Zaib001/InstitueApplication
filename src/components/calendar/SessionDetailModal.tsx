@@ -166,7 +166,7 @@ export function SessionDetailModal({
               )}
             </div>
             <h3 className="font-extrabold text-slate-800 text-base sm:text-lg">
-              {session.classroom.subjectName}
+              {session.classroom?.subjectName || "Séance de cours"}
             </h3>
             <p className="text-[11px] text-slate-400 capitalize">{formattedDate}</p>
           </div>
@@ -231,10 +231,10 @@ export function SessionDetailModal({
               <span>{locale === "en" ? "Student" : "Élève"}</span>
             </span>
             <span className="font-bold text-slate-800 block text-xs truncate">
-              {session.classroom.student.fullName}
+              {session.classroom?.student?.fullName || "Élève"}
             </span>
             <span className="text-[11px] text-slate-400 block truncate">
-              {session.classroom.student.gradeLevel || "Soutien scolaire"}
+              {session.classroom?.student?.gradeLevel || "Soutien scolaire"}
             </span>
           </div>
 
@@ -245,16 +245,16 @@ export function SessionDetailModal({
               <span>{locale === "en" ? "Tutor" : "Enseignant"}</span>
             </span>
             <span className="font-bold text-slate-800 block text-xs truncate">
-              {session.classroom.teacherProfile.user.fullName}
+              {session.classroom?.teacherProfile?.user?.fullName || "Enseignant"}
             </span>
             <span className="text-[11px] text-slate-400 block truncate">
-              {session.classroom.teacherProfile.user.phoneNumber || session.classroom.teacherProfile.user.email}
+              {session.classroom?.teacherProfile?.user?.phoneNumber || session.classroom?.teacherProfile?.user?.email || "—"}
             </span>
           </div>
         </div>
 
         {/* Online Video Link Support */}
-        {session.classroom.mode === "ONLINE" && session.classroom.externalVideoUrl && (
+        {session.classroom?.mode === "ONLINE" && session.classroom?.externalVideoUrl && (
           <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <Video className="w-4 h-4 text-indigo-600 shrink-0" />

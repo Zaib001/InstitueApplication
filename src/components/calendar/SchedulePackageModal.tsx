@@ -191,8 +191,8 @@ export function SchedulePackageModal({
             >
               {classrooms.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.subjectName} — {c.studentName} ({c.teacherName}) [
-                  {c.remainingToSchedule} restante(s)]
+                  {c?.subjectName || "Cours"} — {c?.studentName || "Élève"} ({c?.teacherName || "Tuteur"}) [
+                  {c?.remainingToSchedule ?? 0} restante(s)]
                 </option>
               ))}
             </select>

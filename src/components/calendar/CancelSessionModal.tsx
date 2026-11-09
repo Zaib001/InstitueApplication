@@ -88,8 +88,8 @@ export function CancelSessionModal({
         )}
 
         <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 leading-relaxed">
-          Séance #{session.sessionSequence} de <strong>{session.classroom.subjectName}</strong> avec{" "}
-          <strong>{session.classroom.student.fullName}</strong>.
+          Séance #{session.sessionSequence} de <strong>{session.classroom?.subjectName || "Cours"}</strong> avec{" "}
+          <strong>{session.classroom?.student?.fullName || "l'élève"}</strong>.
           <p className="mt-1 text-[11px] text-slate-400">
             L&apos;annulation est enregistrée dans l&apos;historique officiel de la classe et notifie l&apos;autre partie.
           </p>

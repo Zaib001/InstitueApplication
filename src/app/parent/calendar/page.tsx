@@ -11,7 +11,11 @@ import { SchedulingEngine } from "@/lib/scheduling/scheduling-engine";
 
 export const dynamic = "force-dynamic";
 
-export default async function ParentCalendarPage() {
+export default async function ParentCalendarPage(props: {
+  searchParams?: Promise<{ classroomId?: string }>;
+}) {
+  const searchParams = props.searchParams ? await props.searchParams : undefined;
+  const initialClassroomId = searchParams?.classroomId;
   const user = await getCurrentUser();
 
   if (!user) {
@@ -109,32 +113,49 @@ export default async function ParentCalendarPage() {
     rescheduleReason: s.rescheduleReason,
     cancelledAt: s.cancelledAt ? s.cancelledAt.toISOString() : null,
     cancellationReason: s.cancellationReason,
-    classroom: {
-      id: s.classroom.id,
-      subjectName: s.classroom.subjectName,
-      mode: s.classroom.mode,
-      externalVideoUrl: s.classroom.externalVideoUrl,
-      student: {
-        id: s.classroom.student.id,
-        fullName: s.classroom.student.fullName,
-        gradeLevel: s.classroom.student.gradeLevel,
-        parent: {
-          id: s.classroom.student.parent.id,
-          user: {
-            fullName: s.classroom.student.parent.user.fullName,
-            phoneNumber: s.classroom.student.parent.user.phoneNumber,
+    classroom: s.classroom
+      ? {
+          id: s.classroom.id,
+          subjectName: s.classroom.subjectName || "Cours",
+          mode: s.classroom.mode,
+          externalVideoUrl: s.classroom.externalVideoUrl,
+          student: {
+            id: s.classroom.student?.id || "",
+            fullName: s.classroom.student?.fullName || "Élève",
+            gradeLevel: s.classroom.student?.gradeLevel || "",
+            parent: {
+              id: s.classroom.student?.parent?.id || "",
+              user: {
+                fullName: s.classroom.student?.parent?.user?.fullName || "Parent",
+                phoneNumber: s.classroom.student?.parent?.user?.phoneNumber || "",
+              },
+            },
+          },
+          teacherProfile: {
+            id: s.classroom.teacherProfile?.id || "",
+            user: {
+              fullName: s.classroom.teacherProfile?.user?.fullName || "Tuteur",
+              phoneNumber: s.classroom.teacherProfile?.user?.phoneNumber || "",
+              email: s.classroom.teacherProfile?.user?.email || "",
+            },
+          },
+        }
+      : {
+          id: s.classroomId,
+          subjectName: "Séance de cours",
+          mode: "HOME" as any,
+          externalVideoUrl: null,
+          student: {
+            id: "",
+            fullName: "Élève",
+            gradeLevel: "",
+            parent: { id: "", user: { fullName: "Parent", phoneNumber: "" } },
+          },
+          teacherProfile: {
+            id: "",
+            user: { fullName: "Tuteur", phoneNumber: "", email: "" },
           },
         },
-      },
-      teacherProfile: {
-        id: s.classroom.teacherProfile.id,
-        user: {
-          fullName: s.classroom.teacherProfile.user.fullName,
-          phoneNumber: s.classroom.teacherProfile.user.phoneNumber,
-          email: s.classroom.teacherProfile.user.email,
-        },
-      },
-    },
   }));
 
   return (
@@ -144,6 +165,7 @@ export default async function ParentCalendarPage() {
         classrooms={classroomOptions}
         userRole={user.role}
         userFullName={user.fullName}
+        initialClassroomId={initialClassroomId}
       />
     </LightDashboardLayout>
   );

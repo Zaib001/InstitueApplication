@@ -351,6 +351,31 @@ export class SchedulingEngine {
             isFunded: isClassroomFunded,
             status: SessionStatus.SCHEDULED,
           },
+          include: {
+            classroom: {
+              include: {
+                student: {
+                  select: {
+                    id: true,
+                    fullName: true,
+                    gradeLevel: true,
+                    parent: {
+                      select: {
+                        id: true,
+                        user: { select: { fullName: true, phoneNumber: true } },
+                      },
+                    },
+                  },
+                },
+                teacherProfile: {
+                  select: {
+                    id: true,
+                    user: { select: { fullName: true, phoneNumber: true, email: true } },
+                  },
+                },
+              },
+            },
+          },
         });
 
         records.push(session);

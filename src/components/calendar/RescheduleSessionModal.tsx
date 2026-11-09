@@ -44,10 +44,11 @@ export function RescheduleSessionModal({
       start.setUTCHours(hours, mins, 0, 0);
       const end = new Date(start.getTime() + checkDur * 60000);
 
+      const teacherProfId = session.classroom?.teacherProfile?.id;
+      if (!teacherProfId) return;
+
       const res = await fetch(
-        `/api/calendar/availability-check?teacherProfileId=${
-          session.classroom.teacherProfile.id
-        }&start=${start.toISOString()}&end=${end.toISOString()}&excludeSessionId=${session.id}`
+        `/api/calendar/availability-check?teacherProfileId=${teacherProfId}&start=${start.toISOString()}&end=${end.toISOString()}&excludeSessionId=${session.id}`
       );
       const data = await res.json();
       if (data.hasConflict) {
@@ -129,7 +130,7 @@ export function RescheduleSessionModal({
               {locale === "en" ? "Reschedule Session" : "Reprogrammer la séance"}
             </h3>
             <p className="text-[11px] text-slate-400">
-              Séance #{session.sessionSequence} • {session.classroom.subjectName}
+              Séance #{session.sessionSequence} • {session.classroom?.subjectName || "Cours"}
             </p>
           </div>
           <button
