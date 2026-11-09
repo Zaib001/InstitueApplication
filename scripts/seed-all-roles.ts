@@ -54,6 +54,7 @@ async function main() {
     { name: "Histoire-Géographie", category: "Sciences Humaines" },
     { name: "Philosophie", category: "Sciences Humaines" },
     { name: "Informatique & Bureautique", category: "Technologie" },
+    { name: "Autre", category: "Spécialisé" },
   ];
 
   for (const s of subjectsData) {
@@ -74,6 +75,7 @@ async function main() {
     { name: "Terminale Sciences Expérimentales (SE)", cycle: "LYCEE", orderIndex: 9 },
     { name: "Terminale Sciences Sociales (SS)", cycle: "LYCEE", orderIndex: 10 },
     { name: "Université / Classes Préparatoires", cycle: "SUPERIEUR", orderIndex: 11 },
+    { name: "Autre", cycle: "AUTRE", orderIndex: 99 },
   ];
 
   for (const g of gradeLevelsData) {

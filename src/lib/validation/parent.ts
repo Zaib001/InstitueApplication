@@ -5,6 +5,7 @@ export const EducationCycleEnum = z.enum([
   "COLLEGE",
   "LYCEE",
   "SUPERIEUR",
+  "AUTRE",
 ]);
 
 export type EducationCycle = z.infer<typeof EducationCycleEnum>;
@@ -49,16 +50,23 @@ export const parentProfileUpdateSchema = z.object({
 export type ParentProfileUpdateInput = z.infer<typeof parentProfileUpdateSchema>;
 
 /**
- * Validation schema for creating a Student Profile.
+ * Base object schema for creating or updating a Student Profile.
  * Minimizes sensitive child data collection while capturing academic needs.
  */
-export const studentCreateSchema = z.object({
+export const baseStudentSchema = z.object({
   fullName: z
     .string()
     .trim()
     .min(2, "Le nom de l'élève doit comporter au moins 2 caractères.")
     .max(80, "Le nom ne peut pas dépasser 80 caractères."),
   cycle: EducationCycleEnum.default("LYCEE"),
+  customCycle: z
+    .string()
+    .trim()
+    .max(120, "L'intitulé du cycle personnalisé ne peut dépasser 120 caractères.")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   gradeLevel: z
     .string()
     .trim()
@@ -95,6 +103,13 @@ export const studentCreateSchema = z.object({
     .array(z.string().trim())
     .max(15, "Maximum 15 matières cibles.")
     .default([]),
+  customSubject: z
+    .string()
+    .trim()
+    .max(120, "L'intitulé de la matière personnalisée ne peut dépasser 120 caractères.")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   notes: z
     .string()
     .trim()
@@ -104,10 +119,49 @@ export const studentCreateSchema = z.object({
     .or(z.literal("")),
 });
 
+/**
+ * Validation schema for creating a Student Profile with refinement rules.
+ */
+export const studentCreateSchema = baseStudentSchema.superRefine((data, ctx) => {
+  // If cycle is "AUTRE", customCycle is mandatory
+  if (data.cycle === "AUTRE" && (!data.customCycle || data.customCycle.trim().length < 2)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["customCycle"],
+      message: "Veuillez préciser le cycle ou la formation spécifique (au moins 2 caractères).",
+    });
+  }
+
+  // If preferredSubjects includes "Autre", customSubject is mandatory
+  if (data.preferredSubjects && data.preferredSubjects.includes("Autre") && (!data.customSubject || data.customSubject.trim().length < 2)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["customSubject"],
+      message: "Veuillez préciser la matière ou la formation spécifique (au moins 2 caractères).",
+    });
+  }
+});
+
 export type StudentCreateInput = z.infer<typeof studentCreateSchema>;
 
 /**
  * Validation schema for updating an existing Student Profile.
  */
-export const studentUpdateSchema = studentCreateSchema.partial();
+export const studentUpdateSchema = baseStudentSchema.partial().superRefine((data, ctx) => {
+  if (data.cycle === "AUTRE" && (!data.customCycle || data.customCycle.trim().length < 2)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["customCycle"],
+      message: "Veuillez préciser le cycle ou la formation spécifique (au moins 2 caractères).",
+    });
+  }
+
+  if (data.preferredSubjects && data.preferredSubjects.includes("Autre") && (!data.customSubject || data.customSubject.trim().length < 2)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["customSubject"],
+      message: "Veuillez préciser la matière ou la formation spécifique (au moins 2 caractères).",
+    });
+  }
+});
 export type StudentUpdateInput = z.infer<typeof studentUpdateSchema>;

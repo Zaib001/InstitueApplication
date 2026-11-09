@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { getCurrentUser } from "@/lib/auth/session";
 import { LightDashboardLayout } from "@/components/dashboard/LightDashboardLayout";
-import { ProfileSettingsForm } from "@/components/dashboard/ProfileSettingsForm";
+import { AccountSettingsClient } from "@/components/dashboard/AccountSettingsClient";
 
 export const dynamic = "force-dynamic";
 
@@ -14,40 +14,62 @@ export default async function SettingsPage() {
     redirect("/login?callbackUrl=/settings");
   }
 
-  let address: string | null = null;
-  let city: string | null = "Conakry";
+  // Fetch complete profile with metadata, joined profiles, and counts
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: {
+      id: true,
+      email: true,
+      fullName: true,
+      phoneNumber: true,
+      role: true,
+      createdAt: true,
+      parentProfile: {
+        select: {
+          address: true,
+          city: true,
+          children: {
+            select: { id: true },
+          },
+        },
+      },
+      teacherProfile: {
+        select: {
+          city: true,
+          verificationStatus: true,
+          classrooms: {
+            select: { id: true },
+          },
+        },
+      },
+    },
+  });
 
-  if (user.role === "PARENT") {
-    const parentProfile = await prisma.parentProfile.findUnique({
-      where: { userId: user.id },
-      select: { address: true, city: true },
-    });
-    address = parentProfile?.address ?? null;
-    city = parentProfile?.city ?? "Conakry";
-  } else if (user.role === "TEACHER") {
-    const teacherProfile = await prisma.teacherProfile.findUnique({
-      where: { userId: user.id },
-      select: { city: true },
-    });
-    city = teacherProfile?.city ?? "Conakry";
-  }
+  const address = dbUser?.parentProfile?.address ?? null;
+  const city =
+    dbUser?.parentProfile?.city ??
+    dbUser?.teacherProfile?.city ??
+    "Conakry";
+
+  const memberSince = dbUser?.createdAt
+    ? dbUser.createdAt.toISOString()
+    : new Date().toISOString();
+
+  const stats = {
+    childrenCount: dbUser?.parentProfile?.children?.length ?? 0,
+    classroomsCount: dbUser?.teacherProfile?.classrooms?.length ?? 0,
+    verificationStatus: dbUser?.teacherProfile?.verificationStatus ?? null,
+  };
 
   return (
-    <LightDashboardLayout user={user}>
-      <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto">
-        <div>
-          <h1 className="text-2xl font-black text-slate-800 font-heading tracking-tight">
-            Paramètres du Compte
-          </h1>
-          <p className="text-xs text-slate-400">
-            Gérez vos coordonnées, informations personnelles et la sécurité de votre mot de passe.
-          </p>
-        </div>
-
-        <ProfileSettingsForm
+    <LightDashboardLayout user={user} hideRightProfile={true}>
+      <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <AccountSettingsClient
           user={user}
           initialAddress={address}
           initialCity={city}
+          memberSince={memberSince}
+          stats={stats}
         />
       </div>
     </LightDashboardLayout>

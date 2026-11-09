@@ -54,6 +54,8 @@ interface TeacherDetailProfile {
   monthlyPackageRateGnf: number;
   monthlyPackageSessions: number;
   monthlyPackageHoursPerSession: number;
+  customSubject?: string | null;
+  customGradeLevel?: string | null;
   verificationStatus: "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "REJECTED";
   rejectionReason: string | null;
   submittedAt: string | null;
@@ -218,7 +220,7 @@ export function AdminVerificationDetailClient({ teacherId }: { teacherId: string
     return (
       <div className="flex-1 flex items-center justify-center p-12">
         <div className="text-center space-y-3">
-          <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto" />
+          <Loader2 className="w-8 h-8 text-[#16385c] animate-spin mx-auto" />
           <p className="text-xs font-semibold text-slate-600">
             {locale === "en" ? "Loading teacher dossier..." : "Chargement du dossier de vérification..."}
           </p>
@@ -519,14 +521,17 @@ export function AdminVerificationDetailClient({ teacherId }: { teacherId: string
                   {locale === "en" ? "Assigned Subjects" : "Matières enseignées"}
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {profile.subjects.map((s) => (
-                    <span
-                      key={s.id}
-                      className="text-xs px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 border border-blue-200 font-semibold"
-                    >
-                      {s.subject.name}
-                    </span>
-                  ))}
+                  {profile.subjects.map((s) => {
+                    const isCustom = s.subject.name === "Autre" && profile.customSubject;
+                    return (
+                      <span
+                        key={s.id}
+                        className="text-xs px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 border border-blue-200 font-semibold"
+                      >
+                        {isCustom ? `Autre (${profile.customSubject})` : s.subject.name}
+                      </span>
+                    );
+                  })}
                   {profile.subjects.length === 0 && (
                     <span className="text-xs text-slate-400 italic">
                       {locale === "en" ? "No subjects selected." : "Aucune matière sélectionnée."}
@@ -540,14 +545,17 @@ export function AdminVerificationDetailClient({ teacherId }: { teacherId: string
                   {locale === "en" ? "Supported Educational Cycles" : "Cycles scolaires pris en charge"}
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {profile.gradeLevels.map((g) => (
-                    <span
-                      key={g.id}
-                      className="text-xs px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold"
-                    >
-                      {g.gradeLevel.name} ({g.gradeLevel.cycle})
-                    </span>
-                  ))}
+                  {profile.gradeLevels.map((g) => {
+                    const isCustom = g.gradeLevel.name === "Autre" && profile.customGradeLevel;
+                    return (
+                      <span
+                        key={g.id}
+                        className="text-xs px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold"
+                      >
+                        {isCustom ? `Autre (${profile.customGradeLevel})` : `${g.gradeLevel.name} (${g.gradeLevel.cycle})`}
+                      </span>
+                    );
+                  })}
                   {profile.gradeLevels.length === 0 && (
                     <span className="text-xs text-slate-400 italic">
                       {locale === "en" ? "No cycles selected." : "Aucun cycle sélectionné."}

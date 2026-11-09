@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import { LightSidebar } from "./LightSidebar";
 import { LightRightProfile } from "./LightRightProfile";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { AuthenticatedUser } from "@/lib/auth/session";
 import { Menu, X } from "lucide-react";
 
@@ -15,9 +17,20 @@ interface LightDashboardLayoutProps {
 export function LightDashboardLayout({
   user,
   children,
-  hideRightProfile = false,
+  hideRightProfile,
 }: LightDashboardLayoutProps) {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Profile sidebar is displayed ONLY on the main dashboard pages (/admin/dashboard, /parent/dashboard, /teacher/dashboard).
+  // On all other pages (requests, children, verifications, settings, etc.), it is false so the UI has full width and breathing room.
+  const isDashboardRoute =
+    pathname === "/admin/dashboard" ||
+    pathname === "/parent/dashboard" ||
+    pathname === "/teacher/dashboard";
+
+  const showProfile =
+    hideRightProfile !== undefined ? !hideRightProfile : isDashboardRoute;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col antialiased">
@@ -37,8 +50,11 @@ export function LightDashboardLayout({
           </span>
         </div>
 
-        <div className="w-8 h-8 rounded-full bg-[#16385c] text-white flex items-center justify-center text-xs font-bold">
-          {user.fullName.charAt(0).toUpperCase()}
+        <div className="flex items-center gap-2">
+          <NotificationBell variant="light" />
+          <div className="w-8 h-8 rounded-full bg-[#16385c] text-white flex items-center justify-center text-xs font-bold">
+            {user.fullName.charAt(0).toUpperCase()}
+          </div>
         </div>
       </header>
 
@@ -67,8 +83,8 @@ export function LightDashboardLayout({
           {children}
         </main>
 
-        {/* Right Sidebar (Desktop only) */}
-        {!hideRightProfile && (
+        {/* Right Sidebar (Desktop only - Shown on dashboard, hidden on other pages) */}
+        {showProfile && (
           <div className="hidden xl:block shrink-0">
             <LightRightProfile user={user} />
           </div>

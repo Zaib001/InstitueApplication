@@ -12,6 +12,7 @@ import {
   Calendar,
   Sparkles,
   Archive,
+  BarChart3,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
@@ -20,10 +21,12 @@ export interface StudentCardData {
   fullName: string;
   gradeLevel: string;
   cycle?: string | null;
+  customCycle?: string | null;
   schoolName?: string | null;
   dateOfBirth?: string | null;
   supportNeeds?: string | null;
   preferredSubjects?: string[];
+  customSubject?: string | null;
   notes?: string | null;
   isArchived?: boolean;
   createdAt?: string;
@@ -47,6 +50,7 @@ export function StudentCard({ student, onEdit, onDelete }: StudentCardProps) {
     COLLEGE: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
     LYCEE: { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
     SUPERIEUR: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+    AUTRE: { bg: "bg-amber-50", text: "text-amber-800", border: "border-amber-200" },
   };
 
   const cycleStyle = student.cycle && cycleColors[student.cycle.toUpperCase()]
@@ -89,7 +93,7 @@ export function StudentCard({ student, onEdit, onDelete }: StudentCardProps) {
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${cycleStyle.bg} ${cycleStyle.text} ${cycleStyle.border}`}
               >
-                {student.cycle}
+                {student.cycle === "AUTRE" && student.customCycle ? student.customCycle : student.cycle}
               </span>
             )}
           </div>
@@ -110,14 +114,17 @@ export function StudentCard({ student, onEdit, onDelete }: StudentCardProps) {
               {t("parent.preferredSubjects", "Matières cibles :")}
             </span>
             <div className="flex flex-wrap gap-1.5">
-              {student.preferredSubjects.slice(0, 3).map((sub, idx) => (
-                <span
-                  key={idx}
-                  className="text-[11px] font-medium px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200/60"
-                >
-                  {sub}
-                </span>
-              ))}
+              {student.preferredSubjects.slice(0, 3).map((sub, idx) => {
+                const isCustom = sub === "Autre" && student.customSubject;
+                return (
+                  <span
+                    key={idx}
+                    className="text-[11px] font-medium px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200/60"
+                  >
+                    {isCustom ? `Autre (${student.customSubject})` : sub}
+                  </span>
+                );
+              })}
               {student.preferredSubjects.length > 3 && (
                 <span className="text-[10px] font-bold text-slate-400 self-center">
                   +{student.preferredSubjects.length - 3}
@@ -141,21 +148,41 @@ export function StudentCard({ student, onEdit, onDelete }: StudentCardProps) {
       </div>
 
       {/* Card Footer: View, Edit, and Delete/Archive Actions */}
-      <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-        <Link
-          href={`/parent/children/${student.id}`}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition-colors"
-        >
-          <Eye className="w-3.5 h-3.5" />
-          <span>{t("parent.viewDossier", "Consulter la fiche")}</span>
-        </Link>
+      <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Link
+            href={`/parent/requests?studentId=${student.id}`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition-colors shrink-0"
+            title={locale === "en" ? "Tutoring Requests" : "Demandes de cours"}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+            <span>{locale === "en" ? "Requests" : "Demandes"}</span>
+          </Link>
 
-        <div className="flex items-center gap-1">
+          <Link
+            href={`/parent/children/${student.id}`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>{t("parent.viewDossier", "Consulter la fiche")}</span>
+          </Link>
+
+          <Link
+            href={`/parent/students/${student.id}/progress`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-semibold transition-colors shrink-0"
+            title={locale === "en" ? "Digital Progress Book" : "Carnet de progression"}
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-purple-600" />
+            <span>{locale === "en" ? "Progress" : "Carnet"}</span>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-1 shrink-0 ml-auto">
           {onEdit && (
             <button
               type="button"
               onClick={() => onEdit(student)}
-              className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
               title={t("parent.editDossier", "Modifier")}
               aria-label={t("parent.editDossier", "Modifier")}
             >
@@ -167,7 +194,7 @@ export function StudentCard({ student, onEdit, onDelete }: StudentCardProps) {
             <button
               type="button"
               onClick={() => onDelete(student)}
-              className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+              className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
               title={t("parent.archiveDossier", "Archiver")}
               aria-label={t("parent.archiveDossier", "Archiver")}
             >

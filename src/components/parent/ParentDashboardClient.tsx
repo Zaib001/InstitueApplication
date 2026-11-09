@@ -25,9 +25,14 @@ import {
   Percent,
   Calendar,
   Wallet,
+  ChevronRight,
+  PlusCircle,
 } from "lucide-react";
+import { RequestStatus } from "@prisma/client";
+import { RequestStatusBadge } from "@/components/requests/RequestStatusBadge";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { AuthenticatedUser } from "@/lib/auth/session";
 import { StudentCardData } from "./StudentCard";
 import { StudentList } from "./StudentList";
@@ -64,6 +69,21 @@ interface ParentDashboardClientProps {
     scheduledText: string;
     locationText?: string;
   } | null;
+  requestsSummary?: {
+    totalCount: number;
+    recentRequests: Array<{
+      id: string;
+      subjectName: string;
+      customSubject?: string | null;
+      gradeLevelName: string;
+      mode: string;
+      budgetGnf: number;
+      status: RequestStatus;
+      createdAt: string;
+      studentName: string;
+      applicationsCount: number;
+    }>;
+  };
 }
 
 export function ParentDashboardClient({
@@ -72,12 +92,13 @@ export function ParentDashboardClient({
   initialChildren,
   masterData,
   stats = {
-    totalChildren: 2,
-    completedSessions: 22,
-    hoursSpentTotal: "44h 00m",
-    activeEscrowOrders: 1,
+    totalChildren: 0,
+    completedSessions: 0,
+    hoursSpentTotal: "0h 00m",
+    activeEscrowOrders: 0,
   },
   upcomingSession,
+  requestsSummary,
 }: ParentDashboardClientProps) {
   const { t, locale } = useTranslation();
 
@@ -232,53 +253,8 @@ export function ParentDashboardClient({
             />
           </div>
 
-          {/* Notifications Bell */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-xs relative cursor-pointer"
-              aria-label="Notifications"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="w-2 h-2 rounded-full bg-[#e59a38] absolute top-2 right-2 ring-2 ring-white" />
-            </button>
-
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-40 space-y-3 animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <span className="font-bold text-xs text-slate-800">
-                    {t("dashboard.notificationsTitle", "Notifications")}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setShowNotifications(false)}
-                    className="text-slate-400 hover:text-slate-600 text-xs cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <div className="space-y-2 text-xs">
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                    <p className="font-semibold text-slate-800">
-                      {locale === "en" ? "Math session confirmed for Mamadou" : "Séance de Mathématiques validée pour Mamadou"}
-                    </p>
-                    <span className="text-[10px] text-slate-400">
-                      {locale === "en" ? "Yesterday • 6:15 PM" : "Hier • 18h15"}
-                    </span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                    <p className="font-semibold text-slate-800">
-                      {locale === "en" ? "Escrow deposit 2,400,000 GNF secured" : "Séquestre forfait 2 400 000 GNF approvisionné"}
-                    </p>
-                    <span className="text-[10px] text-slate-400">
-                      {locale === "en" ? "Orange Money • Guaranteed" : "Orange Money • Garanti"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Universal Notification Bell */}
+          <NotificationBell variant="light" />
 
           <LanguageSwitcher />
         </div>
@@ -365,9 +341,11 @@ export function ParentDashboardClient({
               <Clock className="w-3 h-3 text-[#e59a38]" />
               <div>
                 <span className="font-semibold block">
-                  {locale === "en" ? "Today • 2 Hours" : "Aujourd'hui • 2h 00m"}
+                  {stats.completedSessions > 0
+                    ? (locale === "en" ? "Hours Delivered" : "Heures Enregistrées")
+                    : (locale === "en" ? "Tutoring Volume" : "Volume d'heures")}
                 </span>
-                <span className="text-[#e59a38] font-bold">Terminale SM</span>
+                <span className="text-[#e59a38] font-bold">{stats.hoursSpentTotal}</span>
               </div>
             </div>
 
@@ -384,33 +362,43 @@ export function ParentDashboardClient({
                 </linearGradient>
               </defs>
 
-              <rect x="330" y="20" width="40" height="130" rx="12" fill="#eff6ff" />
+              {stats.completedSessions > 0 && (
+                <rect x="330" y="20" width="40" height="130" rx="12" fill="#eff6ff" />
+              )}
 
               <path
-                d="M 10 100 
-                   C 60 90, 80 40, 130 50 
-                   C 170 58, 200 115, 250 110 
-                   C 290 105, 310 25, 350 35 
-                   C 390 45, 430 110, 480 95 
-                   C 520 85, 550 105, 590 100 
-                   L 590 150 L 10 150 Z"
+                d={stats.completedSessions > 0
+                  ? `M 10 100 
+                     C 60 90, 80 40, 130 50 
+                     C 170 58, 200 115, 250 110 
+                     C 290 105, 310 25, 350 35 
+                     C 390 45, 430 110, 480 95 
+                     C 520 85, 550 105, 590 100 
+                     L 590 150 L 10 150 Z`
+                  : "M 10 120 L 590 120 L 590 150 L 10 150 Z"}
                 fill="url(#parentWaveGrad)"
               />
 
               <path
-                d="M 10 100 
-                   C 60 90, 80 40, 130 50 
-                   C 170 58, 200 115, 250 110 
-                   C 290 105, 310 25, 350 35 
-                   C 390 45, 430 110, 480 95 
-                   C 520 85, 550 105, 590 100"
+                d={stats.completedSessions > 0
+                  ? `M 10 100 
+                     C 60 90, 80 40, 130 50 
+                     C 170 58, 200 115, 250 110 
+                     C 290 105, 310 25, 350 35 
+                     C 390 45, 430 110, 480 95 
+                     C 520 85, 550 105, 590 100`
+                  : "M 10 120 L 590 120"}
                 stroke="#2563eb"
                 strokeWidth="3.5"
                 strokeLinecap="round"
               />
 
-              <circle cx="350" cy="35" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2.5" />
-              <circle cx="350" cy="35" r="9" stroke="#2563eb" strokeOpacity="0.3" strokeWidth="2" />
+              {stats.completedSessions > 0 && (
+                <>
+                  <circle cx="350" cy="35" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2.5" />
+                  <circle cx="350" cy="35" r="9" stroke="#2563eb" strokeOpacity="0.3" strokeWidth="2" />
+                </>
+              )}
             </svg>
 
             <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium px-2 pt-1">
@@ -454,12 +442,14 @@ export function ParentDashboardClient({
                 strokeWidth="16"
                 strokeLinecap="round"
                 strokeDasharray="188.5"
-                strokeDashoffset="7.5"
+                strokeDashoffset={stats.completedSessions > 0 ? 0 : 188.5}
               />
             </svg>
 
             <div className="absolute bottom-2 text-center">
-              <span className="text-2xl font-black text-slate-800">98%</span>
+              <span className="text-2xl font-black text-slate-800">
+                {stats.completedSessions > 0 ? "100%" : "0%"}
+              </span>
               <span className="block text-[10px] text-slate-400 font-medium">
                 {locale === "en" ? "Validated Sessions" : "Séances Validées"}
               </span>
@@ -468,13 +458,17 @@ export function ParentDashboardClient({
 
           <div className="space-y-3 w-full">
             <p className="text-xs text-slate-500 font-medium leading-relaxed">
-              {locale === "en"
-                ? "100% of completed sessions approved with high satisfaction ratings."
-                : "Toutes les séances ont été validées sans retard avec d'excellents rapports pédagogiques."}
+              {stats.completedSessions > 0
+                ? (locale === "en"
+                  ? "100% of completed sessions approved with high satisfaction ratings."
+                  : "Toutes les séances ont été validées sans retard avec d'excellents rapports pédagogiques.")
+                : (locale === "en"
+                  ? "No completed sessions yet. Metrics will update when your lessons take place."
+                  : "Aucune séance validée pour le moment. Vos métriques s'actualiseront après vos premiers cours.")}
             </p>
             <a
               href="#children"
-              className="block w-full py-2.5 px-4 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all cursor-pointer transform hover:-translate-y-0.5 text-center"
+              className="block w-full py-2.5 px-4 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white font-bold text-xs shadow-md shadow-blue-900/10 transition-all cursor-pointer transform hover:-translate-y-0.5 text-center"
             >
               {locale === "en" ? "Manage Children Profiles" : "Gérer les fiches de mes enfants"}
             </a>
@@ -499,15 +493,15 @@ export function ParentDashboardClient({
                 {upcomingSession
                   ? `${upcomingSession.subjectName} (${upcomingSession.childName})`
                   : (locale === "en"
-                      ? "Advanced Mathematics & Sciences (Mamadou Barry)"
-                      : "Mathématiques & Sciences Physiques (Mamadou Barry)")}
+                    ? "No scheduled session yet"
+                    : "Aucune séance programmée")}
               </h3>
               <p className="text-xs text-slate-500">
                 {upcomingSession
                   ? `${upcomingSession.scheduledText} • Tuteur : ${upcomingSession.teacherName}${upcomingSession.locationText ? ` • ${upcomingSession.locationText}` : ""}`
                   : (locale === "en"
-                      ? "Today, 4:30 PM • Tutor: M. Amadou Camara • In-home (Kipé, Conakry)"
-                      : "Aujourd'hui, 16h30 • Tuteur : M. Amadou Camara • Domicile (Kipé, Conakry)")}
+                    ? "Publish a tutoring request to connect with approved teachers in Conakry."
+                    : "Publiez une demande de cours pour être mis en relation avec des professeurs agréés.")}
               </p>
             </div>
           </div>
@@ -517,7 +511,9 @@ export function ParentDashboardClient({
               <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
                 {locale === "en" ? "Duration" : "Durée"}
               </span>
-              <span className="text-xs font-bold text-slate-800">02 h 00 m</span>
+              <span className="text-xs font-bold text-slate-800">
+                {upcomingSession ? "02 h 00 m" : "00 h 00 m"}
+              </span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -527,13 +523,13 @@ export function ParentDashboardClient({
               >
                 {locale === "en" ? "Student Dossier" : "Fiche élève"}
               </a>
-              <button
-                type="button"
-                onClick={() => setShowAddStudentModal(true)}
-                className="px-4 py-2 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold shadow-sm shadow-blue-500/25 transition-all cursor-pointer transform hover:-translate-y-0.5"
+              <Link
+                href="/parent/requests"
+                className="px-4 py-2 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white text-xs font-semibold shadow-sm shadow-blue-900/15 transition-all cursor-pointer transform hover:-translate-y-0.5 inline-flex items-center gap-1.5"
               >
-                {locale === "en" ? "+ Add Child" : "+ Ajouter un élève"}
-              </button>
+                <Plus className="w-3.5 h-3.5" />
+                <span>{locale === "en" ? "Tutoring Requests" : "Demandes de cours"}</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -598,6 +594,105 @@ export function ParentDashboardClient({
           onEditChild={(student) => setEditingStudent(student)}
           onDeleteChild={(student) => setDeletingStudent(student)}
         />
+      </div>
+
+      {/* 7. Parent Tutoring Requests Section */}
+      <div id="requests" className="pt-2 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-amber-500" />
+              <span>{locale === "en" ? "My Tutoring Requests" : "Mes Demandes de Soutien"}</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                {requestsSummary?.totalCount || 0}
+              </span>
+            </h2>
+            <p className="text-xs text-slate-500">
+              {locale === "en"
+                ? "Active requests for your children looking for verified tutors in Conakry"
+                : "Demandes actives pour vos enfants à la recherche de professeurs vérifiés à Conakry"}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href="/parent/requests"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-colors shadow-xs"
+            >
+              <span>{locale === "en" ? "Manage all requests" : "Gérer mes demandes"}</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            </Link>
+
+            <Link
+              href="/parent/requests"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#16385c] hover:bg-[#1f4a7a] transition-all shadow-xs"
+            >
+              <PlusCircle className="w-3.5 h-3.5 text-[#e59a38]" />
+              <span>{locale === "en" ? "New Request" : " Créer une demande"}</span>
+            </Link>
+          </div>
+        </div>
+
+        {(!requestsSummary?.recentRequests || requestsSummary.recentRequests.length === 0) ? (
+          <div className="p-8 rounded-3xl bg-white border border-slate-200/90 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 mx-auto flex items-center justify-center">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <div className="max-w-md mx-auto space-y-1">
+              <h3 className="font-bold text-sm text-slate-800">
+                {locale === "en" ? "No tutoring requests yet" : "Aucune demande de cours pour le moment"}
+              </h3>
+              <p className="text-xs text-slate-500">
+                {locale === "en"
+                  ? "Publish a tutoring request for your child to start receiving verified teacher applications."
+                  : "Publiez une demande de soutien pour votre enfant afin de recevoir les candidatures de professeurs vérifiés."}
+              </p>
+            </div>
+            <Link
+              href="/parent/requests"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#16385c] hover:bg-[#1f4a7a] transition-all shadow-sm"
+            >
+              <PlusCircle className="w-4 h-4 text-[#e59a38]" />
+              <span>{locale === "en" ? "Create Tutoring Request" : "Créer une première demande"}</span>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {requestsSummary.recentRequests.map((req) => (
+              <Link
+                key={req.id}
+                href={`/parent/requests/${req.id}`}
+                className="p-4 rounded-2xl bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all space-y-3 block group"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <RequestStatusBadge status={req.status} />
+                  <span className="text-[10px] text-slate-400">
+                    {new Date(req.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+                  </span>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-sm text-[#16385c] group-hover:text-blue-600 transition-colors line-clamp-1">
+                    {req.customSubject ? `${req.customSubject} (${req.subjectName})` : req.subjectName}
+                  </h4>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {req.studentName} • {req.gradeLevelName}
+                  </p>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="font-bold text-slate-800">
+                    {new Intl.NumberFormat("fr-GN").format(req.budgetGnf)} GNF
+                  </span>
+                  <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1 group-hover:text-blue-600">
+                    <span>{locale === "en" ? "Details" : "Voir"}</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Modals */}

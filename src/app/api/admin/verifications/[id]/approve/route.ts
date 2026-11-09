@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getCurrentUser } from "@/lib/auth/session";
-import { UserRole, TeacherVerificationStatus, DocumentStatus } from "@prisma/client";
+import { UserRole, TeacherVerificationStatus, DocumentStatus, NotificationEventType, NotificationPriority } from "@prisma/client";
+import { NotificationService } from "@/lib/notifications/notification-service";
 
 export async function POST(
   _request: Request,
@@ -95,16 +96,26 @@ export async function POST(
       },
     });
 
-    // 4. In-App Notification for the teacher
-    await tx.notification.create({
-      data: {
-        userId: profile.userId,
+    // 4. P14: In-App Notification and Transactional Email for the teacher
+    await NotificationService.publishNotificationEvent(
+      {
+        eventType: NotificationEventType.TEACHER_VERIFIED,
+        recipientUserId: profile.userId,
+        actorUserId: user.id,
+        entityType: "TeacherProfile",
+        entityId: profile.id,
         title: "Félicitations ! Votre profil est approuvé 🎉",
         message:
           "Votre candidature d'enseignant a été validée par l'administration. Vous pouvez désormais postuler aux demandes de soutien scolaire.",
         linkUrl: "/teacher/dashboard",
+        priority: NotificationPriority.HIGH,
+        emailPayload: {
+          teacherName: profile.user.fullName,
+          dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/teacher/dashboard`,
+        },
       },
-    });
+      tx
+    );
 
     return updated;
   });

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import {
   GraduationCap,
   LogOut,
@@ -74,6 +75,8 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         {/* User Info & Actions */}
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
+
+          <NotificationBell variant="dark" />
 
           <div className="hidden md:flex items-center gap-2 text-right">
             <div>

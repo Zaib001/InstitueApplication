@@ -64,6 +64,7 @@ export async function PUT(
     if (validatedData.fullName !== undefined) updatePayload.fullName = validatedData.fullName;
     if (validatedData.gradeLevel !== undefined) updatePayload.gradeLevel = validatedData.gradeLevel;
     if (validatedData.cycle !== undefined) updatePayload.cycle = validatedData.cycle;
+    if (validatedData.customCycle !== undefined) updatePayload.customCycle = validatedData.customCycle || null;
     if (validatedData.schoolName !== undefined) updatePayload.schoolName = validatedData.schoolName || null;
     if (validatedData.dateOfBirth !== undefined) {
       updatePayload.dateOfBirth = validatedData.dateOfBirth ? new Date(validatedData.dateOfBirth) : null;
@@ -73,6 +74,9 @@ export async function PUT(
     }
     if (validatedData.preferredSubjects !== undefined) {
       updatePayload.preferredSubjects = validatedData.preferredSubjects;
+    }
+    if (validatedData.customSubject !== undefined) {
+      updatePayload.customSubject = validatedData.customSubject || null;
     }
     if (validatedData.notes !== undefined) {
       updatePayload.notes = validatedData.notes || null;

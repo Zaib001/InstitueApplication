@@ -68,7 +68,9 @@ interface TeacherApprovedDossierViewProps {
   monthlyPackageSessions: number;
   monthlyPackageHoursPerSession: number;
   selectedSubjects: SubjectItem[];
+  customSubject?: string | null;
   selectedGradeLevels: GradeLevelItem[];
+  customGradeLevel?: string | null;
   availabilities: AvailabilitySlot[];
   documents: DocumentItem[];
   submittedAt: string | null;
@@ -91,7 +93,9 @@ export function TeacherApprovedDossierView({
   monthlyPackageSessions,
   monthlyPackageHoursPerSession,
   selectedSubjects,
+  customSubject,
   selectedGradeLevels,
+  customGradeLevel,
   availabilities,
   documents,
   submittedAt,
@@ -153,12 +157,6 @@ export function TeacherApprovedDossierView({
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/teacher/dashboard"
-            className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 transition-colors border border-slate-200/90 shadow-xs"
-          >
-            {locale === "en" ? "Back to Dashboard" : "Tableau de bord"}
-          </Link>
           {onEditDossier && (
             <button
               type="button"
@@ -320,15 +318,18 @@ export function TeacherApprovedDossierView({
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedSubjects.length > 0 ? (
-                    selectedSubjects.map((sub) => (
-                      <span
-                        key={sub.id}
-                        className="px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-100 text-purple-900 font-bold text-xs flex items-center gap-1.5"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
-                        {sub.name}
-                      </span>
-                    ))
+                    selectedSubjects.map((sub) => {
+                      const isCustom = sub.name === "Autre" && customSubject;
+                      return (
+                        <span
+                          key={sub.id}
+                          className="px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-100 text-purple-900 font-bold text-xs flex items-center gap-1.5"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 text-purple-600" />
+                          {isCustom ? `Autre (${customSubject})` : sub.name}
+                        </span>
+                      );
+                    })
                   ) : (
                     <span className="text-xs text-slate-400">Mathématiques, Physique-Chimie</span>
                   )}
@@ -341,14 +342,17 @@ export function TeacherApprovedDossierView({
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {selectedGradeLevels.length > 0 ? (
-                    selectedGradeLevels.map((gl) => (
-                      <span
-                        key={gl.id}
-                        className="px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-100 text-blue-900 font-semibold text-xs"
-                      >
-                        {gl.name}
-                      </span>
-                    ))
+                    selectedGradeLevels.map((gl) => {
+                      const isCustom = gl.name === "Autre" && customGradeLevel;
+                      return (
+                        <span
+                          key={gl.id}
+                          className="px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-100 text-blue-900 font-semibold text-xs"
+                        >
+                          {isCustom ? `Autre (${customGradeLevel})` : gl.name}
+                        </span>
+                      );
+                    })
                   ) : (
                     <span className="text-xs text-slate-400">Terminale Sciences Mathématiques, Brevet BEPC</span>
                   )}

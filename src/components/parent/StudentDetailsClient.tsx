@@ -19,6 +19,7 @@ import {
   Layers,
   FileText,
   User,
+  BarChart3,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
@@ -73,6 +74,7 @@ export function StudentDetailsClient({
     COLLEGE: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
     LYCEE: { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
     SUPERIEUR: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+    AUTRE: { bg: "bg-amber-50", text: "text-amber-800", border: "border-amber-200" },
   };
 
   const cycleStyle = student.cycle && cycleColors[student.cycle.toUpperCase()]
@@ -139,6 +141,14 @@ export function StudentDetailsClient({
         </div>
 
         <div className="flex items-center gap-2.5">
+          <Link
+            href={`/parent/students/${student.id}/progress`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold shadow-xs transition-colors"
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>{locale === "en" ? "Progress Book" : "Carnet de progression"}</span>
+          </Link>
+
           <button
             type="button"
             onClick={() => setShowEditModal(true)}
@@ -203,7 +213,7 @@ export function StudentDetailsClient({
                   <span
                     className={`text-[11px] font-bold px-2.5 py-1 rounded-md border ${cycleStyle.bg} ${cycleStyle.text} ${cycleStyle.border}`}
                   >
-                    {student.cycle}
+                    {student.cycle === "AUTRE" && student.customCycle ? student.customCycle : student.cycle}
                   </span>
                 )}
               </div>
@@ -241,14 +251,17 @@ export function StudentDetailsClient({
               </span>
               {student.preferredSubjects && student.preferredSubjects.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
-                  {student.preferredSubjects.map((s, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 rounded-xl bg-blue-50 text-blue-900 border border-blue-200 text-xs font-semibold"
-                    >
-                      {s}
-                    </span>
-                  ))}
+                  {student.preferredSubjects.map((s, idx) => {
+                    const isCustom = s === "Autre" && student.customSubject;
+                    return (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-xl bg-blue-50 text-blue-900 border border-blue-200 text-xs font-semibold"
+                      >
+                        {isCustom ? `Autre (${student.customSubject})` : s}
+                      </span>
+                    );
+                  })}
                 </div>
               ) : (
                 <span className="text-xs text-slate-400">

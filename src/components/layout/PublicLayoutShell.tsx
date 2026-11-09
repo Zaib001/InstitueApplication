@@ -14,6 +14,7 @@ export function PublicLayoutShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/teacher") ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/settings") ||
+    pathname.startsWith("/notifications") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/forgot-password") ||

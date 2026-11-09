@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { getCurrentUser } from "@/lib/auth/session";
-import { UserRole, TeacherVerificationStatus } from "@prisma/client";
+import { UserRole, TeacherVerificationStatus, NotificationEventType, NotificationPriority } from "@prisma/client";
+import { NotificationService } from "@/lib/notifications/notification-service";
 
 const rejectSchema = z.object({
   reason: z
@@ -70,15 +71,26 @@ export async function POST(
         },
       });
 
-      // In-App Notification for teacher
-      await tx.notification.create({
-        data: {
-          userId: profile.userId,
+      // P14: In-App Notification and Transactional Email for teacher
+      await NotificationService.publishNotificationEvent(
+        {
+          eventType: NotificationEventType.TEACHER_REJECTED,
+          recipientUserId: profile.userId,
+          actorUserId: user.id,
+          entityType: "TeacherProfile",
+          entityId: profile.id,
           title: "Complément requis pour votre dossier enseignant",
           message: `Votre dossier n'a pas pu être validé en l'état : ${reason.trim()}. Vous pouvez corriger vos informations et renvoyer votre candidature.`,
           linkUrl: "/teacher/onboarding",
+          priority: NotificationPriority.HIGH,
+          emailPayload: {
+            teacherName: profile.user.fullName,
+            reason: reason.trim(),
+            onboardingUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/teacher/onboarding`,
+          },
         },
-      });
+        tx
+      );
 
       return updated;
     });

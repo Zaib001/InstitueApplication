@@ -91,7 +91,9 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
   const [institution, setInstitution] = useState("");
 
   const [selectedSubjectIds, setSelectedSubjectIds] = useState<string[]>([]);
+  const [customSubject, setCustomSubject] = useState("");
   const [selectedGradeLevelIds, setSelectedGradeLevelIds] = useState<string[]>([]);
+  const [customGradeLevel, setCustomGradeLevel] = useState("");
 
   const [city, setCity] = useState("Conakry");
   const [serviceArea, setServiceArea] = useState("");
@@ -158,7 +160,9 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
           setTermsAccepted(Boolean(data.profile.termsAccepted));
 
           if (data.profile.subjectIds) setSelectedSubjectIds(data.profile.subjectIds);
+          if (data.profile.customSubject) setCustomSubject(data.profile.customSubject);
           if (data.profile.gradeLevelIds) setSelectedGradeLevelIds(data.profile.gradeLevelIds);
+          if (data.profile.customGradeLevel) setCustomGradeLevel(data.profile.customGradeLevel);
           if (data.profile.availabilities && data.profile.availabilities.length > 0) {
             setAvailabilities(data.profile.availabilities);
           }
@@ -305,6 +309,31 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
   const handleSaveOrSubmit = async (action: "save_draft" | "submit") => {
     setErrorMessage(null);
     setSuccessMessage(null);
+
+    const hasAutreSubject = allSubjects.some(
+      (s) => s.name === "Autre" && selectedSubjectIds.includes(s.id)
+    );
+    if (hasAutreSubject && (!customSubject.trim() || customSubject.trim().length < 2)) {
+      setErrorMessage(
+        locale === "en"
+          ? "Please specify the custom subject or training (at least 2 characters)."
+          : "Veuillez préciser la matière ou la formation spécifique (au moins 2 caractères)."
+      );
+      return;
+    }
+
+    const hasAutreGradeLevel = allGradeLevels.some(
+      (g) => g.name === "Autre" && selectedGradeLevelIds.includes(g.id)
+    );
+    if (hasAutreGradeLevel && (!customGradeLevel.trim() || customGradeLevel.trim().length < 2)) {
+      setErrorMessage(
+        locale === "en"
+          ? "Please specify the custom cycle or specialized training (at least 2 characters)."
+          : "Veuillez préciser le cycle ou la formation spécifique (au moins 2 caractères)."
+      );
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -324,7 +353,9 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
         monthlyPackageSessions: Number(monthlyPackageSessions),
         monthlyPackageHoursPerSession: Number(monthlyPackageHoursPerSession),
         subjectIds: selectedSubjectIds,
+        customSubject: customSubject.trim() || null,
         gradeLevelIds: selectedGradeLevelIds,
+        customGradeLevel: customGradeLevel.trim() || null,
         availabilities,
         termsAccepted,
         action,
@@ -414,7 +445,9 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
         monthlyPackageSessions={monthlyPackageSessions}
         monthlyPackageHoursPerSession={monthlyPackageHoursPerSession}
         selectedSubjects={selectedSubjectsList}
+        customSubject={customSubject}
         selectedGradeLevels={selectedGradeLevelsList}
+        customGradeLevel={customGradeLevel}
         availabilities={availabilities}
         documents={uploadedDocuments}
         submittedAt={submittedAt}
@@ -863,6 +896,34 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
                     );
                   })}
                 </div>
+
+                {/* When "Autre" subject is selected */}
+                {allSubjects.some((s) => s.name === "Autre" && selectedSubjectIds.includes(s.id)) && (
+                  <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/90 space-y-1.5 animate-in fade-in duration-150 mt-2">
+                    <label className="block text-xs font-bold text-[#16385c]">
+                      {locale === "en"
+                        ? "Specify the subject or training *"
+                        : "Précisez la matière ou la formation *"}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={customSubject}
+                      onChange={(e) => setCustomSubject(e.target.value)}
+                      placeholder={
+                        locale === "en"
+                          ? "e.g. Advanced Economics, Russian, Robotics, Accounting..."
+                          : "ex: Économie approfondie, Russe, Robotique, Comptabilité..."
+                      }
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-blue-300 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16385c]"
+                    />
+                    <p className="text-[10px] text-blue-800">
+                      {locale === "en"
+                        ? "Specify your specialized field to help match with relevant student requests."
+                        : "Précisez votre domaine d'expertise pour correspondre aux demandes d'élèves ciblées."}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Grade Levels Selection */}
@@ -905,6 +966,34 @@ export function TeacherOnboardingClient({ user }: TeacherOnboardingClientProps) 
                     );
                   })}
                 </div>
+
+                {/* When "Autre" grade level is selected */}
+                {allGradeLevels.some((lvl) => lvl.name === "Autre" && selectedGradeLevelIds.includes(lvl.id)) && (
+                  <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-200/90 space-y-1.5 animate-in fade-in duration-150 mt-2">
+                    <label className="block text-xs font-bold text-indigo-950">
+                      {locale === "en"
+                        ? "Specify cycle or specialized training *"
+                        : "Précisez le cycle ou la formation spécifique *"}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={customGradeLevel}
+                      onChange={(e) => setCustomGradeLevel(e.target.value)}
+                      placeholder={
+                        locale === "en"
+                          ? "e.g. Professional training, Specialized tutoring, Technical training..."
+                          : "ex: Formation professionnelle, Alphabétisation, Concours d'entrée spécialisé..."
+                      }
+                      className="w-full px-3.5 py-2 text-xs rounded-xl border border-indigo-300 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                    />
+                    <p className="text-[10px] text-indigo-800">
+                      {locale === "en"
+                        ? "Define your targeted educational level or non-standard curriculum."
+                        : "Définissez le niveau scolaire d'intervention ou le programme personnalisé."}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}

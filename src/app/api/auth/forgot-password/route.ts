@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { forgotPasswordSchema } from "@/lib/auth/validation";
 import { generateSecureResetToken } from "@/lib/auth/tokens";
+import { NotificationEventType, NotificationPriority } from "@prisma/client";
+import { NotificationService } from "@/lib/notifications/notification-service";
 
 export async function POST(request: Request) {
   try {
@@ -44,6 +46,20 @@ export async function POST(request: Request) {
 
       // In production, integrate SMTP. In development, log reset URL for immediate testing.
       console.log(`[PASSWORD_RESET_DISPATCH] To: ${user.email} | Link: ${resetLink}`);
+
+      // P14: Dispatch transactional email via durable Outbox
+      await NotificationService.publishNotificationEvent({
+        eventType: NotificationEventType.AUTH_PASSWORD_RESET,
+        recipientUserId: user.id,
+        title: "Réinitialisation de votre mot de passe",
+        message: "Une demande de réinitialisation de mot de passe a été initiée pour votre compte.",
+        linkUrl: `/reset-password?token=${plainToken}`,
+        priority: NotificationPriority.URGENT,
+        emailPayload: {
+          resetLink,
+          expiresIn: "1 heure",
+        },
+      });
     }
 
     // Always return safe, generic message to prevent email enumeration

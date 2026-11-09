@@ -22,7 +22,9 @@ const onboardingSchema = z.object({
   monthlyPackageSessions: z.coerce.number().int().min(1).max(30).default(8),
   monthlyPackageHoursPerSession: z.coerce.number().int().min(1).max(6).default(2),
   subjectIds: z.array(z.string()).default([]),
+  customSubject: z.string().max(120).optional().nullable(),
   gradeLevelIds: z.array(z.string()).default([]),
+  customGradeLevel: z.string().max(120).optional().nullable(),
   availabilities: z
     .array(
       z.object({
@@ -136,6 +138,30 @@ export async function POST(request: Request) {
       });
     }
 
+    // Check if "Autre" subject or grade level is selected, requiring custom description
+    const [autreSubject, autreGradeLevel] = await Promise.all([
+      prisma.subject.findFirst({ where: { name: "Autre" } }),
+      prisma.gradeLevel.findFirst({ where: { name: "Autre" } }),
+    ]);
+
+    if (autreSubject && parsed.subjectIds.includes(autreSubject.id)) {
+      if (!parsed.customSubject || parsed.customSubject.trim().length < 2) {
+        return NextResponse.json(
+          { error: "Veuillez préciser la matière ou la formation spécifique (au moins 2 caractères)." },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (autreGradeLevel && parsed.gradeLevelIds.includes(autreGradeLevel.id)) {
+      if (!parsed.customGradeLevel || parsed.customGradeLevel.trim().length < 2) {
+        return NextResponse.json(
+          { error: "Veuillez préciser le cycle ou la formation spécifique (au moins 2 caractères)." },
+          { status: 400 }
+        );
+      }
+    }
+
     // Check if submitting application
     if (parsed.action === "submit") {
       // 1. Bio completeness check
@@ -202,6 +228,28 @@ export async function POST(request: Request) {
     const previousStatus = profile.verificationStatus;
     const isResubmission = previousStatus === TeacherVerificationStatus.REJECTED;
 
+    // Detect material qualification modifications for approved teachers
+    const existingSubjectIds = (
+      await prisma.teacherSubject.findMany({ where: { teacherProfileId: profile.id } })
+    ).map((s) => s.subjectId).sort();
+    const newSubjectIds = [...parsed.subjectIds].sort();
+    const subjectsChanged = JSON.stringify(existingSubjectIds) !== JSON.stringify(newSubjectIds);
+
+    const existingGradeIds = (
+      await prisma.teacherGradeLevel.findMany({ where: { teacherProfileId: profile.id } })
+    ).map((g) => g.gradeLevelId).sort();
+    const newGradeIds = [...parsed.gradeLevelIds].sort();
+    const gradesChanged = JSON.stringify(existingGradeIds) !== JSON.stringify(newGradeIds);
+
+    const materialChanged =
+      (parsed.degrees !== undefined && parsed.degrees !== profile.degrees) ||
+      (parsed.customSubject !== undefined && parsed.customSubject !== profile.customSubject) ||
+      (parsed.customGradeLevel !== undefined && parsed.customGradeLevel !== profile.customGradeLevel) ||
+      subjectsChanged ||
+      gradesChanged;
+
+    const requiresReVerification = previousStatus === TeacherVerificationStatus.APPROVED && materialChanged;
+
     // Transaction to update profile, subjects, gradeLevels, and availabilities
     const updatedProfile = await prisma.$transaction(async (tx) => {
       // 1. Update Profile Fields
@@ -221,10 +269,12 @@ export async function POST(request: Request) {
           monthlyPackageRateGnf: parsed.monthlyPackageRateGnf || null,
           monthlyPackageSessions: parsed.monthlyPackageSessions,
           monthlyPackageHoursPerSession: parsed.monthlyPackageHoursPerSession,
+          customSubject: parsed.customSubject || null,
+          customGradeLevel: parsed.customGradeLevel || null,
           termsAccepted: parsed.termsAccepted,
           termsAcceptedAt: parsed.termsAccepted ? new Date() : profile.termsAcceptedAt,
           termsVersion: parsed.termsAccepted ? TERMS_VERSION : profile.termsVersion,
-          ...(isSubmitting
+          ...(isSubmitting || requiresReVerification
             ? {
                 verificationStatus: TeacherVerificationStatus.PENDING_REVIEW,
                 submittedAt: new Date(),
@@ -270,7 +320,7 @@ export async function POST(request: Request) {
         });
       }
 
-      // 5. If submitting, write AuditLog & in-app Notification
+      // 5. If submitting or modification requires re-verification, write AuditLog & in-app Notification
       if (isSubmitting) {
         const auditAction = isResubmission
           ? "TEACHER_APPLICATION_RESUBMITTED"
@@ -300,6 +350,31 @@ export async function POST(request: Request) {
               : "Dossier d'enseignant soumis avec succès",
             message:
               "Votre candidature a été transmise à l'administration de Monsieur Fanyi. Examen sous 24h ouvrées.",
+            linkUrl: "/teacher/dashboard",
+          },
+        });
+      } else if (requiresReVerification) {
+        await tx.auditLog.create({
+          data: {
+            userId: user.id,
+            action: "TEACHER_QUALIFICATIONS_MODIFIED_REQUIRES_REVIEW",
+            entityType: "TeacherProfile",
+            entityId: profile.id,
+            detailsJson: JSON.stringify({
+              fullName: user.fullName,
+              customSubject: parsed.customSubject,
+              customGradeLevel: parsed.customGradeLevel,
+              subjectsCount: parsed.subjectIds.length,
+            }),
+          },
+        });
+
+        await tx.notification.create({
+          data: {
+            userId: user.id,
+            title: "Qualifications mises à jour — Examen requis",
+            message:
+              "Vos matières, niveaux ou diplômes ayant été modifiés, votre profil repasse en cours d'examen par l'administration.",
             linkUrl: "/teacher/dashboard",
           },
         });

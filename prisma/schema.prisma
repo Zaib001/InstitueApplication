@@ -54,31 +54,80 @@ enum RequestStatus {
   DRAFT
   OPEN
   ASSIGNED
+  MATCHED
   CLOSED
   CANCELLED
 }
 
 enum ApplicationStatus {
   SUBMITTED
+  SHORTLISTED
   ACCEPTED
   REJECTED
   WITHDRAWN
 }
 
 enum ClassroomStatus {
+  PENDING_PAYMENT
+  PENDING_CONFIRMATION
   ACTIVE
   COMPLETED
   PAUSED
   CANCELLED
 }
 
+enum PackageStatus {
+  DRAFT
+  PROPOSED
+  AGREED
+  PENDING_PAYMENT
+  FUNDED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
 enum SessionStatus {
   SCHEDULED
+  RESCHEDULED
+  IN_PROGRESS
   TEACHER_COMPLETED
   PARENT_APPROVED
   PARENT_DISPUTED
   ADMIN_RESOLVED
   CANCELLED
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  RETURNED_FOR_CORRECTION
+  VALIDATED
+  DISPUTED
+}
+
+enum HomeworkStatus {
+  ASSIGNED
+  IN_PROGRESS
+  SUBMITTED
+  REVIEWED
+  COMPLETED
+}
+
+enum AssessmentType {
+  DIAGNOSTIC
+  WEEKLY_QUIZ
+  MONTHLY_EXAM
+  TOPIC_TEST
+  PRACTICE_EXAM
+}
+
+enum LessonAttendance {
+  PRESENT
+  ABSENT_STUDENT
+  ABSENT_TEACHER
+  EXCUSED
+  LATE
 }
 
 enum PaymentOrderStatus {
@@ -119,6 +168,70 @@ enum PayoutStatus {
   FAILED
 }
 
+enum NotificationEventType {
+  AUTH_WELCOME
+  AUTH_ACTIVATION
+  AUTH_PASSWORD_RESET
+  AUTH_PASSWORD_CHANGED
+  TEACHER_REGISTERED
+  TEACHER_SUBMITTED_FOR_REVIEW
+  TEACHER_VERIFIED
+  TEACHER_REJECTED
+  TEACHER_DOCUMENTS_REQUESTED
+  TEACHER_APPLICATION_RECEIVED
+  TEACHER_SHORTLISTED
+  TEACHER_SELECTED
+  TEACHER_APPLICATION_REJECTED
+  TEACHER_APPLICATION_WITHDRAWN
+  OPPORTUNITY_MATCHED
+  ADMIN_CLASSROOM_ASSIGNED
+  CLASSROOM_STATUS_CHANGED
+  PACKAGE_CONFIRMED
+  PACKAGE_PAYMENT_REQUIRED
+  SCHEDULE_CREATED
+  SCHEDULE_CHANGED
+  LESSON_CANCELLED
+  LESSON_REMINDER
+  ATTENDANCE_RECORDED
+  LESSON_REPORT_SUBMITTED
+  LESSON_APPROVED
+  DISPUTE_OPENED
+  DISPUTE_TEACHER_RESPONDED
+  DISPUTE_RESOLVED
+  HOMEWORK_ASSIGNED
+  HOMEWORK_SUBMITTED
+  HOMEWORK_GRADED
+  ASSESSMENT_RECORDED
+  PROGRESS_OBSERVATION_RECORDED
+  ACADEMIC_PROGRESS_DIGEST
+  ADMIN_ALERT
+  // Milestone 3 prepared (inactive)
+  PAYMENT_INITIATED
+  PAYMENT_CONFIRMED
+  PAYMENT_FAILED
+  PACKAGE_FUNDED
+  PAYOUT_PENDING
+  PAYOUT_COMPLETED
+  REFUND_PROCESSED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum EmailDeliveryStatus {
+  PENDING
+  PROCESSING
+  SENT
+  DELIVERED
+  FAILED
+  RETRY_SCHEDULED
+  PERMANENT_FAILURE
+}
+
 // ----------------------------------------------------
 // MODELS
 // ----------------------------------------------------
@@ -142,8 +255,11 @@ model User {
   passwordResetTokens PasswordResetToken[]
   auditLogs           AuditLog[]
   notifications       Notification[]
+  notificationPreference NotificationPreference?
   sentMessages        ClassroomMessage[]
   uploadedAttachments Attachment[]
+  adminAssignedClassrooms Classroom[] @relation("AdminAssignedClassrooms")
+  invitationTokens    AccountInvitationToken[]
 
   @@index([role])
   @@index([email])
@@ -176,12 +292,27 @@ model PasswordResetToken {
   @@index([tokenHash])
 }
 
+model AccountInvitationToken {
+  id               String    @id @default(cuid())
+  tokenHash        String    @unique
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt        DateTime
+  usedAt           DateTime?
+  invitedByAdminId String?
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
 model ParentProfile {
   id          String   @id @default(cuid())
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   address     String?
   city        String   @default("Conakry")
+  isAssistedRegistration Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -200,7 +331,9 @@ model StudentProfile {
   user              User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   fullName          String
   gradeLevel        String
-  cycle             String?  // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR
+  cycle             String?  // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR, AUTRE
+  customCycle       String?  // Spécification si cycle === "AUTRE" (ex: Formation Pro)
+  customSubject     String?  // Spécification matière personnalisée si "Autre"
   schoolName        String?
   dateOfBirth       DateTime?
   supportNeeds      String?  // Academic challenges & learning goals
@@ -211,8 +344,11 @@ model StudentProfile {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  tutoringRequests TutoringRequest[]
-  classrooms       Classroom[]
+  tutoringRequests     TutoringRequest[]
+  classrooms           Classroom[]
+  homework             HomeworkAssignment[]
+  assessments          AcademicAssessment[]
+  progressObservations SubjectProgressObservation[]
 
   @@index([parentId])
   @@index([isArchived])
@@ -235,6 +371,8 @@ model TeacherProfile {
   monthlyPackageRateGnf          Int?
   monthlyPackageSessions         Int?                      @default(8)
   monthlyPackageHoursPerSession  Int?                      @default(2)
+  customSubject                  String?                   // Spécification matière personnalisée si "Autre"
+  customGradeLevel               String?                   // Spécification cycle / niveau personnalisé si "Autre"
   verificationStatus             TeacherVerificationStatus @default(DRAFT)
   rejectionReason                String?
   submittedAt                    DateTime?
@@ -257,6 +395,9 @@ model TeacherProfile {
   earnings                       TeacherEarning[]
   payouts                        Payout[]
   ratings                        Rating[]
+  homework                       HomeworkAssignment[]
+  assessments                    AcademicAssessment[]
+  progressObservations           SubjectProgressObservation[]
 
   @@index([userId])
   @@index([verificationStatus])
@@ -341,30 +482,46 @@ model TeacherPricingOffer {
   updatedAt         DateTime         @updatedAt
 
   orders            PaymentOrder[]
+  applications      TeacherApplication[]
 
   @@index([teacherProfileId])
 }
 
 model TutoringRequest {
-  id              String        @id @default(cuid())
-  parentId        String
-  parent          ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
-  studentId       String
-  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  subjectName     String
-  gradeLevelName  String
-  mode            TutoringMode  @default(HOME)
-  frequency       String?       // ex: 2 fois par semaine
-  budgetGnf       Int
-  city            String        @default("Conakry")
-  neighborhood    String?
-  description     String
-  status          RequestStatus @default(OPEN)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id                    String        @id @default(cuid())
+  parentId              String
+  parent                ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  studentId             String
+  student               StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subjectId             String?
+  subjectName           String
+  customSubject         String?       // Spécification matière personnalisée si "Autre"
+  cycle                 String?       // PRIMAIRE, COLLEGE, LYCEE, SUPERIEUR, AUTRE
+  customCycle           String?       // Spécification cycle / niveau personnalisé si "Autre"
+  gradeLevelName        String
+  mode                  TutoringMode  @default(HOME)
+  frequency             String?       // ex: "1_WEEKLY", "2_WEEKLY", "3_WEEKLY", "INTENSIVE", "WEEKEND"
+  preferredSchedule     String?       // ex: "Mardi et Jeudi 16h-18h, Samedi 10h-12h"
+  sessionDurationMinutes Int          @default(120)
+  budgetGnf             Int           @default(800000)
+  budgetType            String        @default("MONTHLY") // "MONTHLY" | "HOURLY"
+  city                  String        @default("Conakry")
+  commune               String?       // Kaloum, Dixinn, Matam, Ratoma, Matoto, etc.
+  neighborhood          String?       // Kipé, Taouyah, Lambanyi, etc.
+  locationAddress       String?       // Adresse exacte confidentielle (domicile)
+  learningGoals         String?       // Objectifs d'apprentissage prioritaires
+  description           String        @default("") // Description globale ou remarques
+  notes                 String?       // Remarques éducatives additionnelles
+  status                RequestStatus @default(DRAFT)
+  isAssisted            Boolean       @default(false)
+  publishedAt           DateTime?
+  cancelledAt           DateTime?
+  cancellationReason    String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
-  applications    TeacherApplication[]
-  classroom       Classroom?
+  applications          TeacherApplication[]
+  classroom             Classroom?
 
   @@index([parentId])
   @@index([studentId])
@@ -372,105 +529,184 @@ model TutoringRequest {
 }
 
 model TeacherApplication {
-  id                String             @id @default(cuid())
-  requestId         String
-  request           TutoringRequest    @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  teacherProfileId  String
-  teacherProfile    TeacherProfile     @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
-  pitchMessage      String?
-  proposedRateGnf   Int?
-  status            ApplicationStatus  @default(SUBMITTED)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id                    String               @id @default(cuid())
+  requestId             String
+  request               TutoringRequest      @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  teacherProfileId      String
+  teacherProfile        TeacherProfile       @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  pitchMessage          String?              // Message de motivation de l'enseignant
+  proposedRateGnf       Int?                 // Tarif proposé en GNF
+  proposedRateType      String               @default("MONTHLY") // "MONTHLY" | "HOURLY"
+  sessionArrangement    String?              // Modalités et fréquence proposées (ex: 2 séances de 2h/semaine)
+  availabilityNotes     String?              // Créneaux horaires et disponibilités
+  pricingOfferId        String?              // Formule tarifaire associée si sélectionnée
+  pricingOffer          TeacherPricingOffer? @relation(fields: [pricingOfferId], references: [id], onDelete: SetNull)
+  status                ApplicationStatus    @default(SUBMITTED)
+  isAssisted            Boolean              @default(false)
+  rejectionReason       String?              // Motif en cas de refus
+  withdrawnAt           DateTime?            // Date de retrait par l'enseignant
+  decisionAt            DateTime?            // Date de décision parent/admin
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
   @@unique([requestId, teacherProfileId])
   @@index([requestId])
   @@index([teacherProfileId])
   @@index([status])
+  @@index([teacherProfileId, status])
+  @@index([requestId, status])
 }
 
 model Classroom {
-  id                String          @id @default(cuid())
-  requestId         String?         @unique
-  request           TutoringRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
-  teacherProfileId  String
-  teacherProfile    TeacherProfile  @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
-  studentId         String
-  student           StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  subjectName       String
-  externalVideoUrl  String?
-  status            ClassroomStatus @default(ACTIVE)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
+  id                    String            @id @default(cuid())
+  requestId             String?           @unique
+  request               TutoringRequest?  @relation(fields: [requestId], references: [id], onDelete: SetNull)
+  teacherProfileId      String
+  teacherProfile        TeacherProfile    @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
+  studentId             String
+  student               StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  subjectName           String
+  mode                  TutoringMode      @default(HOME)
+  hourlyRateGnf         Int?
+  monthlyRateGnf        Int?
+  isAssistedAssignment  Boolean           @default(false)
+  assignedByAdminId     String?
+  assignedByAdmin       User?             @relation("AdminAssignedClassrooms", fields: [assignedByAdminId], references: [id], onDelete: SetNull)
+  adminNotes            String?
+  assignmentSource      String?           // e.g. "PHONE_INQUIRY", "DIRECT_OFFICE", "ADMIN_MATCH"
+  externalVideoUrl      String?
+  status                ClassroomStatus   @default(PENDING_PAYMENT)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
 
-  sessions          LessonSession[]
-  messages          ClassroomMessage[]
-  orders            PaymentOrder[]
-  attachments       Attachment[]
+  sessions              LessonSession[]
+  messages              ClassroomMessage[]
+  orders                PaymentOrder[]
+  packages              TutoringPackage[]
+  attachments           Attachment[]
+  homework              HomeworkAssignment[]
+  assessments           AcademicAssessment[]
+  progressObservations  SubjectProgressObservation[]
 
   @@index([teacherProfileId])
   @@index([studentId])
+  @@index([isAssistedAssignment])
+  @@index([assignedByAdminId])
 }
 
 model LessonSession {
-  id                  String        @id @default(cuid())
-  classroomId         String
-  classroom           Classroom     @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-  scheduledStart      DateTime
-  scheduledEnd        DateTime
-  durationMinutes     Int           @default(60)
-  allocatedAmountGnf  Int           @default(0)
-  isFunded            Boolean       @default(false)
-  status              SessionStatus @default(SCHEDULED)
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  id                    String            @id @default(cuid())
+  classroomId           String
+  classroom             Classroom         @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  packageId             String?
+  package               TutoringPackage?  @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  sessionSequence       Int               @default(1)
+  title                 String?           // Titre ou objectif pédagogique de la séance
+  scheduledStart        DateTime
+  scheduledEnd          DateTime
+  actualStart           DateTime?
+  actualEnd             DateTime?
+  durationMinutes       Int               @default(60)
+  actualDurationMinutes Int?
+  attendanceStatus      LessonAttendance  @default(PRESENT)
+  attendanceRecordedAt  DateTime?
+  attendanceRecordedById String?
+  attendanceNotes       String?
+  allocatedAmountGnf    Int               @default(0)
+  platformCommissionGnf Int               @default(0)
+  teacherNetGnf         Int               @default(0)
+  isFunded              Boolean           @default(false)
+  status                SessionStatus     @default(SCHEDULED)
 
-  report              LessonReport?
-  approval            LessonApproval?
-  dispute             LessonDispute?
-  earning             TeacherEarning?
-  refundCases         RefundCase[]
+  // Audit reprogrammation
+  rescheduledFromStart  DateTime?
+  rescheduledFromEnd    DateTime?
+  rescheduleReason      String?
+  rescheduledById       String?
+
+  // Audit annulation
+  cancelledAt           DateTime?
+  cancelledById         String?
+  cancellationReason    String?
+
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  report                LessonReport?
+  approval              LessonApproval?
+  dispute               LessonDispute?
+  earning               TeacherEarning?
+  refundCases           RefundCase[]
+  homework              HomeworkAssignment[]
+  assessments           AcademicAssessment[]
 
   @@index([classroomId])
+  @@index([packageId])
   @@index([status])
+  @@index([attendanceStatus])
+  @@index([scheduledStart])
 }
 
 model LessonReport {
-  id            String        @id @default(cuid())
-  sessionId     String        @unique
-  session       LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  topicsCovered String
-  studentEffort String?
-  homeworkGiven String?
-  teacherNotes  String?
-  submittedAt   DateTime      @default(now())
+  id                        String        @id @default(cuid())
+  sessionId                 String        @unique
+  session                   LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  status                    ReportStatus  @default(DRAFT)
+  topicsCovered             String
+  learningObjectives        String?       // Objectifs pédagogiques abordés
+  studentEffort             String?       // Participation / implication de l'élève
+  teacherNotes              String?       // Observations générales
+  strengths                 String?       // Points forts constatés
+  areasForImprovement       String?       // Difficultés rencontrées / axes de progrès
+  homeworkGiven             String?       // Devoirs assignés
+  homeworkDueDate           DateTime?     // Date limite des devoirs
+  nextLessonRecommendations String?       // Recommandations pour la séance suivante
+  assessmentTitle           String?       // Titre du contrôle / évaluation éventuelle
+  assessmentScore           Float?        // Note obtenue
+  assessmentMaxScore        Float?        // Note maximale (ex: 20)
+  assessmentComment         String?       // Commentaire sur l'évaluation
+  progressRating            Int?          // Évaluation globale 1 à 5 étoiles
+  version                   Int           @default(1)
+  revisionNotes             String?       // Notes en cas de correction demandée
+  originalReportJson        String?       // Sauvegarde de la version originale si modifiée
+  draftSavedAt              DateTime?     // Date d'enregistrement du dernier brouillon
+  submittedAt               DateTime?     // Date de soumission formelle pour validation
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @default(now()) @updatedAt
 
   @@index([sessionId])
+  @@index([status])
 }
 
 model LessonApproval {
-  id            String        @id @default(cuid())
-  sessionId     String        @unique
-  session       LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  approvedBy    String
-  approvedAt    DateTime      @default(now())
-  feedbackNote  String?
+  id                    String        @id @default(cuid())
+  sessionId             String        @unique
+  session               LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  approvedBy            String
+  approvedAt            DateTime      @default(now())
+  feedbackNote          String?
+  reportVersionReviewed Int?          @default(1)
 
   @@index([sessionId])
 }
 
 model LessonDispute {
-  id            String        @id @default(cuid())
-  sessionId     String        @unique
-  session       LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  openedBy      String
-  reason        String
-  status        DisputeStatus @default(OPEN)
-  adminNote     String?
-  resolvedAt    DateTime?
-  refundCase    RefundCase?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id                  String        @id @default(cuid())
+  sessionId           String        @unique
+  session             LessonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  openedBy            String
+  category            String?       // LESSON_NOT_HELD, INCORRECT_DURATION, ATTENDANCE_DISAGREEMENT, INCOMPLETE_TEACHING, INCORRECT_REPORT, OTHER
+  reason              String        // Description du litige par le parent
+  teacherResponse     String?       // Réponse explicative de l'enseignant
+  teacherRespondedAt  DateTime?     // Horodatage de la réponse de l'enseignant
+  status              DisputeStatus @default(OPEN)
+  resolutionType      String?       // RESOLVED_VALIDATED, RESOLVED_REFUNDED, RESOLVED_RESCHEDULED
+  adminNote           String?       // Décision et notes administratives
+  resolvedById        String?       // Administrateur ayant statué
+  resolvedAt          DateTime?     // Horodatage de la résolution
+  refundCase          RefundCase?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 
   @@index([sessionId])
   @@index([status])
@@ -489,6 +725,122 @@ model ClassroomMessage {
 
   @@index([classroomId])
   @@index([senderId])
+}
+
+model HomeworkAssignment {
+  id                String         @id @default(cuid())
+  studentId         String
+  student           StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherProfileId  String
+  teacherProfile    TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  classroomId       String
+  classroom         Classroom      @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  sessionId         String?
+  session           LessonSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  subjectName       String
+  title             String
+  description       String
+  dueDate           DateTime?
+  status            HomeworkStatus @default(ASSIGNED)
+  studentSubmission String?
+  submittedAt       DateTime?
+  teacherFeedback   String?
+  reviewedAt        DateTime?
+  completedAt       DateTime?
+  attachmentUrl     String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([studentId])
+  @@index([classroomId])
+  @@index([teacherProfileId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model AcademicAssessment {
+  id                 String         @id @default(cuid())
+  studentId          String
+  student            StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherProfileId   String
+  teacherProfile     TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  classroomId        String
+  classroom          Classroom      @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  sessionId          String?
+  session            LessonSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  subjectName        String
+  title              String
+  assessmentType     AssessmentType @default(TOPIC_TEST)
+  assessmentDate     DateTime       @default(now())
+  obtainedScore      Float
+  maxScore           Float          @default(20)
+  percentage         Float          // Pourcentage normalisé (0 à 100)
+  learningObjectives String?
+  teacherComments    String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([studentId])
+  @@index([classroomId])
+  @@index([teacherProfileId])
+  @@index([subjectName])
+  @@index([assessmentDate])
+}
+
+model SubjectProgressObservation {
+  id                  String         @id @default(cuid())
+  studentId           String
+  student             StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherProfileId    String
+  teacherProfile      TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  classroomId         String
+  classroom           Classroom      @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  subjectName         String
+  observationDate     DateTime       @default(now())
+  topicsMastered      String?
+  strengths           String?
+  areasForImprovement String?
+  recommendations     String?
+  progressRating      Int?           // Évaluation globale 1-5 étoiles
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([studentId])
+  @@index([classroomId])
+  @@index([subjectName])
+}
+
+model TutoringPackage {
+  id                          String           @id @default(cuid())
+  classroomId                 String
+  classroom                   Classroom        @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  pricingType                 PricingOfferType @default(MONTHLY_PACKAGE)
+  hourlyRateGnf               Int?
+  totalAmountGnf              Int
+  sessionsCount               Int              @default(8)
+  minutesPerSession           Int              @default(60)
+  totalPlannedMinutes         Int              @default(480)
+  baseSessionRateGnf          Int
+  remainderGnf                Int              @default(0)
+  commissionRatePercent       Int              @default(15)
+  totalPlatformCommissionGnf  Int
+  totalTeacherShareGnf        Int
+  allocationsJson             String?          // JSON des allocations exactes par séance
+  status                      PackageStatus    @default(PENDING_PAYMENT)
+  notes                       String?
+  version                     Int              @default(1)
+  agreedAt                    DateTime?
+  fundedAt                    DateTime?
+  completedAt                 DateTime?
+  cancelledAt                 DateTime?
+  createdAt                   DateTime         @default(now())
+  updatedAt                   DateTime         @updatedAt
+
+  orders                      PaymentOrder[]
+  sessions                    LessonSession[]
+
+  @@index([classroomId])
+  @@index([status])
 }
 
 // ----------------------------------------------------
@@ -510,6 +862,8 @@ model PaymentOrder {
   id              String             @id @default(cuid())
   classroomId     String?
   classroom       Classroom?         @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  packageId       String?
+  package         TutoringPackage?   @relation(fields: [packageId], references: [id], onDelete: SetNull)
   pricingOfferId  String?
   pricingOffer    TeacherPricingOffer? @relation(fields: [pricingOfferId], references: [id], onDelete: SetNull)
   parentUserId    String
@@ -627,17 +981,77 @@ model Rating {
 }
 
 model Notification {
-  id          String   @id @default(cuid())
+  id          String                 @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType   NotificationEventType  @default(ADMIN_ALERT)
+  priority    NotificationPriority   @default(NORMAL)
   title       String
   message     String
   linkUrl     String?
-  isRead      Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  entityType  String?
+  entityId    String?
+  isRead      Boolean                @default(false)
+  readAt      DateTime?
+  dedupKey    String?
+  createdAt   DateTime               @default(now())
+
+  emailOutbox EmailOutbox?
 
   @@index([userId])
   @@index([isRead])
+  @@index([eventType])
+  @@index([priority])
+  @@index([dedupKey])
+}
+
+model EmailOutbox {
+  id                   String                @id @default(cuid())
+  notificationId       String?               @unique
+  notification         Notification?         @relation(fields: [notificationId], references: [id], onDelete: SetNull)
+  eventType            NotificationEventType
+  recipientEmail       String
+  recipientName        String?
+  subject              String
+  templateName         String
+  locale               String                @default("fr")
+  payloadJson          String                @default("{}")
+  status               EmailDeliveryStatus   @default(PENDING)
+  attempts             Int                   @default(0)
+  maxAttempts          Int                   @default(5)
+  nextAttemptAt        DateTime              @default(now())
+  lastError            String?
+  providerMessageId    String?
+  providerResponseJson String?
+  dedupKey             String                @unique
+  sentAt               DateTime?
+  deliveredAt          DateTime?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  @@index([status])
+  @@index([nextAttemptAt])
+  @@index([recipientEmail])
+  @@index([eventType])
+  @@index([dedupKey])
+}
+
+model NotificationPreference {
+  id                            String   @id @default(cuid())
+  userId                        String   @unique
+  user                          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailLessonReminders          Boolean  @default(true)
+  emailReportSubmitted          Boolean  @default(true)
+  emailHomeworkAssigned         Boolean  @default(true)
+  emailAssessmentRecorded       Boolean  @default(true)
+  emailProgressDigest           Boolean  @default(true)
+  emailMarketplaceOpportunities Boolean  @default(false)
+  emailMarketing                Boolean  @default(false)
+  inAppAll                      Boolean  @default(true)
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model AuditLog {

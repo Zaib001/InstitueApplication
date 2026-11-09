@@ -176,12 +176,6 @@ export function AdminUsersClient({ user, initialUsers }: AdminUsersClientProps) 
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/admin/dashboard"
-            className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 transition-colors border border-slate-200/90 shadow-xs"
-          >
-            {locale === "en" ? "Back to Dashboard" : "Tableau de bord"}
-          </Link>
           <LanguageSwitcher />
         </div>
       </div>

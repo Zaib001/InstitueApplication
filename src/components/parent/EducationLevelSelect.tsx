@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useTranslation } from "@/lib/i18n";
-import { GraduationCap, BookOpen, Award, Sparkles } from "lucide-react";
+import { GraduationCap, BookOpen, Award, Sparkles, HelpCircle } from "lucide-react";
 
 export interface GradeLevelOption {
   id: string;
@@ -14,6 +14,8 @@ export interface GradeLevelOption {
 interface EducationLevelSelectProps {
   selectedCycle: string;
   onCycleChange: (cycle: string) => void;
+  customCycle?: string;
+  onCustomCycleChange?: (custom: string) => void;
   selectedGradeLevel: string;
   onGradeLevelChange: (grade: string) => void;
   gradeLevels: GradeLevelOption[];
@@ -22,6 +24,8 @@ interface EducationLevelSelectProps {
 export function EducationLevelSelect({
   selectedCycle,
   onCycleChange,
+  customCycle = "",
+  onCustomCycleChange,
   selectedGradeLevel,
   onGradeLevelChange,
   gradeLevels,
@@ -57,6 +61,13 @@ export function EducationLevelSelect({
       icon: Sparkles,
       color: "emerald",
     },
+    {
+      id: "AUTRE",
+      label: locale === "en" ? "Other" : "Autre",
+      sub: locale === "en" ? "Special / Custom" : "Cycle ou formation sur-mesure",
+      icon: HelpCircle,
+      color: "amber",
+    },
   ];
 
   // Filter grade levels according to selected cycle if available
@@ -66,11 +77,12 @@ export function EducationLevelSelect({
 
   return (
     <div className="space-y-3">
+      {/* 1. Cycle selection */}
       <div>
         <label className="block text-xs font-semibold text-slate-700 mb-1.5">
           {locale === "en" ? "1. Educational Cycle *" : "1. Cycle d'enseignement *"}
         </label>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
           {cycles.map((c) => {
             const isSelected = selectedCycle === c.id;
             const Icon = c.icon;
@@ -96,12 +108,41 @@ export function EducationLevelSelect({
         </div>
       </div>
 
+      {/* When "AUTRE" is selected, show specialized custom cycle description input */}
+      {selectedCycle === "AUTRE" && (
+        <div className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/80 space-y-1.5 animate-in fade-in duration-150">
+          <label className="block text-xs font-bold text-amber-950">
+            {locale === "en"
+              ? "Specify educational cycle or specialized training *"
+              : "Précisez le cycle ou la formation spécifique *"}
+          </label>
+          <input
+            type="text"
+            required
+            value={customCycle}
+            onChange={(e) => onCustomCycleChange?.(e.target.value)}
+            placeholder={
+              locale === "en"
+                ? "e.g. Professional training, Specialized tutoring, Technical training..."
+                : "ex: Formation professionnelle, Alphabétisation, Concours d'entrée spécialisé..."
+            }
+            className="w-full px-3.5 py-2 text-xs rounded-xl border border-amber-300 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+          <p className="text-[10px] text-amber-800">
+            {locale === "en"
+              ? "Allows tailored tutoring matches for non-standard academic and vocational curricula."
+              : "Permet d'adapter l'attribution d'enseignants pour les filières techniques, professionnelles ou spécialisées."}
+          </p>
+        </div>
+      )}
+
+      {/* 2. Specific Grade / Class */}
       <div>
         <label className="block text-xs font-semibold text-slate-700 mb-1">
           {locale === "en" ? "2. Specific Grade / Class *" : "2. Classe ou niveau scolaire précis *"}
         </label>
 
-        {filteredGrades.length > 0 ? (
+        {selectedCycle !== "AUTRE" && filteredGrades.length > 0 ? (
           <select
             value={selectedGradeLevel}
             onChange={(e) => onGradeLevelChange(e.target.value)}
@@ -119,12 +160,15 @@ export function EducationLevelSelect({
         ) : (
           <input
             type="text"
+            required
             value={selectedGradeLevel}
             onChange={(e) => onGradeLevelChange(e.target.value)}
             placeholder={
-              locale === "en"
-                ? "e.g. 12th Grade Advanced Math (Terminale SM)"
-                : "ex: Terminale Sciences Mathématiques (SM) ou 10ème Année"
+              selectedCycle === "AUTRE"
+                ? (locale === "en" ? "e.g. 1st Year Certificate, Module B, Adult Level 2" : "ex: 1ère Année Brevet, Module B, Niveau 2 Adulte")
+                : (locale === "en"
+                    ? "e.g. 12th Grade Advanced Math (Terminale SM)"
+                    : "ex: Terminale Sciences Mathématiques (SM) ou 10ème Année")
             }
             className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16385c]"
           />

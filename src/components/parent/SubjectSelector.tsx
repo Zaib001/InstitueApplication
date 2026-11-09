@@ -13,12 +13,16 @@ export interface SubjectOption {
 interface SubjectSelectorProps {
   selectedSubjects: string[];
   onChange: (subjects: string[]) => void;
+  customSubject?: string;
+  onCustomSubjectChange?: (val: string) => void;
   availableSubjects: SubjectOption[];
 }
 
 export function SubjectSelector({
   selectedSubjects,
   onChange,
+  customSubject = "",
+  onCustomSubjectChange,
   availableSubjects,
 }: SubjectSelectorProps) {
   const { locale } = useTranslation();
@@ -31,7 +35,8 @@ export function SubjectSelector({
     }
   };
 
-  const defaultList: SubjectOption[] = availableSubjects.length
+  // Ensure "Autre" is present in the list
+  const baseList: SubjectOption[] = availableSubjects.length
     ? availableSubjects
     : [
         { id: "1", name: "Mathématiques" },
@@ -44,13 +49,20 @@ export function SubjectSelector({
         { id: "8", name: "Informatique & Numérique" },
       ];
 
+  const hasAutreInList = baseList.some((s) => s.name.toLowerCase() === "autre");
+  const displayList: SubjectOption[] = hasAutreInList
+    ? baseList
+    : [...baseList, { id: "custom-other", name: "Autre", category: "Spécialisé" }];
+
+  const isOtherSelected = selectedSubjects.includes("Autre");
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <label className="block text-xs font-semibold text-slate-700">
           {locale === "en"
-            ? "Target Tutoring Subjects (Select all that apply)"
-            : "Matières prioritaires pour le soutien scolaire"}
+            ? "Target Tutoring Subjects (Select all that apply) *"
+            : "Matières prioritaires pour le soutien scolaire *"}
         </label>
         <span className="text-[10px] text-slate-400">
           {selectedSubjects.length} {locale === "en" ? "selected" : "sélectionnée(s)"}
@@ -58,7 +70,7 @@ export function SubjectSelector({
       </div>
 
       <div className="flex flex-wrap gap-2">
-        {defaultList.map((sub) => {
+        {displayList.map((sub) => {
           const isSelected = selectedSubjects.includes(sub.name);
           return (
             <button
@@ -77,6 +89,34 @@ export function SubjectSelector({
           );
         })}
       </div>
+
+      {/* When "Autre" is selected, render custom subject text input */}
+      {isOtherSelected && (
+        <div className="p-3.5 rounded-2xl bg-blue-50/60 border border-blue-200/80 space-y-1.5 animate-in fade-in duration-150">
+          <label className="block text-xs font-bold text-[#16385c]">
+            {locale === "en"
+              ? "Specify the subject or training *"
+              : "Précisez la matière ou la formation *"}
+          </label>
+          <input
+            type="text"
+            required
+            value={customSubject}
+            onChange={(e) => onCustomSubjectChange?.(e.target.value)}
+            placeholder={
+              locale === "en"
+                ? "e.g. Advanced Economics, Russian, Robotics, Accounting..."
+                : "ex: Économie approfondie, Russe, Robotique, Comptabilité..."
+            }
+            className="w-full px-3.5 py-2 text-xs rounded-xl border border-blue-300 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#16385c]"
+          />
+          <p className="text-[10px] text-blue-800">
+            {locale === "en"
+              ? "This detail helps match with a verified tutor specialized in this discipline."
+              : "Cette précision permettra d'identifier un professeur compétent dans ce domaine particulier."}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

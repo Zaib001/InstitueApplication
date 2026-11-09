@@ -28,9 +28,12 @@ import {
   ShieldCheck,
   UserCheck,
   Eye,
+  Plus,
+  Send,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { AuthenticatedUser } from "@/lib/auth/session";
 
 interface LightDashboardViewProps {
@@ -66,6 +69,11 @@ interface LightDashboardViewProps {
     rateOrEarningsText: string;
     locationText?: string;
   } | null;
+  teacherMarketplaceSummary?: {
+    openOpportunitiesCount: number;
+    pendingApplicationsCount: number;
+    recommendedCount: number;
+  } | null;
 }
 
 export function LightDashboardView({
@@ -81,6 +89,7 @@ export function LightDashboardView({
   featuredTeacherApplication,
   realEarnings,
   upcomingClass,
+  teacherMarketplaceSummary,
 }: LightDashboardViewProps) {
   const { t, locale } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,75 +109,8 @@ export function LightDashboardView({
 
   // Role-based course databases
   const getCoursesForRole = () => {
-    if (customCourses && customCourses.length > 0) return customCourses;
-
-    if (user.role === "TEACHER") {
-      return [
-        {
-          id: "t1",
-          title: locale === "en" ? "Applied Physics — Grade 12 SM (Mamadou Barry)" : "Physique Appliquée — Terminale SM (Mamadou Barry)",
-          lessonsCount: 12,
-          progressPercent: 65,
-        },
-        {
-          id: "t2",
-          title: locale === "en" ? "General Mathematics — Grade 10 (Fanta Camara)" : "Mathématiques Générales — Collège 10ème (Fanta Camara)",
-          lessonsCount: 8,
-          progressPercent: 40,
-        },
-        {
-          id: "t3",
-          title: locale === "en" ? "Experimental Chemistry — Grade 12 SE (Oumar Sylla)" : "Chimie Expérimentale — Terminale SE (Oumar Sylla)",
-          lessonsCount: 6,
-          progressPercent: 80,
-        },
-      ];
-    }
-
-    if (user.role === "ADMIN") {
-      return [
-        {
-          id: "a1",
-          title: locale === "en" ? "Teacher Credentials & Degrees Audit (UGANC)" : "Contrôle des Dossiers & Diplômes Enseignants (UGANC)",
-          lessonsCount: stats.inProgress || 7,
-          progressPercent: 75,
-        },
-        {
-          id: "a2",
-          title: locale === "en" ? "Orange & MTN Escrow Payout Monitoring" : "Surveillance des Comptes de Séquestre Orange & MTN",
-          lessonsCount: 14,
-          progressPercent: 92,
-        },
-        {
-          id: "a3",
-          title: locale === "en" ? "Pedagogical Dispute Mediation (SRD V2.0)" : "Arbitrage Pédagogique & Litiges en cours",
-          lessonsCount: 2,
-          progressPercent: 50,
-        },
-      ];
-    }
-
-    // Default Parent
-    return [
-      {
-        id: "p1",
-        title: locale === "en" ? "Advanced Mathematics & Algebra (Mamadou)" : "Mathématiques & Algèbre Approfondie (Mamadou)",
-        lessonsCount: 10,
-        progressPercent: 50,
-      },
-      {
-        id: "p2",
-        title: locale === "en" ? "Physics & Chemistry — Waves (Mamadou)" : "Physique-Chimie — Ondes & Mécanique (Mamadou)",
-        lessonsCount: 7,
-        progressPercent: 27,
-      },
-      {
-        id: "p3",
-        title: locale === "en" ? "French Language & Literature (Aissatou)" : "Français & Expression Littéraire (Aissatou)",
-        lessonsCount: 6,
-        progressPercent: 65,
-      },
-    ];
+    if (customCourses !== undefined) return customCourses;
+    return [];
   };
 
   const currentCourses = getCoursesForRole();
@@ -231,95 +173,8 @@ export function LightDashboardView({
             />
           </div>
 
-          {/* Notifications Bell with working popup */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="w-9 h-9 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors shadow-xs relative cursor-pointer"
-              aria-label={t("dashboard.notificationsTitle", "Notifications")}
-            >
-              <Bell className="w-4 h-4" />
-              <span className="w-2 h-2 rounded-full bg-[#e59a38] absolute top-2 right-2 ring-2 ring-white" />
-            </button>
-
-            {showNotifications && (
-              <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-40 space-y-3 animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <span className="font-bold text-xs text-slate-800">
-                    {t("dashboard.notificationsTitle", "Notifications")}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setShowNotifications(false)}
-                    className="text-slate-400 hover:text-slate-600 text-xs"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <div className="space-y-2 text-xs">
-                  {user.role === "TEACHER" ? (
-                    <>
-                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <p className="font-semibold text-slate-800">
-                          {locale === "en" ? "127,500 GNF added to pending payout" : "127 500 GNF ajoutés à vos gains à verser"}
-                        </p>
-                        <span className="text-[10px] text-slate-400">
-                          {locale === "en" ? "Yesterday • 6:15 PM" : "Hier • 18h15"}
-                        </span>
-                      </div>
-                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <p className="font-semibold text-slate-800">
-                          {locale === "en" ? "New tutoring request in Kipé" : "Nouvelle demande de cours à Kipé"}
-                        </p>
-                        <span className="text-[10px] text-slate-400">
-                          {locale === "en" ? "Today • 10:00 AM" : "Aujourd'hui • 10h00"}
-                        </span>
-                      </div>
-                    </>
-                  ) : user.role === "ADMIN" ? (
-                    <>
-                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <p className="font-semibold text-slate-800">
-                          {locale === "en" ? "New teacher diploma uploaded for review" : "Nouveau diplôme enseignant soumis pour examen"}
-                        </p>
-                        <span className="text-[10px] text-slate-400">
-                          {locale === "en" ? "2h ago" : "Il y a 2h"}
-                        </span>
-                      </div>
-                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <p className="font-semibold text-slate-800">
-                          {locale === "en" ? "Escrow deposit 300,000 GNF via Orange Money" : "Séquestre approvisionné 300 000 GNF via Orange Money"}
-                        </p>
-                        <span className="text-[10px] text-slate-400">
-                          {locale === "en" ? "May 22 • 11:00 AM" : "22 Mai • 11h00"}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <p className="font-semibold text-slate-800">
-                          {t("dashboard.notification1", "Séance de Mathématiques validée avec succès")}
-                        </p>
-                        <span className="text-[10px] text-slate-400">
-                          {locale === "en" ? "Yesterday • 6:15 PM" : "Hier • 18h15"}
-                        </span>
-                      </div>
-                      <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
-                        <p className="font-semibold text-slate-800">
-                          {t("dashboard.notification2", "Séquestre de 300 000 GNF approvisionné")}
-                        </p>
-                        <span className="text-[10px] text-slate-400">
-                          {locale === "en" ? "May 22 • 11:00 AM" : "22 Mai • 11h00"}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Universal Notification Bell with real database connection */}
+          <NotificationBell variant="light" />
 
           <LanguageSwitcher />
         </div>
@@ -369,7 +224,7 @@ export function LightDashboardView({
                   {t("dashboard.teacherEarningsNet", "Gains nets (85%)")}
                 </span>
                 <div className="text-lg font-black text-slate-800">
-                  {realEarnings || (locale === "en" ? "680,000 GNF" : "680 000 GNF")}
+                  {realEarnings || "0 GNF"}
                 </div>
               </div>
             </div>
@@ -416,7 +271,7 @@ export function LightDashboardView({
                   {t("dashboard.adminCommission", "Part plateforme (15%)")}
                 </span>
                 <div className="text-lg font-black text-slate-800">
-                  2 175 000 GNF
+                  {realEarnings || "0 GNF"}
                 </div>
               </div>
             </div>
@@ -460,16 +315,54 @@ export function LightDashboardView({
               </div>
               <div>
                 <span className="text-[11px] font-medium text-slate-400 block">
-                  {t("dashboard.achievements", "Taux de réussite")}
+                  {t("dashboard.achievements", "Taux de conformité")}
                 </span>
                 <div className="text-lg font-black text-slate-800">
-                  15.5 / 20 (+3.2)
+                  {stats.performancePercent}%
                 </div>
               </div>
             </div>
           </>
         )}
       </div>
+
+      {/* 2.5 Teacher Marketplace Quick Access Widget */}
+      {user.role === "TEACHER" && (
+        <div className="p-5 rounded-3xl bg-white border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-[#16385c]/10 text-[#16385c] flex items-center justify-center shrink-0">
+              <Sparkles className="w-6 h-6 text-[#e59a38]" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">
+                {locale === "en" ? "Tutoring Opportunities & Applications" : "Opportunités & Candidatures"}
+              </h3>
+              <p className="text-xs text-slate-500">
+                {locale === "en"
+                  ? `${teacherMarketplaceSummary?.openOpportunitiesCount || 0} open requests available in Conakry (${teacherMarketplaceSummary?.recommendedCount || 0} recommended) • ${teacherMarketplaceSummary?.pendingApplicationsCount || 0} active application(s)`
+                  : `${teacherMarketplaceSummary?.openOpportunitiesCount || 0} demandes ouvertes à Conakry (${teacherMarketplaceSummary?.recommendedCount || 0} recommandées) • ${teacherMarketplaceSummary?.pendingApplicationsCount || 0} candidature(s) en cours`}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/teacher/opportunities"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#16385c] hover:bg-[#10243d] text-white transition-colors shadow-xs inline-flex items-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#e59a38]" />
+              <span>{locale === "en" ? "Discover" : "Découvrir"}</span>
+            </Link>
+            <Link
+              href="/teacher/applications"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors inline-flex items-center gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>{locale === "en" ? "My Applications" : "Mes Candidatures"}</span>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* 3. Middle 2 Analytics Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -550,9 +443,11 @@ export function LightDashboardView({
               <Clock className="w-3 h-3 text-[#e59a38]" />
               <div>
                 <span className="font-semibold block">
-                  {t("dashboard.fridaySession", "Vendredi, 24 Mai")}
+                  {stats.hoursSpentTotal && stats.hoursSpentTotal !== "0h 00m"
+                    ? (locale === "en" ? "Hours Delivered" : "Heures dispensées")
+                    : (locale === "en" ? "Tutoring Volume" : "Volume d'heures")}
                 </span>
-                <span className="text-[#e59a38] font-bold">2h 15m</span>
+                <span className="text-[#e59a38] font-bold">{stats.hoursSpentTotal || "0h 00m"}</span>
               </div>
             </div>
 
@@ -569,33 +464,43 @@ export function LightDashboardView({
                 </linearGradient>
               </defs>
 
-              <rect x="330" y="20" width="40" height="130" rx="12" fill="#eff6ff" />
+              {stats.hoursSpentTotal && stats.hoursSpentTotal !== "0h 00m" && (
+                <rect x="330" y="20" width="40" height="130" rx="12" fill="#eff6ff" />
+              )}
 
               <path
-                d="M 10 100 
-                   C 60 90, 80 40, 130 50 
-                   C 170 58, 200 115, 250 110 
-                   C 290 105, 310 25, 350 35 
-                   C 390 45, 430 110, 480 95 
-                   C 520 85, 550 105, 590 100 
-                   L 590 150 L 10 150 Z"
+                d={stats.hoursSpentTotal && stats.hoursSpentTotal !== "0h 00m"
+                  ? `M 10 100 
+                     C 60 90, 80 40, 130 50 
+                     C 170 58, 200 115, 250 110 
+                     C 290 105, 310 25, 350 35 
+                     C 390 45, 430 110, 480 95 
+                     C 520 85, 550 105, 590 100 
+                     L 590 150 L 10 150 Z`
+                  : "M 10 120 L 590 120 L 590 150 L 10 150 Z"}
                 fill="url(#waveGradient)"
               />
 
               <path
-                d="M 10 100 
-                   C 60 90, 80 40, 130 50 
-                   C 170 58, 200 115, 250 110 
-                   C 290 105, 310 25, 350 35 
-                   C 390 45, 430 110, 480 95 
-                   C 520 85, 550 105, 590 100"
+                d={stats.hoursSpentTotal && stats.hoursSpentTotal !== "0h 00m"
+                  ? `M 10 100 
+                     C 60 90, 80 40, 130 50 
+                     C 170 58, 200 115, 250 110 
+                     C 290 105, 310 25, 350 35 
+                     C 390 45, 430 110, 480 95 
+                     C 520 85, 550 105, 590 100`
+                  : "M 10 120 L 590 120"}
                 stroke="#2563eb"
                 strokeWidth="3.5"
                 strokeLinecap="round"
               />
 
-              <circle cx="350" cy="35" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2.5" />
-              <circle cx="350" cy="35" r="9" stroke="#2563eb" strokeOpacity="0.3" strokeWidth="2" />
+              {stats.hoursSpentTotal && stats.hoursSpentTotal !== "0h 00m" && (
+                <>
+                  <circle cx="350" cy="35" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2.5" />
+                  <circle cx="350" cy="35" r="9" stroke="#2563eb" strokeOpacity="0.3" strokeWidth="2" />
+                </>
+              )}
             </svg>
 
             {/* Day Labels Strip */}
@@ -661,15 +566,19 @@ export function LightDashboardView({
           <div className="space-y-3 w-full">
             <p className="text-xs text-slate-500 font-medium leading-relaxed">
               {user.role === "TEACHER"
-                ? (locale === "en" ? "94% of your sessions confirmed without delay" : "94% de vos séances sont validées sans contestation")
+                ? stats.completed > 0
+                  ? (locale === "en" ? `${stats.performancePercent}% of your sessions confirmed without delay` : `${stats.performancePercent}% de vos séances sont validées sans contestation`)
+                  : (locale === "en" ? "No tutoring sessions delivered yet." : "Aucune séance dispensée pour le moment.")
                 : user.role === "ADMIN"
-                ? (locale === "en" ? "99% compliance with Guinean educational SRD" : "99% de conformité avec les règles SRD V2.0")
-                : t("dashboard.goalNote", "Votre objectif mensuel est en bonne voie !")}
+                ? (locale === "en" ? `${stats.performancePercent}% platform compliance with Guinean educational SRD` : `${stats.performancePercent}% de conformité plateforme avec les règles SRD V2.0`)
+                : stats.completed > 0
+                ? t("dashboard.goalNote", "Votre objectif mensuel est en bonne voie !")
+                : (locale === "en" ? "No completed sessions yet. Analytics will appear after your first lesson." : "Aucune séance validée pour le moment. Vos métriques apparaîtront dès votre premier cours.")}
             </p>
             <button
               type="button"
               onClick={() => setShowPerformanceModal(true)}
-              className="w-full py-2.5 px-4 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all cursor-pointer transform hover:-translate-y-0.5"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white font-bold text-xs shadow-md shadow-blue-900/10 transition-all cursor-pointer transform hover:-translate-y-0.5"
             >
               {t("dashboard.moreDetails", "Plus de détails")}
             </button>
@@ -685,7 +594,7 @@ export function LightDashboardView({
             ? t("dashboard.teacherAssignmentBadge", "Prochain cours à dispenser")
             : user.role === "ADMIN"
             ? (locale === "en" ? "Priority Dossier to Review" : "Dossier prioritaire à instruire")
-            : t("dashboard.parentAssignmentBadge", "Prochaine séance de Mamadou")}
+            : (locale === "en" ? "Next Scheduled Lesson" : "Prochaine séance programmée")}
         </h2>
 
         <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-purple-50/30 border border-blue-100 flex flex-col md:flex-row md:items-center justify-between gap-5">
@@ -705,23 +614,25 @@ export function LightDashboardView({
                 {upcomingClass
                   ? upcomingClass.title
                   : user.role === "TEACHER"
-                  ? (locale === "en" ? "Advanced Mathematics — Grade 12 SM" : "Mathématiques Approfondies — Terminale SM")
+                  ? (locale === "en" ? "No upcoming tutoring sessions" : "Aucune séance planifiée")
                   : user.role === "ADMIN"
                   ? (featuredTeacherApplication
                       ? `${locale === "en" ? "Review Candidate:" : "Validation Enseignant :"} ${featuredTeacherApplication.name}`
                       : (locale === "en" ? "All teacher applications reviewed" : "Tous les dossiers enseignants ont été traités"))
-                  : (locale === "en" ? "Mathematics & Physical Sciences" : "Mathématiques & Sciences Physiques")}
+                  : (locale === "en" ? "No scheduled session yet" : "Aucune séance programmée")}
               </h3>
               <p className="text-xs text-slate-500">
                 {upcomingClass
                   ? `${upcomingClass.scheduledText} • ${upcomingClass.participant}${upcomingClass.locationText ? ` • ${upcomingClass.locationText}` : ""}`
                   : user.role === "TEACHER"
-                  ? (locale === "en" ? "Today, 4:30 PM • Student: Mamadou Barry" : "Aujourd'hui, 16h30 • Élève : Mamadou Barry")
+                  ? (locale === "en"
+                      ? "When a student is matched and a lesson is scheduled, it will appear here."
+                      : "Dès qu'une demande est validée et qu'un cours est planifié, il apparaîtra ici.")
                   : user.role === "ADMIN"
                   ? (featuredTeacherApplication
                       ? `${featuredTeacherApplication.degrees} • ${featuredTeacherApplication.subject} • ${featuredTeacherApplication.city}`
                       : (locale === "en" ? "No dossiers waiting in pending queue." : "Aucun dossier en attente dans la file d'attente."))
-                  : (locale === "en" ? "Today, 4:30 PM • In-home (Kipé, Conakry)" : "Aujourd'hui, 16h30 • Domicile (Kipé, Conakry)")}
+                  : (locale === "en" ? "Create a tutoring request to connect with qualified teachers." : "Créez une demande de cours pour être mis en relation avec des enseignants certifiés.")}
               </p>
             </div>
           </div>
@@ -739,31 +650,40 @@ export function LightDashboardView({
                 {upcomingClass
                   ? upcomingClass.rateOrEarningsText
                   : user.role === "TEACHER"
-                  ? (locale === "en" ? "127,500 GNF / session" : "127 500 GNF / séance")
+                  ? "0 GNF"
                   : user.role === "ADMIN"
                   ? (locale === "en" ? "High (< 24h)" : "Haute (< 24h)")
-                  : "02 h 00 m"}
+                  : "00 h 00 m"}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               {user.role === "TEACHER" ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setShowActionModal("studentCard")}
-                    className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200/90 shadow-xs transition-colors cursor-pointer"
+                upcomingClass ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setShowActionModal("studentCard")}
+                      className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200/90 shadow-xs transition-colors cursor-pointer"
+                    >
+                      {locale === "en" ? "Student Profile" : "Fiche élève"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowActionModal("join")}
+                      className="px-5 py-2 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white text-xs font-semibold shadow-sm shadow-blue-900/15 transition-all cursor-pointer transform hover:-translate-y-0.5"
+                    >
+                      {locale === "en" ? "Start Lesson" : "Démarrer le cours"}
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/teacher/onboarding"
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200/90 shadow-xs transition-colors inline-flex items-center gap-1.5"
                   >
-                    {locale === "en" ? "Student Profile" : "Fiche élève"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowActionModal("join")}
-                    className="px-5 py-2 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold shadow-sm shadow-blue-500/25 transition-all cursor-pointer transform hover:-translate-y-0.5"
-                  >
-                    {locale === "en" ? "Start Lesson" : "Démarrer le cours"}
-                  </button>
-                </>
+                    <span>{locale === "en" ? "Manage Profile & Availability" : "Profil & Disponibilités"}</span>
+                  </Link>
+                )
               ) : user.role === "ADMIN" ? (
                 <>
                   <Link
@@ -774,7 +694,7 @@ export function LightDashboardView({
                     }
                     className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200/90 shadow-xs transition-colors inline-flex items-center gap-1.5"
                   >
-                    <Eye className="w-3.5 h-3.5 text-blue-600" />
+                    <Eye className="w-3.5 h-3.5 text-[#16385c]" />
                     <span>{locale === "en" ? "Review Dossier" : "Examiner le dossier"}</span>
                   </Link>
                   <Link
@@ -785,7 +705,7 @@ export function LightDashboardView({
                     <span>{locale === "en" ? "Verification Queue" : "File de vérification"}</span>
                   </Link>
                 </>
-              ) : (
+              ) : upcomingClass ? (
                 <>
                   <button
                     type="button"
@@ -797,11 +717,19 @@ export function LightDashboardView({
                   <button
                     type="button"
                     onClick={() => setShowActionModal("join")}
-                    className="px-5 py-2 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold shadow-sm shadow-blue-500/25 transition-all cursor-pointer transform hover:-translate-y-0.5"
+                    className="px-5 py-2 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white text-xs font-semibold shadow-sm shadow-blue-900/15 transition-all cursor-pointer transform hover:-translate-y-0.5"
                   >
                     {locale === "en" ? "Join Lesson" : "Rejoindre le cours"}
                   </button>
                 </>
+              ) : (
+                <Link
+                  href="/parent/requests"
+                  className="px-5 py-2 rounded-xl bg-[#16385c] hover:bg-[#10243d] text-white text-xs font-semibold shadow-sm shadow-blue-900/15 transition-all cursor-pointer transform hover:-translate-y-0.5 inline-flex items-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{locale === "en" ? "Tutoring Requests" : "Demandes de cours"}</span>
+                </Link>
               )}
             </div>
           </div>
@@ -832,7 +760,13 @@ export function LightDashboardView({
         <div className="space-y-2.5">
           {filteredCourses.length === 0 ? (
             <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-400">
-              {locale === "en" ? "No items match your search query." : "Aucun élément ne correspond à votre recherche."}
+              {user.role === "TEACHER"
+                ? (locale === "en"
+                    ? "No active classes or assigned students yet. Your verified tutoring matches will appear here."
+                    : "Aucune classe active ni élève assigné pour le moment. Vos cours validés apparaîtront ici.")
+                : (locale === "en"
+                    ? "No items match your search query."
+                    : "Aucun élément ne correspond à votre recherche.")}
             </div>
           ) : (
             filteredCourses.map((course) => (
@@ -945,7 +879,7 @@ export function LightDashboardView({
             <button
               type="button"
               onClick={() => setShowPerformanceModal(false)}
-              className="w-full py-2.5 rounded-xl bg-[#2563eb] text-white text-xs font-bold hover:bg-[#1d4ed8] transition-colors cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-[#16385c] text-white text-xs font-bold hover:bg-[#10243d] transition-colors cursor-pointer"
             >
               {t("dashboard.close", "Fermer")}
             </button>
@@ -1018,7 +952,7 @@ export function LightDashboardView({
                   alert(locale === "en" ? "Rescheduling request transmitted." : "Demande de reprogrammation transmise.");
                   setShowActionModal(null);
                 }}
-                className="flex-1 py-2.5 rounded-xl bg-[#2563eb] text-white text-xs font-bold hover:bg-[#1d4ed8] transition-colors cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl bg-[#16385c] text-white text-xs font-bold hover:bg-[#10243d] transition-colors cursor-pointer"
               >
                 {t("dashboard.confirm", "Confirmer")}
               </button>
@@ -1087,7 +1021,7 @@ export function LightDashboardView({
         </div>
       )}
 
-      {showActionModal === "studentCard" && (
+      {showActionModal === "studentCard" && upcomingClass && (
         <div
           role="dialog"
           aria-modal="true"
@@ -1098,7 +1032,9 @@ export function LightDashboardView({
               <div className="flex items-center gap-2 text-[#16385c]">
                 <UserCheck className="w-5 h-5 text-blue-600" />
                 <h3 className="font-extrabold text-sm text-slate-800">
-                  {locale === "en" ? "Student Profile: Mamadou Barry" : "Fiche Élève : Mamadou Barry"}
+                  {locale === "en"
+                    ? `Student Profile: ${upcomingClass.participant.replace(/^Élève : |^Student: /, "")}`
+                    : `Fiche Élève : ${upcomingClass.participant.replace(/^Élève : |^Student: /, "")}`}
                 </h3>
               </div>
               <button
@@ -1113,20 +1049,20 @@ export function LightDashboardView({
             <div className="space-y-2 text-xs text-slate-600">
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
                 <span className="font-bold text-slate-800 block">
-                  {locale === "en" ? "Grade: Grade 12 Math Sciences (Terminale SM)" : "Niveau : Terminale Sciences Mathématiques"}
+                  {upcomingClass.title}
                 </span>
                 <span className="text-slate-500 block">
-                  {locale === "en" ? "Target: Intensive Baccalaureate Examination Prep" : "Objectif : Préparation intensive Baccalauréat Unique"}
+                  {upcomingClass.scheduledText}
                 </span>
                 <span className="text-slate-500 block">
-                  {locale === "en" ? "Location: Kipé, Conakry • In-home tutoring" : "Lieu : Kipé, Conakry • Domicile"}
+                  {upcomingClass.locationText || (locale === "en" ? "In-home (Conakry)" : "À domicile (Conakry)")}
                 </span>
               </div>
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-800">
                 <span className="font-semibold block">
                   {locale === "en"
-                    ? "Escrow funded for 8 sessions (1,200,000 GNF)"
-                    : "Séquestre approvisionné pour 8 séances (1 200 000 GNF)"}
+                    ? `Remuneration: ${upcomingClass.rateOrEarningsText}`
+                    : `Rémunération : ${upcomingClass.rateOrEarningsText}`}
                 </span>
               </div>
             </div>

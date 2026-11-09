@@ -172,3 +172,11 @@ export function reconcilePackageProgress(
     isFullyReconciled,
   };
 }
+
+/**
+ * Formats an amount in Guinean Francs (GNF).
+ * Example: 800000 -> "800 000 GNF"
+ */
+export function formatGnf(amount: number): string {
+  return new Intl.NumberFormat("fr-GN").format(amount) + " GNF";
+}

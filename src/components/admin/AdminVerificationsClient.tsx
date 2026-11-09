@@ -111,7 +111,7 @@ export function AdminVerificationsClient({ user }: AdminVerificationsClientProps
   };
 
   return (
-    <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto">
+    <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
       {/* Dashboard Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
@@ -140,7 +140,7 @@ export function AdminVerificationsClient({ user }: AdminVerificationsClientProps
             onClick={fetchQueue}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-blue-600" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-[#16385c]" : ""}`} />
             <span>{locale === "en" ? "Refresh Queue" : "Actualiser"}</span>
           </button>
           <LanguageSwitcher />

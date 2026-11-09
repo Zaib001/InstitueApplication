@@ -59,10 +59,12 @@ export async function POST(request: Request) {
         fullName: validatedData.fullName,
         gradeLevel: validatedData.gradeLevel,
         cycle: validatedData.cycle || null,
+        customCycle: validatedData.customCycle || null,
         schoolName: validatedData.schoolName || null,
         dateOfBirth: validatedData.dateOfBirth ? new Date(validatedData.dateOfBirth) : null,
         supportNeeds: validatedData.supportNeeds || null,
         preferredSubjects: validatedData.preferredSubjects || [],
+        customSubject: validatedData.customSubject || null,
         notes: validatedData.notes || null,
       },
     });
@@ -79,6 +81,8 @@ export async function POST(request: Request) {
           studentName: student.fullName,
           gradeLevel: student.gradeLevel,
           cycle: student.cycle,
+          customCycle: student.customCycle,
+          customSubject: student.customSubject,
         }),
       },
     });

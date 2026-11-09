@@ -22,6 +22,10 @@ import {
   Clock,
   Sparkles,
   AlertTriangle,
+  Send,
+  FileText,
+  Gavel,
+  Bell,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { AuthenticatedUser } from "@/lib/auth/session";
@@ -34,6 +38,35 @@ export function LightSidebar({ user }: LightSidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const fetchCount = async () => {
+      try {
+        const res = await fetch("/api/notifications/unread-count");
+        if (res.ok) {
+          const data = await res.json();
+          const count =
+            typeof data.count === "number"
+              ? data.count
+              : typeof data.unreadCount === "number"
+              ? data.unreadCount
+              : 0;
+          if (isMounted) setUnreadCount(count);
+        }
+      } catch {
+        // Ignore background polling failure
+      }
+    };
+
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -71,7 +104,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
         },
         {
           label: t("dashboard.nav.teacherSubjects", "Matières & Tarifs"),
-          href: "/teacher/dashboard#subjects",
+          href: "/teacher/pricing",
           icon: BookOpen,
           iconColor: "text-purple-600",
           iconBg: "bg-purple-50",
@@ -81,7 +114,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
         },
         {
           label: t("dashboard.nav.teacherAvailability", "Disponibilités"),
-          href: "/teacher/dashboard#availability",
+          href: "/teacher/availability",
           icon: Clock,
           iconColor: "text-amber-600",
           iconBg: "bg-amber-50",
@@ -91,7 +124,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
         },
         {
           label: t("dashboard.nav.teacherOpportunities", "Opportunités"),
-          href: "/teacher/dashboard#opportunities",
+          href: "/teacher/opportunities",
           icon: Sparkles,
           iconColor: "text-rose-500",
           iconBg: "bg-rose-50",
@@ -100,14 +133,54 @@ export function LightSidebar({ user }: LightSidebarProps) {
           activeText: "text-rose-900",
         },
         {
+          label: t("dashboard.nav.teacherApplications", "Mes Candidatures"),
+          href: "/teacher/applications",
+          icon: Send,
+          iconColor: "text-blue-600",
+          iconBg: "bg-blue-50",
+          activeBg: "bg-blue-50/80",
+          activeBorder: "border-blue-200",
+          activeText: "text-blue-900",
+        },
+        {
           label: t("dashboard.nav.teacherClasses", "Mes Classes"),
-          href: "/teacher/dashboard#classes",
+          href: "/teacher/classes",
           icon: Users,
           iconColor: "text-indigo-600",
           iconBg: "bg-indigo-50",
           activeBg: "bg-indigo-50/80",
           activeBorder: "border-indigo-200",
           activeText: "text-indigo-900",
+        },
+        {
+          label: t("dashboard.nav.calendar", "Emploi du temps"),
+          href: "/teacher/calendar",
+          icon: Calendar,
+          iconColor: "text-sky-600",
+          iconBg: "bg-sky-50",
+          activeBg: "bg-sky-50/80",
+          activeBorder: "border-sky-200",
+          activeText: "text-sky-900",
+        },
+        {
+          label: t("dashboard.nav.teacherReports", "Comptes Rendus"),
+          href: "/teacher/reports",
+          icon: FileText,
+          iconColor: "text-emerald-600",
+          iconBg: "bg-emerald-50",
+          activeBg: "bg-emerald-50/80",
+          activeBorder: "border-emerald-200",
+          activeText: "text-emerald-900",
+        },
+        {
+          label: t("dashboard.nav.teacherProgress", "Carnet de Progression"),
+          href: "/teacher/progress",
+          icon: BarChart3,
+          iconColor: "text-amber-600",
+          iconBg: "bg-amber-50",
+          activeBg: "bg-amber-50/80",
+          activeBorder: "border-amber-200",
+          activeText: "text-amber-900",
         },
         {
           label: t("dashboard.nav.teacherEarnings", "Gains (Part 85%)"),
@@ -118,6 +191,16 @@ export function LightSidebar({ user }: LightSidebarProps) {
           activeBg: "bg-teal-50/80",
           activeBorder: "border-teal-200",
           activeText: "text-teal-900",
+        },
+        {
+          label: t("dashboard.nav.notifications", "Notifications"),
+          href: "/notifications",
+          icon: Bell,
+          iconColor: "text-amber-600",
+          iconBg: "bg-amber-50",
+          activeBg: "bg-amber-50/80",
+          activeBorder: "border-amber-200",
+          activeText: "text-amber-900",
         },
       ];
     }
@@ -156,7 +239,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
         },
         {
           label: t("dashboard.nav.adminRequests", "Demandes de soutien"),
-          href: "/admin/dashboard#requests",
+          href: "/admin/requests",
           icon: BookOpen,
           iconColor: "text-amber-600",
           iconBg: "bg-amber-50",
@@ -165,14 +248,34 @@ export function LightSidebar({ user }: LightSidebarProps) {
           activeText: "text-amber-900",
         },
         {
-          label: t("dashboard.nav.adminClasses", "Classes actives"),
-          href: "/admin/dashboard#classes",
+          label: t("dashboard.nav.adminAssignments", "Attributions & Classes"),
+          href: "/admin/assignments",
           icon: Award,
           iconColor: "text-indigo-600",
           iconBg: "bg-indigo-50",
           activeBg: "bg-indigo-50/80",
           activeBorder: "border-indigo-200",
           activeText: "text-indigo-900",
+        },
+        {
+          label: t("dashboard.nav.calendar", "Calendrier Général"),
+          href: "/admin/calendar",
+          icon: Calendar,
+          iconColor: "text-sky-600",
+          iconBg: "bg-sky-50",
+          activeBg: "bg-sky-50/80",
+          activeBorder: "border-sky-200",
+          activeText: "text-sky-900",
+        },
+        {
+          label: t("dashboard.nav.adminAcademicProgress", "Suivi Académique"),
+          href: "/admin/academic-progress",
+          icon: BarChart3,
+          iconColor: "text-purple-600",
+          iconBg: "bg-purple-50",
+          activeBg: "bg-purple-50/80",
+          activeBorder: "border-purple-200",
+          activeText: "text-purple-900",
         },
         {
           label: t("dashboard.nav.adminFinances", "Séquestre & 15% Comm."),
@@ -185,14 +288,24 @@ export function LightSidebar({ user }: LightSidebarProps) {
           activeText: "text-teal-900",
         },
         {
-          label: t("dashboard.nav.adminDisputes", "Litiges & Arbitrage"),
-          href: "/admin/dashboard#disputes",
-          icon: AlertTriangle,
+          label: t("dashboard.nav.adminDisputes", "Litiges de Séances"),
+          href: "/admin/session-disputes",
+          icon: Gavel,
           iconColor: "text-rose-600",
           iconBg: "bg-rose-50",
           activeBg: "bg-rose-50/80",
           activeBorder: "border-rose-200",
           activeText: "text-rose-900",
+        },
+        {
+          label: t("dashboard.nav.adminNotifications", "Centre Notifications & Outbox"),
+          href: "/admin/notification-center",
+          icon: Bell,
+          iconColor: "text-amber-600",
+          iconBg: "bg-amber-50",
+          activeBg: "bg-amber-50/80",
+          activeBorder: "border-amber-200",
+          activeText: "text-amber-900",
         },
       ];
     }
@@ -211,7 +324,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
       },
       {
         label: t("dashboard.nav.parentChildren", "Mes Enfants"),
-        href: "/parent/dashboard#children",
+        href: "/parent/children",
         icon: Users,
         iconColor: "text-purple-600",
         iconBg: "bg-purple-50",
@@ -221,7 +334,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
       },
       {
         label: t("dashboard.nav.parentRequests", "Demandes de cours"),
-        href: "/parent/dashboard#requests",
+        href: "/parent/requests",
         icon: BookOpen,
         iconColor: "text-amber-600",
         iconBg: "bg-amber-50",
@@ -231,13 +344,33 @@ export function LightSidebar({ user }: LightSidebarProps) {
       },
       {
         label: t("dashboard.nav.parentClasses", "Classes & Tuteurs"),
-        href: "/parent/dashboard#classes",
+        href: "/parent/classes",
         icon: GraduationCap,
         iconColor: "text-indigo-600",
         iconBg: "bg-indigo-50",
         activeBg: "bg-indigo-50/80",
         activeBorder: "border-indigo-200",
         activeText: "text-indigo-900",
+      },
+      {
+        label: t("dashboard.nav.calendar", "Calendrier & Séances"),
+        href: "/parent/calendar",
+        icon: Calendar,
+        iconColor: "text-sky-600",
+        iconBg: "bg-sky-50",
+        activeBg: "bg-sky-50/80",
+        activeBorder: "border-sky-200",
+        activeText: "text-sky-900",
+      },
+      {
+        label: t("dashboard.nav.parentReports", "Comptes Rendus & Devoirs"),
+        href: "/parent/reports",
+        icon: FileText,
+        iconColor: "text-purple-600",
+        iconBg: "bg-purple-50",
+        activeBg: "bg-purple-50/80",
+        activeBorder: "border-purple-200",
+        activeText: "text-purple-900",
       },
       {
         label: t("dashboard.nav.parentPayments", "Paiements & Séquestre"),
@@ -250,14 +383,24 @@ export function LightSidebar({ user }: LightSidebarProps) {
         activeText: "text-teal-900",
       },
       {
-        label: t("dashboard.nav.parentProgress", "Suivi Pédagogique"),
-        href: "/parent/dashboard#progress",
+        label: t("dashboard.nav.parentProgress", "Carnet de Progression"),
+        href: "/parent/progress",
         icon: BarChart3,
         iconColor: "text-emerald-600",
         iconBg: "bg-emerald-50",
         activeBg: "bg-emerald-50/80",
         activeBorder: "border-emerald-200",
         activeText: "text-emerald-900",
+      },
+      {
+        label: t("dashboard.nav.notifications", "Notifications"),
+        href: "/notifications",
+        icon: Bell,
+        iconColor: "text-amber-600",
+        iconBg: "bg-amber-50",
+        activeBg: "bg-amber-50/80",
+        activeBorder: "border-amber-200",
+        activeText: "text-amber-900",
       },
     ];
   };
@@ -331,6 +474,11 @@ export function LightSidebar({ user }: LightSidebarProps) {
                   <Icon className={`w-3.5 h-3.5 ${item.iconColor}`} />
                 </div>
                 <span className="truncate">{item.label}</span>
+                {item.href.includes("notification") && unreadCount > 0 && (
+                  <span className="ml-auto px-2 py-0.5 text-[10px] font-black rounded-full bg-[#e59a38] text-white shadow-xs">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}

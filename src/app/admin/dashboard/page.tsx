@@ -31,6 +31,8 @@ export default async function AdminDashboardPage() {
     activeClassroomsCount,
     totalDisputes,
     nextPlatformSession,
+    totalTutoringRequests,
+    openTutoringRequests,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.teacherProfile.count({
@@ -68,6 +70,8 @@ export default async function AdminDashboardPage() {
       },
       orderBy: { scheduledStart: "asc" },
     }),
+    prisma.tutoringRequest.count(),
+    prisma.tutoringRequest.count({ where: { status: "OPEN" } }),
   ]);
 
   // Real Platform Tutoring Volume (Hours delivered)
@@ -77,15 +81,11 @@ export default async function AdminDashboardPage() {
   );
   const platformHours = Math.floor(totalPlatformMins / 60);
   const platformMins = totalPlatformMins % 60;
-  const platformHoursText = totalPlatformMins > 0
-    ? `${platformHours}h ${platformMins.toString().padStart(2, "0")}m`
-    : "44h 00m";
+  const platformHoursText = `${platformHours}h ${platformMins.toString().padStart(2, "0")}m`;
 
   // Real 15% Platform Commission
   const totalCommissionGnf = commissionEntries.reduce((sum, e) => sum + e.amountGnf, 0);
-  const formattedCommission = new Intl.NumberFormat("fr-GN").format(
-    totalCommissionGnf > 0 ? totalCommissionGnf : 360000
-  ) + " GNF";
+  const formattedCommission = new Intl.NumberFormat("fr-GN").format(totalCommissionGnf) + " GNF";
 
   // Real Compliance & Dispute Rate
   const complianceRate =
@@ -114,7 +114,7 @@ export default async function AdminDashboardPage() {
           stats={{
             inProgress: pendingTeachersCount,
             completed: totalUsers,
-            achievements: activeClassroomsCount > 0 ? activeClassroomsCount : 2,
+            achievements: activeClassroomsCount,
             hoursSpentTotal: platformHoursText,
             performancePercent: complianceRate,
           }}

@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db/prisma";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { parentRegisterSchema, teacherRegisterSchema } from "@/lib/auth/validation";
-import { UserRole, TeacherVerificationStatus } from "@prisma/client";
+import { UserRole, TeacherVerificationStatus, NotificationEventType, NotificationPriority } from "@prisma/client";
+import { NotificationService } from "@/lib/notifications/notification-service";
 
 export async function POST(request: Request) {
   try {
@@ -109,6 +110,29 @@ export async function POST(request: Request) {
           detailsJson: JSON.stringify({ role, email }),
         },
       });
+
+      // P14: Send welcome notification & outbox email
+      await NotificationService.publishNotificationEvent(
+        {
+          eventType: NotificationEventType.AUTH_WELCOME,
+          recipientUserId: user.id,
+          title: "Bienvenue sur Monsieur Fanyi !",
+          message:
+            role === "PARENT"
+              ? "Votre compte parent est actif. Vous pouvez dès à présent créer votre première demande de cours."
+              : "Votre compte enseignant est créé. Complétez votre profil pour commencer à postuler.",
+          linkUrl: role === "PARENT" ? "/parent/dashboard" : "/teacher/dashboard",
+          priority: NotificationPriority.NORMAL,
+          emailPayload: {
+            recipientName: user.fullName,
+            role,
+            dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}${
+              role === "PARENT" ? "/parent/dashboard" : "/teacher/dashboard"
+            }`,
+          },
+        },
+        tx
+      );
 
       return user;
     });

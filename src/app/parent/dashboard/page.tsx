@@ -78,7 +78,13 @@ export default async function ParentDashboardPage() {
 
   // Fetch real delivered sessions count and total hours for this parent's children
   const studentIds = childrenRecords.map((c) => c.id);
-  const [parentCompletedSessions, upcomingParentSession, activeEscrowOrders] = await Promise.all([
+  const [
+    parentCompletedSessions,
+    upcomingParentSession,
+    activeEscrowOrders,
+    totaltutoringRequests,
+    recentTutoringRequests,
+  ] = await Promise.all([
     prisma.lessonSession.findMany({
       where: {
         classroom: {
@@ -112,14 +118,28 @@ export default async function ParentDashboardPage() {
         status: "PAID",
       },
     }),
+    prisma.tutoringRequest.count({
+      where: { parentId: parentProfile.id },
+    }),
+    prisma.tutoringRequest.findMany({
+      where: { parentId: parentProfile.id },
+      take: 3,
+      orderBy: { createdAt: "desc" },
+      include: {
+        student: {
+          select: { id: true, fullName: true, gradeLevel: true },
+        },
+        _count: {
+          select: { applications: true },
+        },
+      },
+    }),
   ]);
 
   const totalParentMinutes = parentCompletedSessions.reduce((acc, s) => acc + s.durationMinutes, 0);
   const parentHours = Math.floor(totalParentMinutes / 60);
   const parentMins = totalParentMinutes % 60;
-  const hoursDeliveredText = totalParentMinutes > 0
-    ? `${parentHours}h ${parentMins.toString().padStart(2, "0")}m`
-    : "44h 00m";
+  const hoursDeliveredText = `${parentHours}h ${parentMins.toString().padStart(2, "0")}m`;
 
   const formattedUpcoming = upcomingParentSession
     ? {
@@ -148,11 +168,26 @@ export default async function ParentDashboardPage() {
         }}
         stats={{
           totalChildren: childrenRecords.filter((c) => !c.isArchived).length,
-          completedSessions: parentCompletedSessions.length > 0 ? parentCompletedSessions.length : 22,
+          completedSessions: parentCompletedSessions.length,
           hoursSpentTotal: hoursDeliveredText,
-          activeEscrowOrders: activeEscrowOrders > 0 ? activeEscrowOrders : 1,
+          activeEscrowOrders: activeEscrowOrders,
         }}
         upcomingSession={formattedUpcoming}
+        requestsSummary={{
+          totalCount: totaltutoringRequests,
+          recentRequests: recentTutoringRequests.map((r) => ({
+            id: r.id,
+            subjectName: r.subjectName,
+            customSubject: r.customSubject,
+            gradeLevelName: r.gradeLevelName,
+            mode: r.mode,
+            budgetGnf: r.budgetGnf,
+            status: r.status,
+            createdAt: r.createdAt.toISOString(),
+            studentName: r.student.fullName,
+            applicationsCount: r._count.applications,
+          })),
+        }}
       />
     </LightDashboardLayout>
   );
