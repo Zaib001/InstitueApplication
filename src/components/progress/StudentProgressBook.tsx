@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   GraduationCap,
   Calendar,
@@ -45,7 +46,8 @@ export function StudentProgressBook({
   onRefresh,
   childrenList,
 }: StudentProgressBookProps) {
-  const { t } = useTranslation();
+  const router = useRouter();
+  const { t, locale } = useTranslation();
 
   // View Mode: Interactive Dashboard vs Official Tabular Report
   const [viewMode, setViewMode] = useState<"DASHBOARD" | "BULLETIN">("DASHBOARD");
@@ -141,145 +143,261 @@ export function StudentProgressBook({
         }
       `}</style>
 
-      {/* Screen Controls & Header (Hidden on Print) */}
-      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs print:hidden">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-[#16385c] to-indigo-700 text-2xl font-black text-white shadow-md">
-              {student.fullName.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-heading">
-                  {student.fullName}
-                </h1>
-                <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700 border border-indigo-200/60">
-                  {student.gradeLevel}
+      {/* Screen Controls & Multi-Child Switcher Header (Hidden on Print) */}
+      <div className="space-y-4 print:hidden">
+        {/* Prominent Multi-Child Selector Bar */}
+        {childrenList && childrenList.length > 1 && (
+          <div className="p-4 sm:p-5 rounded-3xl bg-[#122b49] bg-gradient-to-r from-[#122b49] via-[#16385c] to-[#1c3f66] text-white shadow-md border border-[#234b76] space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-[#e59a38]/20 text-[#e59a38] flex items-center justify-center font-bold">
+                  <Users className="w-4 h-4" />
+                </div>
+                <span className="text-xs sm:text-sm font-bold tracking-wide uppercase text-white/95">
+                  {locale === "en" ? "Switch Child Progress Book" : "Changer d'enfant"}
                 </span>
-                {student.cycle && (
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                    Cycle : {student.cycle}
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#e59a38]/25 text-[#e59a38] border border-[#e59a38]/40">
+                  {childrenList.length} {locale === "en" ? "children" : "enfants inscrits"}
+                </span>
+              </div>
+              <span className="text-xs text-white/90">
+                {locale === "en" ? "Currently viewing: " : "Carnet affiché : "}
+                <strong className="text-white font-bold underline decoration-[#e59a38] decoration-2 underline-offset-2">
+                  {student.fullName}
+                </strong>
+              </span>
+            </div>
+
+            {/* Horizontal Tabs for all registered children */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 pt-1">
+              {childrenList.map((c) => {
+                const isCurrent = c.id === student.id;
+                return (
+                  <Link
+                    key={c.id}
+                    href={`/parent/students/${c.id}/progress`}
+                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2.5 transition-all cursor-pointer ${
+                      isCurrent
+                        ? "bg-white text-slate-900 border-[#e59a38] ring-3 ring-[#e59a38]/40 shadow-sm"
+                        : "bg-[#18365a] text-white border-[#2c5380] hover:bg-[#204470] hover:border-[#3b6da7]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
+                          isCurrent
+                            ? "bg-[#122b49] text-[#e59a38]"
+                            : "bg-white/20 text-white"
+                        }`}
+                      >
+                        {c.fullName.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <span className={`block font-bold text-xs truncate ${isCurrent ? "text-slate-900" : "text-white"}`}>
+                          {c.fullName}
+                        </span>
+                        <span className={`block text-[10px] font-medium truncate ${isCurrent ? "text-slate-500" : "text-slate-300"}`}>
+                          {c.gradeLevel}
+                        </span>
+                      </div>
+                    </div>
+
+                    {isCurrent ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0 border border-emerald-300">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        <span>{locale === "en" ? "Active" : "Actif"}</span>
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold text-[#e59a38] hover:text-white shrink-0">
+                        {locale === "en" ? "Open →" : "Consulter →"}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Executive Progress Book Header Card */}
+        <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 shadow-xs">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#122b49] bg-gradient-to-br from-[#122b49] via-[#16385c] to-indigo-800 text-2xl font-black text-white shadow-md">
+                {student.fullName.charAt(0).toUpperCase()}
+              </div>
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-heading">
+                    {locale === "en"
+                      ? `Digital Progress Book: ${student.fullName}`
+                      : `Carnet de progression de : ${student.fullName}`}
+                  </h1>
+                  <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700 border border-indigo-200/60">
+                    {student.gradeLevel}
                   </span>
+                  {student.cycle && (
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      Cycle : {student.cycle}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-slate-500">
+                  {student.schoolName ? `Établissement : ${student.schoolName} • ` : ""}
+                  Parent référent : <span className="font-semibold text-slate-700">{student.parent.fullName}</span>
+                  {student.parent.phone ? ` (${student.parent.phone})` : ""}
+                </p>
+                {student.preferredSubjects && student.preferredSubjects.length > 0 && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className="text-xs font-semibold text-slate-400">Matières suivies :</span>
+                    {student.preferredSubjects.map((sub: string) => (
+                      <span
+                        key={sub}
+                        className="rounded-lg bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 text-xs font-medium text-slate-700"
+                      >
+                        {sub}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
-              <p className="mt-1 text-sm text-slate-500">
-                {student.schoolName ? `Établissement : ${student.schoolName} • ` : ""}
-                Parent référent : <span className="font-semibold text-slate-700">{student.parent.fullName}</span>
-                {student.parent.phone ? ` (${student.parent.phone})` : ""}
-              </p>
-              {student.preferredSubjects && student.preferredSubjects.length > 0 && (
-                <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                  <span className="text-xs font-semibold text-slate-400">Matières suivies :</span>
-                  {student.preferredSubjects.map((sub: string) => (
-                    <span
-                      key={sub}
-                      className="rounded-lg bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 text-xs font-medium text-slate-700"
-                    >
-                      {sub}
-                    </span>
-                  ))}
+            </div>
+
+            {/* Action Buttons & Switchers */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Mobile Child Dropdown Switcher */}
+              {childrenList && childrenList.length > 1 && (
+                <div className="sm:hidden w-full">
+                  <label className="text-[10px] font-bold text-slate-500 block mb-1 uppercase tracking-wider">
+                    {locale === "en" ? "Change child" : "Changer d'enfant :"}
+                  </label>
+                  <select
+                    value={student.id}
+                    onChange={(e) => {
+                      router.push(`/parent/students/${e.target.value}/progress`);
+                    }}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition focus:outline-none"
+                  >
+                    {childrenList.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.fullName} ({c.gradeLevel})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setViewMode("DASHBOARD")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                    viewMode === "DASHBOARD"
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  <span>{t("progressBook.actions.viewDashboard", "Tableau de bord")}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setViewMode("BULLETIN")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                    viewMode === "BULLETIN"
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <TableIcon className="h-3.5 w-3.5" />
+                  <span>{t("progressBook.actions.viewOfficialBulletin", "Format Tabulaire (Bulletin)")}</span>
+                </button>
+              </div>
+
+              {/* Primary Print / PDF Download Button */}
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#16385c] hover:bg-[#10243d] px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition cursor-pointer"
+                title="Télécharger en PDF ou imprimer le bulletin scolaire officiel"
+              >
+                <Download className="h-4 w-4 text-amber-300" />
+                <span>{t("progressBook.actions.downloadPdf", "Télécharger en PDF")}</span>
+              </button>
+
+              {/* Teacher Specific Action Buttons */}
+              {actorRole === "TEACHER" && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsHomeworkModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>{t("progressBook.homework.newHomeworkBtn", "Assigner devoir")}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsAssessmentModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>{t("progressBook.assessments.newAssessmentBtn", "Noter contrôle")}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsObservationModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>{t("progressBook.observations.newObservationBtn", "Bilan")}</span>
+                  </button>
                 </div>
               )}
             </div>
           </div>
-
-          {/* Action Buttons & Switchers */}
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Child Switcher */}
-            {childrenList && childrenList.length > 1 && (
-              <div className="relative">
-                <select
-                  value={student.id}
-                  onChange={(e) => {
-                    if (typeof window !== "undefined") {
-                      window.location.href = `/parent/students/${e.target.value}/progress`;
-                    }
-                  }}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition focus:outline-none"
-                >
-                  {childrenList.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.fullName} ({c.gradeLevel})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setViewMode("DASHBOARD")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                  viewMode === "DASHBOARD"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                <span>{t("progressBook.actions.viewDashboard", "Tableau de bord")}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setViewMode("BULLETIN")}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                  viewMode === "BULLETIN"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <TableIcon className="h-3.5 w-3.5" />
-                <span>{t("progressBook.actions.viewOfficialBulletin", "Format Tabulaire (Bulletin)")}</span>
-              </button>
-            </div>
-
-            {/* Primary Print / PDF Download Button */}
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#16385c] hover:bg-[#10243d] px-4 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs transition cursor-pointer"
-              title="Télécharger en PDF ou imprimer le bulletin scolaire officiel"
-            >
-              <Download className="h-4 w-4 text-amber-300" />
-              <span>{t("progressBook.actions.downloadPdf", "Télécharger en PDF")}</span>
-            </button>
-
-            {/* Teacher Specific Action Buttons */}
-            {actorRole === "TEACHER" && (
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsHomeworkModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>{t("progressBook.homework.newHomeworkBtn", "Assigner devoir")}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsAssessmentModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>{t("progressBook.assessments.newAssessmentBtn", "Noter contrôle")}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsObservationModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <span>{t("progressBook.observations.newObservationBtn", "Bilan")}</span>
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
+
+      {/* Empty State Banner if student has no academic history yet */}
+      {(!summary.totalScheduledSessions || summary.totalScheduledSessions === 0) && assessments.length === 0 && homework.length === 0 && observations.length === 0 && timeline.length === 0 && (
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 sm:p-12 text-center shadow-xs print:hidden space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+            <BookOpen className="w-8 h-8" />
+          </div>
+          <div className="max-w-md mx-auto space-y-2">
+            <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+              {locale === "en"
+                ? "This student's progress book does not contain any data yet."
+                : "Le carnet de progression de cet élève ne contient pas encore de données."}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              {locale === "en"
+                ? "Lesson reports, attendance, test scores, homework assignments, and teacher digests will automatically populate here once classes are scheduled and delivered."
+                : "Les comptes rendus de cours, l'assiduité, les devoirs et les bilans d'apprentissage apparaîtront automatiquement dès que les cours auront débuté."}
+            </p>
+          </div>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href={`/parent/requests?action=new&studentId=${student.id}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#122b49] hover:bg-[#1b3d66] text-white text-xs font-bold shadow-xs transition"
+            >
+              <Sparkles className="w-4 h-4 text-[#e59a38]" />
+              <span>{locale === "en" ? "Create a tutoring request" : "Faire une demande de cours"}</span>
+            </Link>
+            <Link
+              href="/parent/children"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+            >
+              <span>{locale === "en" ? "Back to children" : "Retour à mes enfants"}</span>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 1. SCREEN MODE A: INTERACTIVE DASHBOARD VIEW (Shown when viewMode === "DASHBOARD") */}

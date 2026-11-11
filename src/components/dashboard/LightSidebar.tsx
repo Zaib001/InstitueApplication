@@ -418,6 +418,60 @@ export function LightSidebar({ user }: LightSidebarProps) {
 
   const navItems = getNavItems();
 
+  const isItemActive = (itemHref: string) => {
+    const [itemPath, itemHash] = itemHref.split("#");
+
+    if (itemHash) {
+      return pathname === itemPath && currentHash === `#${itemHash}`;
+    }
+
+    // Exact dashboard matches (so dashboard doesn't stay active on sub-routes)
+    if (
+      itemHref === "/parent/dashboard" ||
+      itemHref === "/teacher/dashboard" ||
+      itemHref === "/admin/dashboard"
+    ) {
+      return pathname === itemHref && !currentHash;
+    }
+
+    // Progress book routes: match both the index page and student-specific progress books
+    if (itemHref === "/parent/progress") {
+      return (
+        pathname === "/parent/progress" ||
+        pathname.startsWith("/parent/progress/") ||
+        (pathname.startsWith("/parent/students/") && pathname.includes("/progress"))
+      );
+    }
+
+    if (itemHref === "/teacher/progress") {
+      return (
+        pathname === "/teacher/progress" ||
+        pathname.startsWith("/teacher/progress/") ||
+        (pathname.startsWith("/teacher/students/") && pathname.includes("/progress"))
+      );
+    }
+
+    if (itemHref === "/admin/academic-progress") {
+      return (
+        pathname === "/admin/academic-progress" ||
+        pathname.startsWith("/admin/academic-progress/") ||
+        (pathname.startsWith("/admin/students/") && pathname.includes("/progress"))
+      );
+    }
+
+    // Children dossiers (when not on progress book)
+    if (itemHref === "/parent/children") {
+      return (
+        pathname === "/parent/children" ||
+        pathname.startsWith("/parent/children/") ||
+        (pathname.startsWith("/parent/students/") && !pathname.includes("/progress"))
+      );
+    }
+
+    // General prefix match
+    return pathname === itemHref || pathname.startsWith(itemHref + "/");
+  };
+
   return (
     <aside className="w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between p-6 shrink-0 h-screen sticky top-0 overflow-y-auto z-30 shadow-xs [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
       {/* Top Application Logo */}
@@ -440,20 +494,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
         <nav className="space-y-1.5" aria-label="Navigation secondaire">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const [itemPath, itemHash] = item.href.split("#");
-
-            let isActive = false;
-            if (itemHash) {
-              isActive = pathname === itemPath && currentHash === `#${itemHash}`;
-            } else if (
-              item.href === "/parent/dashboard" ||
-              item.href === "/teacher/dashboard" ||
-              item.href === "/admin/dashboard"
-            ) {
-              isActive = pathname === item.href && !currentHash;
-            } else {
-              isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-            }
+            const isActive = isItemActive(item.href);
 
             return (
               <Link

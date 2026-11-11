@@ -27,6 +27,8 @@ import {
   Wallet,
   ChevronRight,
   PlusCircle,
+  FileCheck,
+  AlertCircle,
 } from "lucide-react";
 import { RequestStatus } from "@prisma/client";
 import { RequestStatusBadge } from "@/components/requests/RequestStatusBadge";
@@ -42,6 +44,28 @@ import { ConfirmStudentActionDialog } from "./ConfirmStudentActionDialog";
 import { ProfileCompletionIndicator } from "./ProfileCompletionIndicator";
 import { GradeLevelOption } from "./EducationLevelSelect";
 import { SubjectOption } from "./SubjectSelector";
+
+export interface ParentActionCenterItem {
+  id: string;
+  type: "PENDING_REPORT" | "UNSUBMITTED_REQUEST";
+  priority: number;
+  titleFr: string;
+  titleEn: string;
+  actionLabelFr: string;
+  actionLabelEn: string;
+  actionHref: string;
+  sessionId?: string;
+  studentName?: string;
+  teacherName?: string;
+  subjectName?: string;
+  lessonDate?: string;
+  submittedDate?: string;
+  topicsExcerpt?: string | null;
+  studentId?: string;
+  gradeLevel?: string;
+  descriptionFr?: string;
+  descriptionEn?: string;
+}
 
 interface ParentDashboardClientProps {
   user: AuthenticatedUser;
@@ -69,6 +93,7 @@ interface ParentDashboardClientProps {
     scheduledText: string;
     locationText?: string;
   } | null;
+  actionCenterItems?: ParentActionCenterItem[];
   requestsSummary?: {
     totalCount: number;
     recentRequests: Array<{
@@ -98,6 +123,7 @@ export function ParentDashboardClient({
     activeEscrowOrders: 0,
   },
   upcomingSession,
+  actionCenterItems = [],
   requestsSummary,
 }: ParentDashboardClientProps) {
   const { t, locale } = useTranslation();
@@ -223,6 +249,15 @@ export function ParentDashboardClient({
       : ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
   const activeChildrenCount = childrenList.filter((c) => !c.isArchived).length;
+  const noRequestCount = childrenList.filter(
+    (c) => !c.isArchived && (!c.requestStatus || c.requestStatus.state === "NO_REQUEST")
+  ).length;
+  const inProgressCount = childrenList.filter(
+    (c) => !c.isArchived && (c.requestStatus?.state === "PUBLISHED" || c.requestStatus?.state === "DRAFT")
+  ).length;
+  const matchedCount = childrenList.filter(
+    (c) => !c.isArchived && c.requestStatus?.state === "MATCHED"
+  ).length;
 
   return (
     <div className="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -314,6 +349,183 @@ export function ParentDashboardClient({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 2.5 Priority Action Center: "Actions à effectuer" & Status Breakdown */}
+      <div className="space-y-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold shrink-0">
+              <Sparkles className="w-4 h-4 text-[#e59a38]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                  {locale === "en" ? "Action Center" : "Actions à effectuer"}
+                </h2>
+                {actionCenterItems.length > 0 ? (
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                    {actionCenterItems.length} {locale === "en" ? "action(s) required" : "action(s) requise(s)"}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    {locale === "en" ? "All up to date" : "À jour"}
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-500">
+                {locale === "en"
+                  ? "Priority tasks requiring your attention (lesson report approvals, tutoring requests)"
+                  : "Tâches prioritaires nécessitant votre intervention (validation des comptes rendus, création des demandes)"}
+              </p>
+            </div>
+          </div>
+
+          {/* Children Summary Badges (Requirement 3) */}
+          {activeChildrenCount > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-bold border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-slate-400" />
+                <span>{noRequestCount} sans demande</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+                <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                <span>{inProgressCount} demande(s) en cours</span>
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>{matchedCount} attribué(s)</span>
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Action Items List */}
+        {actionCenterItems.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {actionCenterItems.map((item) => (
+              <div
+                key={item.id}
+                className={`p-4 rounded-3xl border transition-all shadow-xs flex flex-col justify-between gap-3 ${
+                  item.type === "PENDING_REPORT"
+                    ? "bg-amber-50/50 bg-gradient-to-br from-amber-50/70 via-white to-amber-50/30 border-amber-200/90 hover:border-amber-300"
+                    : "bg-blue-50/50 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/30 border-blue-200/80 hover:border-blue-300"
+                }`}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className={`w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 shadow-2xs ${
+                          item.type === "PENDING_REPORT"
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-[#122b49] text-white"
+                        }`}
+                      >
+                        {item.type === "PENDING_REPORT" ? (
+                          <FileCheck className="w-4 h-4 text-amber-700" />
+                        ) : (
+                          <BookOpen className="w-4 h-4 text-[#e59a38]" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-bold uppercase tracking-wider block text-slate-400 truncate">
+                          {item.type === "PENDING_REPORT"
+                            ? (locale === "en" ? "Urgent: Lesson Review" : "Validation de séance • Prioritaire")
+                            : (locale === "en" ? "Tutoring Request Needed" : "Demande de cours à créer")}
+                        </span>
+                        <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 line-clamp-1">
+                          {locale === "en" ? item.titleEn : item.titleFr}
+                        </h4>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`text-[9px] font-black px-2 py-0.5 rounded-full shrink-0 uppercase tracking-wider ${
+                        item.type === "PENDING_REPORT"
+                          ? "bg-amber-100 text-amber-800 border border-amber-300"
+                          : "bg-blue-100 text-blue-800 border border-blue-200"
+                      }`}
+                    >
+                      {item.type === "PENDING_REPORT" ? "Urgent" : "Action"}
+                    </span>
+                  </div>
+
+                  {/* Context Details */}
+                  {item.type === "PENDING_REPORT" ? (
+                    <div className="text-xs text-slate-600 space-y-1 bg-white/80 p-2.5 rounded-2xl border border-amber-100">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-semibold text-slate-700">
+                          Élève : <strong className="text-slate-900">{item.studentName}</strong>
+                        </span>
+                        <span className="text-slate-500">
+                          Matière : <strong className="text-slate-800">{item.subjectName}</strong>
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        Professeur : <span className="font-medium text-slate-700">{item.teacherName}</span>
+                      </div>
+                      {item.topicsExcerpt && (
+                        <p className="text-[11px] text-slate-600 italic line-clamp-1 border-t border-slate-100 pt-1">
+                          &laquo; {item.topicsExcerpt} &raquo;
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-600 leading-relaxed bg-white/80 p-2.5 rounded-2xl border border-blue-100">
+                      {locale === "en" ? item.descriptionEn : item.descriptionFr}
+                    </p>
+                  )}
+                </div>
+
+                {/* Footer Action */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400">
+                    {item.type === "PENDING_REPORT"
+                      ? (locale === "en" ? "Direct validation & payout release" : "Déblocage sécurisé de la rémunération")
+                      : (locale === "en" ? "Fast teacher matching" : "Mise en relation certifiée")}
+                  </span>
+
+                  <Link
+                    href={item.actionHref}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                      item.type === "PENDING_REPORT"
+                        ? "bg-amber-600 hover:bg-amber-700 text-white"
+                        : "bg-[#122b49] hover:bg-[#1b3d66] text-white"
+                    }`}
+                  >
+                    <span>{locale === "en" ? item.actionLabelEn : item.actionLabelFr}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 text-emerald-900 flex items-center justify-between gap-3 text-xs shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <span className="font-bold block text-emerald-950">
+                  {locale === "en" ? "All actions completed!" : "Toutes vos actions sont à jour"}
+                </span>
+                <span className="text-emerald-800 text-[11px]">
+                  {locale === "en"
+                    ? "No pending lesson reports or missing requests. Your family progress is on track."
+                    : "Aucun compte rendu en attente de validation. Vos enfants disposent de demandes de cours actives ou de professeurs attribués."}
+                </span>
+              </div>
+            </div>
+            <Link
+              href="/parent/children"
+              className="px-3 py-1.5 rounded-xl bg-white border border-emerald-200 text-emerald-900 font-bold hover:bg-emerald-50 transition text-xs shrink-0 shadow-2xs"
+            >
+              {locale === "en" ? "Manage children" : "Gérer mes enfants"}
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* 3. Middle 2 Analytics Cards: Hours Chart & Completion Gauge */}

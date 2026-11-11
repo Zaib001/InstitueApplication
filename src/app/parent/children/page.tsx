@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { UserRole } from "@prisma/client";
 import { LightDashboardLayout } from "@/components/dashboard/LightDashboardLayout";
 import { ParentChildrenClient } from "@/components/parent/ParentChildrenClient";
+import { deriveStudentRequestStatus } from "@/lib/requests/student-request-status";
 
 export const dynamic = "force-dynamic";
 
@@ -34,10 +35,28 @@ export default async function ParentChildrenPage() {
     });
   }
 
-  // Fetch children from PostgreSQL
+  // Fetch children from PostgreSQL with their requests and classrooms
   const childrenRecords = await prisma.studentProfile.findMany({
     where: { parentId: parentProfile.id },
     include: {
+      tutoringRequests: {
+        select: {
+          id: true,
+          status: true,
+          subjectName: true,
+          customSubject: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
+      classrooms: {
+        select: {
+          id: true,
+          status: true,
+          subjectName: true,
+        },
+        orderBy: { createdAt: "desc" },
+      },
       _count: {
         select: {
           tutoringRequests: true,
@@ -71,22 +90,31 @@ export default async function ParentChildrenPage() {
       }),
     ]);
 
-  const formattedChildren = childrenRecords.map((c) => ({
-    id: c.id,
-    fullName: c.fullName,
-    gradeLevel: c.gradeLevel,
-    cycle: c.cycle,
-    customCycle: c.customCycle,
-    schoolName: c.schoolName,
-    dateOfBirth: c.dateOfBirth ? c.dateOfBirth.toISOString() : null,
-    supportNeeds: c.supportNeeds,
-    preferredSubjects: c.preferredSubjects,
-    customSubject: c.customSubject,
-    notes: c.notes,
-    isArchived: c.isArchived,
-    createdAt: c.createdAt.toISOString(),
-    _count: c._count,
-  }));
+  const formattedChildren = childrenRecords.map((c) => {
+    const requestStatus = deriveStudentRequestStatus(
+      c.id,
+      c.tutoringRequests,
+      c.classrooms
+    );
+
+    return {
+      id: c.id,
+      fullName: c.fullName,
+      gradeLevel: c.gradeLevel,
+      cycle: c.cycle,
+      customCycle: c.customCycle,
+      schoolName: c.schoolName,
+      dateOfBirth: c.dateOfBirth ? c.dateOfBirth.toISOString() : null,
+      supportNeeds: c.supportNeeds,
+      preferredSubjects: c.preferredSubjects,
+      customSubject: c.customSubject,
+      notes: c.notes,
+      isArchived: c.isArchived,
+      createdAt: c.createdAt.toISOString(),
+      requestStatus,
+      _count: c._count,
+    };
+  });
 
   return (
     <LightDashboardLayout user={user} hideRightProfile={true}>

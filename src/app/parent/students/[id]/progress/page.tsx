@@ -40,6 +40,19 @@ export default async function ParentStudentProgressPage({
     if (parent) {
       childrenList = parent.children;
     }
+  } else if (user.role === UserRole.ADMIN) {
+    const student = await prisma.studentProfile.findUnique({
+      where: { id: studentId },
+      select: { parentId: true },
+    });
+    if (student) {
+      const siblings = await prisma.studentProfile.findMany({
+        where: { parentId: student.parentId, isArchived: false },
+        select: { id: true, fullName: true, gradeLevel: true },
+        orderBy: { createdAt: "asc" },
+      });
+      childrenList = siblings;
+    }
   }
 
   return (

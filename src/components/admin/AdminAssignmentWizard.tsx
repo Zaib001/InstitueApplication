@@ -61,13 +61,34 @@ interface TeacherItem {
   phoneNumber?: string | null;
   avatarUrl?: string | null;
   headline?: string | null;
+  bio?: string | null;
   yearsOfExperience: number;
   city: string;
+  serviceArea?: string | null;
+  degrees?: string | null;
+  institution?: string | null;
+  isHomeAvailable?: boolean;
+  isOnlineAvailable?: boolean;
   hourlyRateGnf?: number | null;
   monthlyPackageRateGnf?: number | null;
   subjects: string[];
   gradeLevels: string[];
+  cycles?: string[];
+  customSubject?: string | null;
+  customGradeLevel?: string | null;
+  availabilities?: Array<{
+    id: string;
+    dayOfWeek: number;
+    dayName: string;
+    startTime: string;
+    endTime: string;
+    isRecurring?: boolean;
+  }>;
   ratingAverage?: number | null;
+  ratingsCount?: number;
+  relevanceScore?: number;
+  matchBadge?: "EXACT" | "SUBJECT_AND_LEVEL" | "SUBJECT_ONLY" | "COMPATIBLE";
+  matchReasons?: string[];
 }
 
 const COMMON_SUBJECTS = [
@@ -135,11 +156,79 @@ export function AdminAssignmentWizard({
   const [locationAddress, setLocationAddress] = useState("");
   const [preferredSchedule, setPreferredSchedule] = useState("2 séances par semaine (2h)");
 
-  // Step 3: Approved Teacher Selection
+  // Step 3: Approved Teacher Selection & Filters
   const [teacherSearchQuery, setTeacherSearchQuery] = useState("");
+  const [teacherFilterSubject, setTeacherFilterSubject] = useState("");
+  const [teacherFilterCycle, setTeacherFilterCycle] = useState("TOUS");
+  const [teacherFilterMode, setTeacherFilterMode] = useState<"TOUS" | "HOME" | "ONLINE">("TOUS");
+  const [teacherFilterCommune, setTeacherFilterCommune] = useState("TOUS");
   const [teachersList, setTeachersList] = useState<TeacherItem[]>([]);
   const [isSearchingTeachers, setIsSearchingTeachers] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherItem | null>(null);
+
+  // Sync Step 2 values to Step 3 filters when step becomes 3
+  useEffect(() => {
+    if (step === 3) {
+      const activeSub = subjectName === "Autre matière" ? customSubjectName : subjectName;
+      setTeacherFilterSubject(activeSub);
+      setTeacherFilterMode(mode === TutoringMode.HOME ? "HOME" : mode === TutoringMode.ONLINE ? "ONLINE" : "TOUS");
+      setTeacherFilterCommune(commune || "TOUS");
+      const currentChild = selectedParent?.children.find((c) => c.id === selectedStudentId);
+      if (currentChild?.cycle) {
+        setTeacherFilterCycle(currentChild.cycle);
+      }
+    }
+  }, [step]);
+
+  // Search Approved Teachers effect with deterministic matching
+  useEffect(() => {
+    if (step !== 3) return;
+    let active = true;
+    const fetchTeachers = async () => {
+      setIsSearchingTeachers(true);
+      try {
+        const params = new URLSearchParams();
+        if (teacherSearchQuery.trim()) {
+          params.set("q", teacherSearchQuery.trim());
+        }
+        if (teacherFilterSubject.trim() && teacherFilterSubject !== "TOUS") {
+          params.set("subject", teacherFilterSubject.trim());
+        }
+        if (teacherFilterCycle && teacherFilterCycle !== "TOUS") {
+          params.set("cycle", teacherFilterCycle);
+        }
+        if (teacherFilterMode && teacherFilterMode !== "TOUS") {
+          params.set("mode", teacherFilterMode);
+        }
+        if (teacherFilterCommune && teacherFilterCommune !== "TOUS") {
+          params.set("commune", teacherFilterCommune);
+        }
+
+        const res = await fetch(`/api/admin/teachers/search?${params.toString()}`);
+        const data = await res.json();
+        if (active && data.teachers) {
+          setTeachersList(data.teachers);
+        }
+      } catch {
+        // silent error
+      } finally {
+        if (active) setIsSearchingTeachers(false);
+      }
+    };
+
+    const timer = setTimeout(fetchTeachers, 250);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [
+    step,
+    teacherSearchQuery,
+    teacherFilterSubject,
+    teacherFilterCycle,
+    teacherFilterMode,
+    teacherFilterCommune,
+  ]);
 
   // Step 4: Pricing & Source
   const [rateType, setRateType] = useState<"MONTHLY" | "HOURLY">("MONTHLY");
@@ -178,34 +267,6 @@ export function AdminAssignmentWizard({
       clearTimeout(timer);
     };
   }, [parentSearchQuery]);
-
-  // Search Approved Teachers effect
-  useEffect(() => {
-    let active = true;
-    const fetchTeachers = async () => {
-      setIsSearchingTeachers(true);
-      try {
-        const activeSub = subjectName === "Autre matière" ? customSubjectName : subjectName;
-        const res = await fetch(
-          `/api/admin/teachers/search?q=${encodeURIComponent(teacherSearchQuery)}&subject=${encodeURIComponent(activeSub)}`
-        );
-        const data = await res.json();
-        if (active && data.teachers) {
-          setTeachersList(data.teachers);
-        }
-      } catch {
-        // silent error
-      } finally {
-        if (active) setIsSearchingTeachers(false);
-      }
-    };
-
-    const timer = setTimeout(fetchTeachers, 300);
-    return () => {
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [teacherSearchQuery, subjectName, customSubjectName]);
 
   // Handle Assisted Parent Registration
   const handleRegisterParent = async (e: React.FormEvent) => {
@@ -894,96 +955,355 @@ export function AdminAssignmentWizard({
           {/* STEP 3: APPROVED TEACHER SELECTION */}
           {step === 3 && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100">
                 <div>
                   <h4 className="text-xs font-bold text-slate-800">
-                    Sélection d&apos;un Enseignant Agréé Monsieur Fanyi
+                    {locale === "en" ? "Select an Approved Tutor" : "Sélection d'un Enseignant Agréé Monsieur Fanyi"}
                   </h4>
                   <p className="text-[11px] text-slate-500">
-                    Seuls les enseignants au statut &laquo; APPROUVÉ &raquo; peuvent être affectés
+                    {locale === "en"
+                      ? "Only active APPROVED teachers can be assigned to classes"
+                      : "Seuls les enseignants au statut APPROUVÉ et avec compte actif sont affichés"}
                   </p>
                 </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold text-slate-500">
+                    {teachersList.length} {locale === "en" ? "tutor(s) found" : "professeur(s) agréé(s)"}
+                  </span>
+                  {(teacherSearchQuery || teacherFilterSubject !== (subjectName === "Autre matière" ? customSubjectName : subjectName) || teacherFilterCycle !== "TOUS" || teacherFilterMode !== "TOUS" || teacherFilterCommune !== "TOUS") && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTeacherSearchQuery("");
+                        setTeacherFilterSubject(subjectName === "Autre matière" ? customSubjectName : subjectName);
+                        setTeacherFilterCycle("TOUS");
+                        setTeacherFilterMode("TOUS");
+                        setTeacherFilterCommune("TOUS");
+                      }}
+                      className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {locale === "en" ? "Reset filters" : "Réinitialiser"}
+                    </button>
+                  )}
+                </div>
               </div>
 
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-                <input
-                  type="text"
-                  value={teacherSearchQuery}
-                  onChange={(e) => setTeacherSearchQuery(e.target.value)}
-                  placeholder="Filtrer par nom, diplôme, biographie..."
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs outline-hidden"
-                />
+              {/* Advanced Multi-criteria Filter Bar */}
+              <div className="space-y-2.5 p-3 rounded-2xl bg-slate-50/90 border border-slate-200">
+                {/* Search Text Input */}
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+                  <input
+                    type="text"
+                    value={teacherSearchQuery}
+                    onChange={(e) => setTeacherSearchQuery(e.target.value)}
+                    placeholder={
+                      locale === "en"
+                        ? "Search by teacher name, diploma, keywords, bio..."
+                        : "Rechercher par nom de professeur, diplôme, biographie..."
+                    }
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 outline-hidden focus:border-[#16385c] focus:ring-1 focus:ring-[#16385c]"
+                  />
+                  {teacherSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setTeacherSearchQuery("")}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Filter Row: Subject, Cycle, Mode, Commune */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  {/* Subject filter */}
+                  <div>
+                    <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">
+                      {locale === "en" ? "Subject" : "Matière"}
+                    </label>
+                    <select
+                      value={teacherFilterSubject}
+                      onChange={(e) => setTeacherFilterSubject(e.target.value)}
+                      className="w-full px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs text-slate-700 outline-hidden font-medium"
+                    >
+                      <option value="TOUS">{locale === "en" ? "All subjects" : "Toutes les matières"}</option>
+                      {COMMON_SUBJECTS.filter((s) => s !== "Autre matière").map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                      {customSubjectName && (
+                        <option value={customSubjectName}>{customSubjectName} (Personnalisée)</option>
+                      )}
+                    </select>
+                  </div>
+
+                  {/* Cycle / Level filter */}
+                  <div>
+                    <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">
+                      {locale === "en" ? "Cycle / Level" : "Cycle d'enseignement"}
+                    </label>
+                    <select
+                      value={teacherFilterCycle}
+                      onChange={(e) => setTeacherFilterCycle(e.target.value)}
+                      className="w-full px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs text-slate-700 outline-hidden font-medium"
+                    >
+                      <option value="TOUS">{locale === "en" ? "All cycles" : "Tous les cycles"}</option>
+                      <option value="PRIMAIRE">{locale === "en" ? "Primary" : "Primaire"}</option>
+                      <option value="COLLEGE">{locale === "en" ? "Middle School" : "Collège"}</option>
+                      <option value="LYCEE">{locale === "en" ? "High School" : "Lycée"}</option>
+                      <option value="SUPERIEUR">{locale === "en" ? "Higher Ed" : "Supérieur"}</option>
+                    </select>
+                  </div>
+
+                  {/* Mode filter */}
+                  <div>
+                    <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">
+                      {locale === "en" ? "Teaching mode" : "Mode d'enseignement"}
+                    </label>
+                    <select
+                      value={teacherFilterMode}
+                      onChange={(e) => setTeacherFilterMode(e.target.value as any)}
+                      className="w-full px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs text-slate-700 outline-hidden font-medium"
+                    >
+                      <option value="TOUS">{locale === "en" ? "All modes" : "Tous formats"}</option>
+                      <option value="HOME">{locale === "en" ? "In-Person (Home)" : "À domicile"}</option>
+                      <option value="ONLINE">{locale === "en" ? "Online" : "En ligne"}</option>
+                    </select>
+                  </div>
+
+                  {/* Commune filter */}
+                  <div>
+                    <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">
+                      {locale === "en" ? "Commune / Area" : "Zone / Commune"}
+                    </label>
+                    <select
+                      value={teacherFilterCommune}
+                      onChange={(e) => setTeacherFilterCommune(e.target.value)}
+                      className="w-full px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs text-slate-700 outline-hidden font-medium"
+                    >
+                      <option value="TOUS">{locale === "en" ? "All Conakry" : "Tout Conakry"}</option>
+                      {CONAKRY_COMMUNES.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
 
+              {/* Results List */}
               {isSearchingTeachers ? (
-                <div className="py-8 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Recherche des professeurs qualifiés...</span>
+                <div className="py-12 text-center text-xs text-slate-400 flex flex-col items-center justify-center gap-2">
+                  <Loader2 className="w-6 h-6 animate-spin text-[#16385c]" />
+                  <span>{locale === "en" ? "Matching qualified tutors..." : "Recherche et classement des professeurs qualifiés..."}</span>
                 </div>
               ) : teachersList.length === 0 ? (
-                <div className="p-4 bg-slate-50 rounded-xl text-center text-xs text-slate-500">
-                  Aucun enseignant approuvé trouvé pour cette matière. Modifiez vos critères de recherche.
+                <div className="p-8 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+                    <Search className="w-6 h-6" />
+                  </div>
+                  <div className="max-w-md mx-auto space-y-1">
+                    <h5 className="font-bold text-slate-800 text-xs sm:text-sm">
+                      {locale === "en"
+                        ? "No tutor matches the selected criteria."
+                        : "Aucun professeur ne correspond aux critères sélectionnés."}
+                    </h5>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      {locale === "en"
+                        ? "You can broaden your filters (e.g. choose All cycles or All communes) to find other qualified teachers."
+                        : "Vous pouvez modifier les filtres pour élargir la recherche."}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTeacherSearchQuery("");
+                      setTeacherFilterSubject("TOUS");
+                      setTeacherFilterCycle("TOUS");
+                      setTeacherFilterMode("TOUS");
+                      setTeacherFilterCommune("TOUS");
+                    }}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors shadow-xs"
+                  >
+                    <span>{locale === "en" ? "Broaden search (Show all tutors)" : "Élargir la recherche (Afficher tous)"}</span>
+                  </button>
                 </div>
               ) : (
-                <div className="max-h-72 overflow-y-auto space-y-2.5 border border-slate-100 rounded-xl p-1">
+                <div className="max-h-80 overflow-y-auto space-y-3 border border-slate-100 rounded-2xl p-1.5 [scrollbar-width:thin]">
                   {teachersList.map((t) => {
                     const isSelected = selectedTeacher?.id === t.id;
+                    const activeTargetSub = teacherFilterSubject !== "TOUS" ? teacherFilterSubject : (subjectName === "Autre matière" ? customSubjectName : subjectName);
+
                     return (
                       <div
                         key={t.id}
                         onClick={() => setSelectedTeacher(t)}
-                        className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                        className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
                           isSelected
-                            ? "bg-emerald-50/70 border-emerald-600 ring-2 ring-emerald-500/20"
-                            : "bg-white border-slate-100 hover:bg-slate-50"
+                            ? "bg-emerald-50/80 border-emerald-600 ring-2 ring-emerald-500/20 shadow-xs"
+                            : "bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-10 h-10 rounded-full bg-[#16385c]/10 text-[#16385c] font-bold text-sm flex items-center justify-center shrink-0">
-                              {t.fullName.charAt(0).toUpperCase()}
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                          {/* Teacher Identity & Details */}
+                          <div className="flex items-start gap-3 flex-1 min-w-0">
+                            {/* Avatar */}
+                            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#16385c] to-blue-700 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                              {t.avatarUrl ? (
+                                <img
+                                  src={t.avatarUrl}
+                                  alt={t.fullName}
+                                  className="w-full h-full rounded-2xl object-cover"
+                                />
+                              ) : (
+                                t.fullName.charAt(0).toUpperCase()
+                              )}
                             </div>
-                            <div>
-                              <div className="flex items-center gap-1.5">
-                                <span className="font-bold text-slate-800 text-xs">
+
+                            <div className="space-y-1.5 flex-1 min-w-0">
+                              {/* Name, Verified Badge & Match Relevance Badge */}
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="font-bold text-slate-900 text-xs sm:text-sm">
                                   {t.fullName}
                                 </span>
-                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-emerald-100 text-emerald-800">
-                                  <ShieldCheck className="w-2.5 h-2.5" />
-                                  <span>Approuvé</span>
+                                <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200/60">
+                                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                                  <span>{locale === "en" ? "Approved" : "Agréé"}</span>
                                 </span>
+
+                                {/* Match Badge */}
+                                {t.matchBadge === "EXACT" && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    <Sparkles className="w-2.5 h-2.5 text-amber-600" />
+                                    <span>{locale === "en" ? "Exact Match" : "Correspondance exacte"}</span>
+                                  </span>
+                                )}
+                                {t.matchBadge === "SUBJECT_AND_LEVEL" && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                    <span>{locale === "en" ? "Subject & Level Match" : "Matière & Niveau compatibles"}</span>
+                                  </span>
+                                )}
+                                {t.matchBadge === "SUBJECT_ONLY" && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                    <span>{locale === "en" ? "Subject Match" : "Matière compatible"}</span>
+                                  </span>
+                                )}
                               </div>
+
+                              {/* Headline / Bio Excerpt */}
                               {t.headline && (
-                                <p className="text-[11px] text-slate-500 line-clamp-1">{t.headline}</p>
+                                <p className="text-[11px] text-slate-600 line-clamp-1 font-medium">
+                                  {t.headline}
+                                </p>
                               )}
-                              <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                                <span>{t.yearsOfExperience} ans exp.</span>
-                                <span>• {t.city}</span>
-                                {t.ratingAverage && <span>• ★ {t.ratingAverage}/5</span>}
+
+                              {/* Qualifications & Degrees */}
+                              <div className="flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
+                                {t.degrees && (
+                                  <span className="font-semibold text-slate-700">
+                                    🎓 {t.degrees} {t.institution ? `(${t.institution})` : ""}
+                                  </span>
+                                )}
+                                <span>• {t.yearsOfExperience} {locale === "en" ? "yrs exp." : "ans d'exp."}</span>
+                                <span>• 📍 {t.serviceArea || t.city}</span>
+                                {t.ratingAverage && (
+                                  <span className="text-amber-700 font-bold">
+                                    ★ {t.ratingAverage}/5 ({t.ratingsCount || 0})
+                                  </span>
+                                )}
                               </div>
+
+                              {/* Subjects Chips (Highlighting matching subject) */}
+                              {t.subjects && t.subjects.length > 0 && (
+                                <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                                  {t.subjects.slice(0, 4).map((sub, idx) => {
+                                    const isSubMatch = activeTargetSub && sub.toLowerCase().includes(activeTargetSub.toLowerCase());
+                                    return (
+                                      <span
+                                        key={idx}
+                                        className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
+                                          isSubMatch
+                                            ? "bg-[#16385c] text-white border-[#16385c]"
+                                            : "bg-slate-100 text-slate-700 border-slate-200/80"
+                                        }`}
+                                      >
+                                        {sub}
+                                      </span>
+                                    );
+                                  })}
+                                  {t.subjects.length > 4 && (
+                                    <span className="text-[10px] text-slate-400 font-semibold">
+                                      +{t.subjects.length - 4}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Verified Availability preview */}
+                              {t.availabilities && t.availabilities.length > 0 && (
+                                <div className="flex items-center gap-1 text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md w-fit">
+                                  <Clock className="w-3 h-3 text-emerald-600 shrink-0" />
+                                  <span className="line-clamp-1">
+                                    {locale === "en" ? "Available:" : "Disponibilités :"} {t.availabilities.slice(0, 2).map((a) => `${a.dayName} (${a.startTime}-${a.endTime})`).join(", ")}
+                                    {t.availabilities.length > 2 ? ` (+${t.availabilities.length - 2})` : ""}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           </div>
 
-                          <div className="text-right shrink-0">
-                            {t.monthlyPackageRateGnf ? (
-                              <span className="font-bold text-slate-800 text-xs block">
-                                {formatGnf(t.monthlyPackageRateGnf)} /mois
-                              </span>
-                            ) : t.hourlyRateGnf ? (
-                              <span className="font-bold text-slate-800 text-xs block">
-                                {formatGnf(t.hourlyRateGnf)} /h
-                              </span>
-                            ) : null}
-                            <span
-                              className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                          {/* Pricing & Selection Control */}
+                          <div className="text-right sm:text-right shrink-0 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                            <div>
+                              {t.monthlyPackageRateGnf ? (
+                                <span className="font-extrabold text-slate-900 text-xs block">
+                                  {formatGnf(t.monthlyPackageRateGnf)} <span className="text-[10px] font-medium text-slate-500">/mois</span>
+                                </span>
+                              ) : t.hourlyRateGnf ? (
+                                <span className="font-extrabold text-slate-900 text-xs block">
+                                  {formatGnf(t.hourlyRateGnf)} <span className="text-[10px] font-medium text-slate-500">/h</span>
+                                </span>
+                              ) : (
+                                <span className="text-[11px] text-slate-400 italic">
+                                  {locale === "en" ? "Standard rates" : "Tarif standard"}
+                                </span>
+                              )}
+
+                              {/* Teaching mode badges */}
+                              <div className="flex items-center justify-end gap-1 mt-1">
+                                {t.isHomeAvailable && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-sm bg-blue-50 text-blue-700 border border-blue-200">
+                                    {locale === "en" ? "In-Person" : "Domicile"}
+                                  </span>
+                                )}
+                                {t.isOnlineAvailable && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-sm bg-purple-50 text-purple-700 border border-purple-200">
+                                    {locale === "en" ? "Online" : "En ligne"}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedTeacher(t);
+                              }}
+                              className={`mt-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs ${
                                 isSelected
-                                  ? "bg-emerald-600 text-white"
-                                  : "bg-slate-100 text-slate-600"
+                                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                                  : "bg-slate-100 text-slate-700 hover:bg-[#16385c] hover:text-white"
                               }`}
                             >
-                              {isSelected ? "Sélectionné" : "Choisir"}
-                            </span>
+                              {isSelected ? (
+                                <span className="inline-flex items-center gap-1">
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>{locale === "en" ? "Selected" : "Sélectionné"}</span>
+                                </span>
+                              ) : (
+                                <span>{locale === "en" ? "Select" : "Choisir ce professeur"}</span>
+                              )}
+                            </button>
                           </div>
                         </div>
                       </div>

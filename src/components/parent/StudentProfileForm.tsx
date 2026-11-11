@@ -212,6 +212,18 @@ export function StudentProfileForm({
           </div>
         )}
 
+        {/* Informative Rule: Creating Profile Does Not Automatically Create Request */}
+        {!isEditing && (
+          <div className="mx-5 sm:mx-7 mt-3 p-3 rounded-2xl bg-blue-50/70 border border-blue-200/80 text-[11px] text-blue-950 flex items-start gap-2.5 shrink-0">
+            <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+            <p className="leading-relaxed font-medium">
+              {locale === "en"
+                ? "Note: Registering a student creates their academic profile. To match an approved private tutor, a tutoring request will be created next."
+                : "Rappel : L'inscription enregistre le profil scolaire de votre enfant. Pour trouver un professeur agréé, vous serez invité(e) à formuler une demande de cours immédiatement après."}
+            </p>
+          </div>
+        )}
+
         {/* Scrollable Form Body */}
         <form
           id="student-form"
