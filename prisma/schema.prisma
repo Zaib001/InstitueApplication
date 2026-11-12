@@ -260,6 +260,7 @@ model User {
   uploadedAttachments     Attachment[]
   adminAssignedClassrooms Classroom[]              @relation("AdminAssignedClassrooms")
   invitationTokens        AccountInvitationToken[]
+  legalAcceptances        LegalAcceptance[]
 
   @@index([role])
   @@index([email])
@@ -311,9 +312,12 @@ model ParentProfile {
   userId                 String   @unique
   user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   address                String?
-  city                   String   @default("Conakry")
-  isAssistedRegistration Boolean  @default(false)
-  createdAt              DateTime @default(now())
+  city                   String    @default("Conakry")
+  isAssistedRegistration Boolean   @default(false)
+  termsAccepted          Boolean   @default(false)
+  termsAcceptedAt        DateTime?
+  termsVersion           String?
+  createdAt              DateTime  @default(now())
   updatedAt              DateTime @updatedAt
 
   children         StudentProfile[]
@@ -1130,3 +1134,32 @@ model RefundCase {
   @@index([orderId])
   @@index([status])
 }
+
+model LegalAcceptance {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentType    String   // "CGU" | "CHARTE_PEDAGOGIQUE" | "NON_CIRCUMVENTION"
+  documentVersion String   // "V2.1-2026-NC"
+  context         String   // "REGISTRATION" | "RE_ACCEPTANCE"
+  ipAddress       String?
+  userAgent       String?
+  acceptedAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([documentType, documentVersion])
+}
+
+model ContactInquiry {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("NEW") // "NEW" | "READ" | "REPLIED" | "ARCHIVED"
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+

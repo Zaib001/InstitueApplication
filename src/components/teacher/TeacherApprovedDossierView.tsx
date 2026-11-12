@@ -208,10 +208,10 @@ export function TeacherApprovedDossierView({
 
       {/* 3. Grid of Profile Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* Column 1 & 2: Main Pedagogical & Personal Dossier */}
         <div className="lg:col-span-2 space-y-6">
-          
+
           {/* Personal Identity Card */}
           <div className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -237,7 +237,7 @@ export function TeacherApprovedDossierView({
               </div>
               <div>
                 <span className="text-slate-400 block mb-0.5">{locale === "en" ? "Phone Number" : "Numéro de téléphone"}</span>
-                <span className="font-semibold text-slate-700">{user.phoneNumber || "+224 620 00 00 00"}</span>
+                <span className="font-semibold text-slate-700">{user.phoneNumber || (locale === "en" ? "Not provided" : "Non renseigné")}</span>
               </div>
               <div>
                 <span className="text-slate-400 block mb-0.5">{locale === "en" ? "City / Location" : "Ville de résidence"}</span>

@@ -351,6 +351,28 @@ export class ProgressService {
       }
     });
 
+    // Feed observations (bilans pédagogiques) into subjects
+    observations.forEach((o) => {
+      const sub = subjectMap.get(o.subjectName);
+      if (sub) {
+        if (o.topicsMastered && !sub.topicsCovered.includes(o.topicsMastered)) {
+          sub.topicsCovered.push(o.topicsMastered);
+        }
+        if (o.strengths && !sub.strengths.includes(o.strengths)) {
+          sub.strengths.push(o.strengths);
+        }
+        if (o.areasForImprovement && !sub.areasForImprovement.includes(o.areasForImprovement)) {
+          sub.areasForImprovement.push(o.areasForImprovement);
+        }
+        if (o.recommendations && !sub.recommendations.includes(o.recommendations)) {
+          sub.recommendations.push(o.recommendations);
+        }
+        if (o.progressRating && !sub.latestProgressRating) {
+          sub.latestProgressRating = o.progressRating;
+        }
+      }
+    });
+
     const subjectsArray = Array.from(subjectMap.values());
 
     // 10. Overall Assessment Stats
@@ -365,7 +387,7 @@ export class ProgressService {
     // 11. Chronological Learning Timeline
     type TimelineItem = {
       id: string;
-      type: "LESSON" | "HOMEWORK" | "ASSESSMENT";
+      type: "LESSON" | "HOMEWORK" | "ASSESSMENT" | "OBSERVATION";
       date: string;
       subjectName: string;
       title: string;
@@ -443,6 +465,26 @@ export class ProgressService {
           percentage: a.percentage,
           learningObjectives: a.learningObjectives,
           teacherComments: a.teacherComments,
+        },
+      });
+    });
+
+    // Add Observations (Bilans Pédagogiques)
+    observations.forEach((o) => {
+      timeline.push({
+        id: `obs_${o.id}`,
+        type: "OBSERVATION",
+        date: o.observationDate.toISOString(),
+        subjectName: o.subjectName,
+        title: `Bilan Pédagogique : ${o.subjectName}`,
+        teacherName: o.teacherProfile.user.fullName,
+        details: {
+          observationId: o.id,
+          topicsMastered: o.topicsMastered,
+          strengths: o.strengths,
+          areasForImprovement: o.areasForImprovement,
+          recommendations: o.recommendations,
+          progressRating: o.progressRating,
         },
       });
     });

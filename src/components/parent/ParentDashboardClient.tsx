@@ -873,7 +873,7 @@ export function ParentDashboardClient({
             {requestsSummary.recentRequests.map((req) => (
               <Link
                 key={req.id}
-                href={`/parent/requests/${req.id}`}
+                href={`/parent/requests/${req.id}${req.applicationsCount > 0 ? "#applications" : ""}`}
                 className="p-4 rounded-2xl bg-white border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all space-y-3 block group"
               >
                 <div className="flex items-start justify-between gap-2">
@@ -892,12 +892,34 @@ export function ParentDashboardClient({
                   </p>
                 </div>
 
+                {/* Application Activity Display */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                  {req.applicationsCount > 0 ? (
+                    <div className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 font-bold text-[11px]">
+                      <Users className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>
+                        {req.applicationsCount === 1
+                          ? locale === "en" ? "1 application received" : "1 candidature reçue"
+                          : `${req.applicationsCount} ${locale === "en" ? "applications received" : "candidatures reçues"}`}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 italic">
+                      {locale === "en" ? "No applications yet" : "Aucune candidature reçue pour le moment."}
+                    </span>
+                  )}
+                </div>
+
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-800">
                     {new Intl.NumberFormat("fr-GN").format(req.budgetGnf)} GNF
                   </span>
-                  <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1 group-hover:text-blue-600">
-                    <span>{locale === "en" ? "Details" : "Voir"}</span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#16385c] group-hover:text-blue-600 bg-slate-50 group-hover:bg-blue-50 px-2.5 py-1 rounded-lg transition-colors">
+                    <span>
+                      {req.applicationsCount > 0
+                        ? locale === "en" ? "View Applications" : "Voir les candidatures"
+                        : locale === "en" ? "Details" : "Voir la demande"}
+                    </span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </span>
                 </div>

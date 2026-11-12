@@ -11,6 +11,7 @@ import {
   Smartphone,
   MapPin,
   Lock,
+  Mail,
 } from "lucide-react";
 
 export function Footer() {
@@ -141,21 +142,35 @@ export function Footer() {
               {t("footer.legalSection", "Cadre & Contact")}
             </h3>
             <ul className="space-y-2.5 text-xs text-slate-400">
+              <li className="flex items-center gap-1.5 text-slate-200">
+                <Mail className="w-3.5 h-3.5 text-brand-gold shrink-0" />
+                <a
+                  href="mailto:contact@monsieurfanyi.com"
+                  className="hover:text-white font-semibold transition-colors"
+                >
+                  contact@monsieurfanyi.com
+                </a>
+              </li>
               <li className="flex items-center gap-1.5 text-slate-300">
                 <MapPin className="w-3.5 h-3.5 text-brand-teal shrink-0" />
                 <span>{t("footer.location", "Conakry, République de Guinée")}</span>
               </li>
+              <li>
+                <Link href="/contact" className="hover:text-white transition-colors text-amber-300 font-medium">
+                  Page de contact & permanence →
+                </Link>
+              </li>
+              <li>
+                <Link href="/cgu" className="hover:text-white transition-colors">
+                  Conditions Générales d&apos;Utilisation (CGU)
+                </Link>
+              </li>
+              <li>
+                <Link href="/charte" className="hover:text-white transition-colors">
+                  Charte d&apos;Engagement Pédagogique
+                </Link>
+              </li>
               <li>{t("footer.currencyLabel", "Devise : Franc Guinéen (GNF)")}</li>
-              <li>
-                <Link href="/mentions-legales" className="hover:text-white transition-colors">
-                  {t("footer.legalNotice", "Mentions Légales (Projet)")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/confidentialite" className="hover:text-white transition-colors">
-                  {t("footer.privacy", "Protection des données & Enfants")}
-                </Link>
-              </li>
             </ul>
           </div>
 

@@ -36,6 +36,7 @@ function RegisterContent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -93,6 +94,11 @@ function RegisterContent() {
       return;
     }
 
+    if (!termsAccepted) {
+      setErrorMessage("Vous devez accepter les Conditions Générales d'Utilisation et la Charte d'engagement pédagogique, y compris la clause de non-contournement.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -106,6 +112,7 @@ function RegisterContent() {
           phoneNumber: phoneNumber || undefined,
           password,
           confirmPassword,
+          termsAccepted,
         }),
       });
 
@@ -379,9 +386,46 @@ function RegisterContent() {
               </div>
             )}
 
+            {/* Checkbox Obligatoire : Acceptation CGU, Charte & Clause de Non-contournement */}
+            <div className="pt-2">
+              <label className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  id="register-terms-checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  disabled={isLoading}
+                  className="mt-0.5 w-4 h-4 rounded text-[#e59a38] border-white/30 bg-slate-900/60 focus:ring-amber-500 focus:ring-offset-0 cursor-pointer shrink-0"
+                />
+                <span className="text-xs text-slate-200 leading-snug">
+                  J&apos;ai lu et j&apos;accepte les{" "}
+                  <Link
+                    href="/cgu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-amber-300 underline underline-offset-2 hover:text-amber-200"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Conditions Générales d&apos;Utilisation
+                  </Link>{" "}
+                  et la{" "}
+                  <Link
+                    href="/charte"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-amber-300 underline underline-offset-2 hover:text-amber-200"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Charte d&apos;engagement pédagogique
+                  </Link>
+                  , y compris la <span className="font-semibold text-white">clause de non-contournement</span>.
+                </span>
+              </label>
+            </div>
+
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !termsAccepted}
               className="w-full py-3 px-6 rounded-full bg-[#e59a38] hover:bg-[#d68b29] text-white font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {isLoading ? (

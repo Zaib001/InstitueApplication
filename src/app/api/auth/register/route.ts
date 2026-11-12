@@ -19,6 +19,17 @@ export async function POST(request: Request) {
       );
     }
 
+    // Legal requirement: Terms & Non-circumvention clause acceptance is mandatory
+    if (body.termsAccepted !== true) {
+      return NextResponse.json(
+        {
+          error:
+            "Vous devez lire et accepter les Conditions Générales d'Utilisation et la Charte d'engagement pédagogique, y compris la clause de non-contournement.",
+        },
+        { status: 400 }
+      );
+    }
+
     let validatedData: any;
     if (role === "PARENT") {
       const result = parentRegisterSchema.safeParse(body);
@@ -67,6 +78,15 @@ export async function POST(request: Request) {
       }
     }
 
+    // Extract client IP and user agent for immutable legal acceptance record
+    const ipAddress =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      null;
+    const userAgent = request.headers.get("user-agent") || null;
+    const termsVersion = "V2.1-2026-NC";
+    const acceptedAt = new Date();
+
     // Hash password with bcryptjs
     const passwordHash = await hashPassword(password);
 
@@ -88,6 +108,9 @@ export async function POST(request: Request) {
           data: {
             userId: user.id,
             city: "Conakry",
+            termsAccepted: true,
+            termsAcceptedAt: acceptedAt,
+            termsVersion,
           },
         });
       } else if (role === "TEACHER") {
@@ -96,18 +119,71 @@ export async function POST(request: Request) {
             userId: user.id,
             city: "Conakry",
             verificationStatus: TeacherVerificationStatus.PENDING_REVIEW,
+            termsAccepted: true,
+            termsAcceptedAt: acceptedAt,
+            termsVersion,
           },
         });
       }
 
-      // Record audit log
+      // Record immutable legal acceptance records for CGU, Charte, and Non-Circumvention
+      await tx.legalAcceptance.createMany({
+        data: [
+          {
+            userId: user.id,
+            documentType: "CGU",
+            documentVersion: termsVersion,
+            context: "REGISTRATION",
+            ipAddress,
+            userAgent,
+            acceptedAt,
+          },
+          {
+            userId: user.id,
+            documentType: "CHARTE_PEDAGOGIQUE",
+            documentVersion: termsVersion,
+            context: "REGISTRATION",
+            ipAddress,
+            userAgent,
+            acceptedAt,
+          },
+          {
+            userId: user.id,
+            documentType: "NON_CIRCUMVENTION",
+            documentVersion: termsVersion,
+            context: "REGISTRATION",
+            ipAddress,
+            userAgent,
+            acceptedAt,
+          },
+        ],
+      });
+
+      // Record audit logs
       await tx.auditLog.create({
         data: {
           userId: user.id,
           action: "USER_REGISTERED",
           entityType: "User",
           entityId: user.id,
+          ipAddress,
           detailsJson: JSON.stringify({ role, email }),
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: user.id,
+          action: "TERMS_ACCEPTED",
+          entityType: "User",
+          entityId: user.id,
+          ipAddress,
+          detailsJson: JSON.stringify({
+            version: termsVersion,
+            documents: ["CGU", "CHARTE_PEDAGOGIQUE", "NON_CIRCUMVENTION"],
+            clause: "Non-contournement de la plateforme",
+            acceptedAt: acceptedAt.toISOString(),
+          }),
         },
       });
 

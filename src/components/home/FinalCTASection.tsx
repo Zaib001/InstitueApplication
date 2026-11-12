@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
   CheckCircle2,
+  Mail,
 } from "lucide-react";
 
 export function FinalCTASection() {
@@ -73,6 +74,24 @@ export function FinalCTASection() {
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
               <span>{t("finalCta.pill3", "Orange Money & MTN Guinée")}</span>
             </div>
+          </div>
+
+          {/* Contact Direct Officiel */}
+          <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-slate-300">
+            <span>Une question particulière ou besoin d&apos;assistance ?</span>
+            <a
+              href="mailto:contact@monsieurfanyi.com"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5 text-brand-gold" />
+              <span>contact@monsieurfanyi.com</span>
+            </a>
+            <Link
+              href="/contact"
+              className="text-amber-300 hover:text-amber-200 underline underline-offset-2 transition-colors ml-1"
+            >
+              Formulaire de contact →
+            </Link>
           </div>
         </div>
       </div>

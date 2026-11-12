@@ -15,6 +15,7 @@ import {
   Eye,
   GraduationCap,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { RequestStatus, TutoringMode } from "@prisma/client";
 import { RequestStatusBadge } from "./RequestStatusBadge";
@@ -117,8 +118,24 @@ export function RequestCard({
           </div>
         </div>
 
-        <div className="self-start sm:self-auto shrink-0">
+        <div className="self-start sm:self-auto shrink-0 flex flex-col sm:items-end gap-1.5">
           <RequestStatusBadge status={request.status} />
+          {request.status === "OPEN" && (
+            (request._count?.applications || 0) > 0 ? (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                <Users className="w-3 h-3 text-emerald-600" />
+                <span>
+                  {(request._count?.applications || 0) === 1
+                    ? locale === "en" ? "1 candidature reçue" : "1 candidature reçue"
+                    : `${request._count?.applications} ${locale === "en" ? "candidatures reçues" : "candidatures reçues"}`}
+                </span>
+              </span>
+            ) : (
+              <span className="text-[10px] text-slate-400 italic">
+                {locale === "en" ? "No applications yet" : "Aucune candidature reçue pour le moment."}
+              </span>
+            )
+          )}
         </div>
       </div>
 
@@ -197,14 +214,29 @@ export function RequestCard({
 
       {/* Footer Actions */}
       <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href={`/parent/requests/${request.id}`}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#16385c] hover:text-blue-700 transition-colors"
-        >
-          <Eye className="w-4 h-4" />
-          <span>{locale === "en" ? "View Full Request" : "Consulter la demande"}</span>
-          <ChevronRight className="w-3.5 h-3.5" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/parent/requests/${request.id}`}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#16385c] hover:text-blue-700 transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            <span>{locale === "en" ? "View Details" : "Détails de la demande"}</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+
+          {(request._count?.applications || 0) > 0 && (
+            <Link
+              href={`/parent/requests/${request.id}#applications`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#16385c] hover:bg-[#1f4a7a] text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+            >
+              <Users className="w-3.5 h-3.5 text-[#e59a38]" />
+              <span>
+                {locale === "en" ? "View Applications" : "Voir les candidatures"} (
+                {request._count?.applications})
+              </span>
+            </Link>
+          )}
+        </div>
 
         <div className="flex items-center gap-2">
           {request.status === "DRAFT" && onPublish && (

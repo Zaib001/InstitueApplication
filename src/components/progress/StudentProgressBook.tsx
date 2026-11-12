@@ -60,7 +60,7 @@ export function StudentProgressBook({
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentItem | null>(null);
 
   // Filters
-  const [timelineFilter, setTimelineFilter] = useState<"ALL" | "LESSON" | "HOMEWORK" | "ASSESSMENT">("ALL");
+  const [timelineFilter, setTimelineFilter] = useState<"ALL" | "LESSON" | "HOMEWORK" | "ASSESSMENT" | "OBSERVATION">("ALL");
   const [homeworkStatusFilter, setHomeworkStatusFilter] = useState<string>("ALL");
 
   const student = data.student;
@@ -757,21 +757,27 @@ export function StudentProgressBook({
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="rounded-xl bg-emerald-50/80 p-3 border border-emerald-100">
-                      <span className="font-bold text-emerald-800 block mb-0.5">Points forts</span>
-                      <p className="text-emerald-950 line-clamp-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="rounded-xl bg-emerald-50/80 p-3.5 border border-emerald-100 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-emerald-800">Points forts</span>
+                        <span className="text-[10px] text-emerald-600 font-medium">Acquis consolidés</span>
+                      </div>
+                      <p className="text-emerald-950 leading-relaxed line-clamp-3">
                         {sub.strengths && sub.strengths.length > 0
                           ? sub.strengths[0]
-                          : "En cours d'évaluation"}
+                          : "Aucun point fort renseigné pour le moment."}
                       </p>
                     </div>
-                    <div className="rounded-xl bg-amber-50/80 p-3 border border-amber-100">
-                      <span className="font-bold text-amber-800 block mb-0.5">Axes de progrès</span>
-                      <p className="text-amber-950 line-clamp-3">
+                    <div className="rounded-xl bg-amber-50/80 p-3.5 border border-amber-100 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-800">Axes de progrès</span>
+                        <span className="text-[10px] text-amber-600 font-medium">Objectifs de travail</span>
+                      </div>
+                      <p className="text-amber-950 leading-relaxed line-clamp-3">
                         {sub.areasForImprovement && sub.areasForImprovement.length > 0
                           ? sub.areasForImprovement[0]
-                          : "Consolider la pratique"}
+                          : "Aucun axe de progression renseigné pour le moment."}
                       </p>
                     </div>
                   </div>
@@ -780,6 +786,151 @@ export function StudentProgressBook({
                     <div className="rounded-xl bg-white p-3.5 border border-slate-200 text-xs">
                       <span className="font-bold text-slate-700 block mb-1">Conseil du professeur :</span>
                       <p className="text-slate-600 italic">"{sub.recommendations[0]}"</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Bilans Pédagogiques & Synthèses Qualitatives Section */}
+        <div id="observations" className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xs scroll-mt-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  {t("progressBook.observations.title", "Bilans Pédagogiques & Synthèses Qualitatives")}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Synthèses d&apos;apprentissage rédigées par les enseignants : acquis consolidés, points forts et axes d&apos;effort prioritaires
+                </p>
+              </div>
+            </div>
+
+            {actorRole === "TEACHER" && classroomOptions.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setIsObservationModalOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition shrink-0 self-start sm:self-auto cursor-pointer"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>{t("progressBook.observations.newObservationBtn", "Rédiger un bilan")}</span>
+              </button>
+            )}
+          </div>
+
+          {observations.length === 0 ? (
+            <div className="py-10 text-center space-y-2">
+              <div className="w-12 h-12 rounded-full bg-slate-50 text-slate-400 mx-auto flex items-center justify-center">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-semibold text-slate-700">
+                Aucun bilan pédagogique enregistré pour le moment.
+              </p>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
+                L&apos;enseignant consignera un bilan après les premières leçons pour formaliser les acquis de l&apos;élève et orienter la suite du programme.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 grid grid-cols-1 gap-5">
+              {observations.map((obs: any) => (
+                <div
+                  key={obs.id}
+                  className="rounded-2xl border border-slate-200 bg-slate-50/40 p-6 space-y-4 hover:border-slate-300 hover:shadow-xs transition"
+                >
+                  {/* Observation Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-800 font-bold flex items-center justify-center text-sm shrink-0">
+                        {obs.teacherName ? obs.teacherName.charAt(0).toUpperCase() : "P"}
+                      </div>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-slate-900 text-sm">
+                            {obs.teacherName}
+                          </span>
+                          <span className="rounded-md bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 text-[11px] font-semibold">
+                            {obs.subjectName}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-slate-400">
+                          Enregistré le{" "}
+                          {new Date(obs.observationDate).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Rating stars if available */}
+                    {obs.progressRating && (
+                      <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-xl border border-slate-200 self-start sm:self-auto">
+                        <span className="text-[11px] font-semibold text-slate-600 mr-1">Appréciation :</span>
+                        {[1, 2, 3, 4, 5].map((star: number) => (
+                          <Star
+                            key={star}
+                            className={`w-3.5 h-3.5 ${
+                              star <= obs.progressRating
+                                ? "text-amber-400 fill-amber-400"
+                                : "text-slate-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Topics Mastered */}
+                  {obs.topicsMastered && (
+                    <div className="p-3.5 rounded-xl bg-white border border-slate-200 text-xs space-y-1">
+                      <div className="flex items-center gap-1.5 font-bold text-slate-700 uppercase tracking-wider text-[10px]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Notions & Compétences Maîtrisées</span>
+                      </div>
+                      <p className="text-slate-700 leading-relaxed pl-5">
+                        {obs.topicsMastered}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Strengths and Areas for Improvement Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="rounded-xl bg-emerald-50/90 p-4 border border-emerald-200 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-emerald-900 text-xs">Points forts constatés</span>
+                        <span className="text-[10px] text-emerald-700 font-medium">Acquis solides</span>
+                      </div>
+                      <p className="text-emerald-950 leading-relaxed font-normal">
+                        {obs.strengths || "Aucun point fort spécifique renseigné."}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-amber-50/90 p-4 border border-amber-200 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-amber-900 text-xs">Axes de progression</span>
+                        <span className="text-[10px] text-amber-700 font-medium">Priorités de travail</span>
+                      </div>
+                      <p className="text-amber-950 leading-relaxed font-normal">
+                        {obs.areasForImprovement || "Aucun axe d'effort spécifique renseigné."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Recommendations */}
+                  {obs.recommendations && (
+                    <div className="rounded-xl bg-blue-50/70 p-3.5 border border-blue-200 text-xs space-y-1">
+                      <span className="font-bold text-blue-900 block text-[11px]">
+                        Recommandations & Conseils méthodologiques :
+                      </span>
+                      <p className="text-blue-950 italic leading-relaxed">
+                        &laquo; {obs.recommendations} &raquo;
+                      </p>
                     </div>
                   )}
                 </div>
@@ -898,8 +1049,8 @@ export function StudentProgressBook({
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5 rounded-xl bg-slate-100 p-1 border border-slate-200/60">
-              {(["ALL", "LESSON", "HOMEWORK", "ASSESSMENT"] as const).map((filter) => (
+            <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-slate-100 p-1 border border-slate-200/60">
+              {(["ALL", "LESSON", "HOMEWORK", "ASSESSMENT", "OBSERVATION"] as const).map((filter) => (
                 <button
                   key={filter}
                   type="button"
@@ -916,7 +1067,9 @@ export function StudentProgressBook({
                     ? "Séances"
                     : filter === "HOMEWORK"
                     ? "Devoirs"
-                    : "Évaluations"}
+                    : filter === "ASSESSMENT"
+                    ? "Évaluations"
+                    : "Bilans"}
                 </button>
               ))}
             </div>
@@ -936,12 +1089,15 @@ export function StudentProgressBook({
                         ? "bg-indigo-50 text-indigo-600 ring-4 ring-white"
                         : item.type === "HOMEWORK"
                         ? "bg-amber-50 text-amber-600 ring-4 ring-white"
+                        : item.type === "OBSERVATION"
+                        ? "bg-purple-50 text-purple-600 ring-4 ring-white"
                         : "bg-blue-50 text-blue-600 ring-4 ring-white"
                     }`}
                   >
                     {item.type === "LESSON" && <Calendar className="h-5 w-5" />}
                     {item.type === "HOMEWORK" && <BookOpen className="h-5 w-5" />}
                     {item.type === "ASSESSMENT" && <Award className="h-5 w-5" />}
+                    {item.type === "OBSERVATION" && <Sparkles className="h-5 w-5" />}
                   </div>
 
                   <div className="flex-1 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
@@ -999,6 +1155,38 @@ export function StudentProgressBook({
                         {item.details.teacherComments && (
                           <p className="text-xs text-slate-600 italic">
                             "{item.details.teacherComments}"
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {item.type === "OBSERVATION" && (
+                      <div className="mt-2 text-xs text-slate-700 space-y-2">
+                        <p>
+                          Professeur : <span className="font-semibold text-slate-900">{item.teacherName}</span>
+                        </p>
+                        {item.details?.topicsMastered && (
+                          <p className="text-slate-800">
+                            <span className="font-semibold text-purple-900">Notions maîtrisées :</span> {item.details.topicsMastered}
+                          </p>
+                        )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                          {item.details?.strengths && (
+                            <div className="rounded-lg bg-emerald-50/80 p-2.5 text-emerald-950 border border-emerald-100">
+                              <span className="font-bold text-emerald-800 block text-[11px] mb-0.5">Points forts :</span>
+                              <span>{item.details.strengths}</span>
+                            </div>
+                          )}
+                          {item.details?.areasForImprovement && (
+                            <div className="rounded-lg bg-amber-50/80 p-2.5 text-amber-950 border border-amber-100">
+                              <span className="font-bold text-amber-800 block text-[11px] mb-0.5">Axes de progrès :</span>
+                              <span>{item.details.areasForImprovement}</span>
+                            </div>
+                          )}
+                        </div>
+                        {item.details?.recommendations && (
+                          <p className="rounded-lg bg-blue-50/60 p-2 text-blue-950 italic border border-blue-100">
+                            Conseil : &laquo; {item.details.recommendations} &raquo;
                           </p>
                         )}
                       </div>

@@ -543,9 +543,7 @@ export function LightSidebar({ user }: LightSidebarProps) {
         </Link>
 
         <a
-          href="https://wa.me/224620000000"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="mailto:contact@monsieurfanyi.com"
           className="flex items-center gap-3 px-3 py-2 rounded-2xl text-xs font-semibold border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all cursor-pointer"
         >
           <div className="w-7 h-7 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
