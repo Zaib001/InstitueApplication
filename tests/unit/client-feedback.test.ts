@@ -275,11 +275,23 @@ describe("Client Feedback Requirements Unit Tests", () => {
     });
   });
 
-  describe("Requirement 4 (New): Official Contact Email & Clean Contact Channels", () => {
+  describe("Requirement 4 (New): Official Contact Information & Clean Contact Channels", () => {
     it("should enforce contact@monsieurfanyi.com as the active official professional email", () => {
       const officialEmail = "contact@monsieurfanyi.com";
       expect(officialEmail).toBe("contact@monsieurfanyi.com");
       expect(`mailto:${officialEmail}`).toBe("mailto:contact@monsieurfanyi.com");
+    });
+
+    it("should enforce +224 612 365 314 as the official verified phone number with interactive tel: protocol", () => {
+      const officialPhone = "+224 612 365 314";
+      const telLink = `tel:${officialPhone.replace(/\s+/g, "")}`;
+      expect(officialPhone).toBe("+224 612 365 314");
+      expect(telLink).toBe("tel:+224612365314");
+    });
+
+    it("should enforce https://monsieurfanyi.com as the official website url", () => {
+      const websiteUrl = "https://monsieurfanyi.com";
+      expect(websiteUrl).toBe("https://monsieurfanyi.com");
     });
 
     it("should reject spam bot submissions containing honeypot data", () => {

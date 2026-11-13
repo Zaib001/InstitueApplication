@@ -11,6 +11,7 @@ import {
   Sparkles,
   CheckCircle2,
   Mail,
+  Phone,
 } from "lucide-react";
 
 export function FinalCTASection() {
@@ -77,21 +78,32 @@ export function FinalCTASection() {
           </div>
 
           {/* Contact Direct Officiel */}
-          <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-slate-300">
-            <span>Une question particulière ou besoin d&apos;assistance ?</span>
-            <a
-              href="mailto:contact@monsieurfanyi.com"
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold transition-colors"
-            >
-              <Mail className="w-3.5 h-3.5 text-brand-gold" />
-              <span>contact@monsieurfanyi.com</span>
-            </a>
-            <Link
-              href="/contact"
-              className="text-amber-300 hover:text-amber-200 underline underline-offset-2 transition-colors ml-1"
-            >
-              Formulaire de contact →
-            </Link>
+          <div className="pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-slate-300">
+            <span className="font-medium">Une question ou besoin d&apos;assistance ?</span>
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              <a
+                href="tel:+224612365314"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold transition-colors cursor-pointer"
+                title="Appeler Monsieur Fanyi au +224 612 365 314"
+              >
+                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <span>+224 612 365 314</span>
+              </a>
+              <a
+                href="mailto:contact@monsieurfanyi.com"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold transition-colors cursor-pointer"
+                title="Écrire à contact@monsieurfanyi.com"
+              >
+                <Mail className="w-3.5 h-3.5 text-brand-gold" />
+                <span>contact@monsieurfanyi.com</span>
+              </a>
+              <Link
+                href="/contact"
+                className="text-amber-300 hover:text-amber-200 underline underline-offset-2 transition-colors ml-1 font-medium"
+              >
+                Page de contact →
+              </Link>
+            </div>
           </div>
         </div>
       </div>

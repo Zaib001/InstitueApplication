@@ -12,6 +12,7 @@ import {
   MapPin,
   Lock,
   Mail,
+  Phone,
 } from "lucide-react";
 
 export function Footer() {
@@ -142,17 +143,28 @@ export function Footer() {
               {t("footer.legalSection", "Cadre & Contact")}
             </h3>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li className="flex items-center gap-1.5 text-slate-200">
+              <li className="flex items-center gap-2 text-slate-200">
+                <Phone className="w-3.5 h-3.5 text-brand-teal shrink-0" />
+                <a
+                  href="tel:+224612365314"
+                  className="hover:text-white font-semibold transition-colors"
+                  title="Appeler Monsieur Fanyi au +224 612 365 314"
+                >
+                  +224 612 365 314
+                </a>
+              </li>
+              <li className="flex items-center gap-2 text-slate-200">
                 <Mail className="w-3.5 h-3.5 text-brand-gold shrink-0" />
                 <a
                   href="mailto:contact@monsieurfanyi.com"
-                  className="hover:text-white font-semibold transition-colors"
+                  className="hover:text-white font-semibold transition-colors break-all"
+                  title="Écrire à contact@monsieurfanyi.com"
                 >
                   contact@monsieurfanyi.com
                 </a>
               </li>
-              <li className="flex items-center gap-1.5 text-slate-300">
-                <MapPin className="w-3.5 h-3.5 text-brand-teal shrink-0" />
+              <li className="flex items-center gap-2 text-slate-300">
+                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span>{t("footer.location", "Conakry, République de Guinée")}</span>
               </li>
               <li>

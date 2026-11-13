@@ -13,6 +13,8 @@ import {
   ShieldCheck,
   Sparkles,
   Loader2,
+  Phone,
+  Globe,
 } from "lucide-react";
 
 export default function ContactPage() {
@@ -114,28 +116,64 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Colonne gauche : Coordonnées officielles */}
           <div className="lg:col-span-5 space-y-6">
-            {/* Carte Email Principal */}
-            <div className="bg-gradient-to-br from-brand-navy to-[#0f2742] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-700 space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-brand-gold border border-white/15">
-                <Mail className="w-6 h-6" />
+            {/* Grille Coordonnées Directes Téléphone & Email */}
+            <div className="space-y-4">
+              {/* Carte Téléphone Officiel */}
+              <div className="bg-gradient-to-br from-brand-navy to-[#0f2742] text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-slate-700 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center text-brand-gold border border-white/15">
+                    <Phone className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-emerald-300 bg-emerald-500/15 border border-emerald-400/25 px-2.5 py-1 rounded-full">
+                    Ligne Directe
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-1">
+                    Téléphone
+                  </span>
+                  <a
+                    href="tel:+224612365314"
+                    className="text-xl sm:text-2xl font-bold font-heading text-white hover:text-brand-gold transition-colors block tracking-tight"
+                    title="Appeler Monsieur Fanyi au +224 612 365 314"
+                  >
+                    +224 612 365 314
+                  </a>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed pt-2 border-t border-white/10">
+                  Ligne officielle pour les familles, élèves et enseignants. Joignable du lundi au samedi de 08h00 à 19h00 (GMT).
+                </p>
               </div>
-              <div>
-                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-1">
-                  Email Professionnel Unique
-                </span>
-                <a
-                  href="mailto:contact@monsieurfanyi.com"
-                  className="text-lg sm:text-xl font-bold font-heading text-white hover:text-brand-gold transition-colors break-all"
-                >
-                  contact@monsieurfanyi.com
-                </a>
+
+              {/* Carte Email Professionnel */}
+              <div className="bg-gradient-to-br from-brand-navy to-[#0f2742] text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-slate-700 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center text-brand-gold border border-white/15">
+                    <Mail className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-amber-300 bg-amber-500/15 border border-amber-400/25 px-2.5 py-1 rounded-full">
+                    Support Dédié
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider block mb-1">
+                    E-mail
+                  </span>
+                  <a
+                    href="mailto:contact@monsieurfanyi.com"
+                    className="text-lg sm:text-xl font-bold font-heading text-white hover:text-brand-gold transition-colors break-all block"
+                    title="Écrire à contact@monsieurfanyi.com"
+                  >
+                    contact@monsieurfanyi.com
+                  </a>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed pt-2 border-t border-white/10">
+                  Canal officiel pour toute demande d&apos;inscription assistée, vérification de dossier professeur, réclamation ou partenariat. Réponse sous 24h ouvrées.
+                </p>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed pt-2 border-t border-white/10">
-                Canal officiel prioritaire pour toute demande d&apos;inscription assistée, vérification de dossier professeur, réclamation ou partenariat. Réponse sous 24h ouvrées.
-              </p>
             </div>
 
-            {/* Carte Localisation & Permanence */}
+            {/* Carte Localisation, Permanence & Site Web */}
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-5">
               <div className="flex items-start gap-3.5">
                 <div className="w-9 h-9 rounded-xl bg-blue-50 text-brand-navy flex items-center justify-center shrink-0">
@@ -162,13 +200,34 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-3.5 pt-3 border-t border-slate-100">
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-slate-900 block">Site Web Officiel</span>
+                  <a
+                    href="https://monsieurfanyi.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-brand-navy hover:text-[#e59a38] font-semibold leading-relaxed mt-0.5 block transition-colors"
+                  >
+                    https://monsieurfanyi.com
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3.5 pt-3 border-t border-slate-100">
                 <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-900 block">Assistance Téléphonique Sécurisée</span>
+                  <span className="text-xs font-bold text-slate-900 block">Assistance Téléphonique Immédiate</span>
                   <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
-                    Afin de garantir la traçabilité des échanges, la mise en relation téléphonique personnalisée s&apos;effectue sur rendez-vous après un premier échange par email.
+                    Nos conseillers pédagogiques sont joignables directement au{" "}
+                    <a href="tel:+224612365314" className="font-bold text-brand-navy hover:text-[#e59a38] underline">
+                      +224 612 365 314
+                    </a>{" "}
+                    pour vous guider dans le choix de votre enseignant.
                   </p>
                 </div>
               </div>

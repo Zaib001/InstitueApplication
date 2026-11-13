@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, FileText, AlertTriangle, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, FileText, AlertTriangle, ArrowLeft, Mail, Phone, CheckCircle2 } from "lucide-react";
 
 export const metadata = {
   title: "Conditions Générales d'Utilisation (CGU) — Monsieur Fanyi",
@@ -135,13 +135,24 @@ export default function CGUPage() {
               <p className="font-bold text-brand-navy">Une question juridique ou administrative ?</p>
               <p className="text-xs text-slate-500">Notre équipe de conformité est à votre disposition.</p>
             </div>
-            <a
-              href="mailto:contact@monsieurfanyi.com"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-navy text-white text-xs font-semibold hover:bg-slate-800 transition-colors"
-            >
-              <Mail className="w-4 h-4 text-brand-gold" />
-              <span>contact@monsieurfanyi.com</span>
-            </a>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <a
+                href="tel:+224612365314"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-brand-navy text-xs font-semibold transition-colors"
+                title="Appeler le +224 612 365 314"
+              >
+                <Phone className="w-3.5 h-3.5 text-brand-teal" />
+                <span>+224 612 365 314</span>
+              </a>
+              <a
+                href="mailto:contact@monsieurfanyi.com"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-navy text-white text-xs font-semibold hover:bg-slate-800 transition-colors"
+                title="Écrire à contact@monsieurfanyi.com"
+              >
+                <Mail className="w-3.5 h-3.5 text-brand-gold" />
+                <span>contact@monsieurfanyi.com</span>
+              </a>
+            </div>
           </section>
         </div>
       </div>
