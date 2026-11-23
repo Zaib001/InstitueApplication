@@ -92,7 +92,7 @@ export default function ChartePage() {
                   <strong>Principe de loyauté :</strong> La confiance entre Monsieur Fanyi, ses enseignants partenaires et les familles repose sur la transparence. Organiser des cours en dehors de la plateforme rompt le contrat moral de confiance et entraîne l&apos;exclusion définitive du réseau d&apos;enseignants certifiés Monsieur Fanyi.
                 </p>
                 <p>
-                  <strong>Perte des garanties :</strong> En cas d&apos;arrangement informel hors plateforme, le professeur perd toute garantie de versement des honoraires en cas d&apos;impayé, et la famille perd l&apos;accès au séquestre financier, au carnet de progression officiel et au service de remplacement sous 48h.
+                  <strong>Perte des garanties :</strong> En cas d&apos;arrangement informel hors plateforme, le professeur perd toute garantie de versement des honoraires en cas d&apos;impayé, et la famille perd l&apos;accès à la sécurisation des fonds prépayés affectés aux cours, au carnet de progression officiel et au service de remplacement sous 48h.
                 </p>
               </div>
             </div>

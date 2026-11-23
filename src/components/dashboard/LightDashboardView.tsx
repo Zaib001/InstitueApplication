@@ -137,14 +137,14 @@ export function LightDashboardView({
     user.role === "TEACHER"
       ? t("dashboard.teacherSubtitle", "Gérez vos classes, vos disponibilités et consultez vos gains (85%)")
       : user.role === "ADMIN"
-      ? t("dashboard.adminSubtitle", "Supervision nationale, vérification des dossiers et séquestres")
+      ? t("dashboard.adminSubtitle", "Supervision nationale, vérification des dossiers et des provisions de cours")
       : t("dashboard.parentSubtitle", "Suivez le parcours pédagogique et les cours de vos enfants");
 
   const coursesSectionTitle =
     user.role === "TEACHER"
       ? t("dashboard.teacherCoursesTitle", "Mes Classes & Élèves")
       : user.role === "ADMIN"
-      ? t("dashboard.adminCoursesTitle", "Surveillance des Classes & Séquestres")
+      ? t("dashboard.adminCoursesTitle", "Surveillance des Classes & Provisions")
       : t("dashboard.myCourses", "Mes Cours & Matières");
 
   return (
@@ -845,7 +845,7 @@ export function LightDashboardView({
                     : "Vos cours sont notés 4.9/5 par les parents d'élèves. 94% des séances sont validées dans les 2 heures suivant la réalisation.")
                 : user.role === "ADMIN"
                 ? (locale === "en"
-                    ? "All platform transactions are audited according to the strict 85% tutor / 15% platform escrow rule without arithmetic loss."
+                    ? "All platform transactions are audited according to the strict 85% tutor / 15% platform provisioning rule without arithmetic loss."
                     : "Toutes les transactions sont tracées selon la règle stricte 85% professeur / 15% plateforme sans perte arithmétique.")
                 : t(
                     "dashboard.performanceDetailsDesc",

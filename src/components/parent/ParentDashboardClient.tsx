@@ -47,7 +47,7 @@ import { SubjectOption } from "./SubjectSelector";
 
 export interface ParentActionCenterItem {
   id: string;
-  type: "PENDING_REPORT" | "UNSUBMITTED_REQUEST";
+  type: "PENDING_REPORT" | "UNSUBMITTED_REQUEST" | "PENDING_PAYMENT";
   priority: number;
   titleFr: string;
   titleEn: string;
@@ -342,7 +342,7 @@ export function ParentDashboardClient({
           </div>
           <div>
             <span className="text-[11px] font-medium text-slate-400 block">
-              {locale === "en" ? "Escrow Protection" : "Séquestre Garanti"}
+              {locale === "en" ? "Secure Prepayment" : "Paiement Sécurisé"}
             </span>
             <div className="text-lg font-black text-slate-800">
               {stats.activeEscrowOrders > 0 ? (locale === "en" ? "1 Active Package" : "1 Forfait Actif") : (locale === "en" ? "Protected" : "Sécurisé")}
@@ -409,6 +409,8 @@ export function ParentDashboardClient({
                 className={`p-4 rounded-3xl border transition-all shadow-xs flex flex-col justify-between gap-3 ${
                   item.type === "PENDING_REPORT"
                     ? "bg-amber-50/50 bg-gradient-to-br from-amber-50/70 via-white to-amber-50/30 border-amber-200/90 hover:border-amber-300"
+                    : item.type === "PENDING_PAYMENT"
+                    ? "bg-emerald-50/50 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/30 border-emerald-200/90 hover:border-emerald-300"
                     : "bg-blue-50/50 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/30 border-blue-200/80 hover:border-blue-300"
                 }`}
               >
@@ -419,11 +421,15 @@ export function ParentDashboardClient({
                         className={`w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 shadow-2xs ${
                           item.type === "PENDING_REPORT"
                             ? "bg-amber-100 text-amber-800"
+                            : item.type === "PENDING_PAYMENT"
+                            ? "bg-emerald-100 text-emerald-800"
                             : "bg-[#122b49] text-white"
                         }`}
                       >
                         {item.type === "PENDING_REPORT" ? (
                           <FileCheck className="w-4 h-4 text-amber-700" />
+                        ) : item.type === "PENDING_PAYMENT" ? (
+                          <Wallet className="w-4 h-4 text-emerald-700" />
                         ) : (
                           <BookOpen className="w-4 h-4 text-[#e59a38]" />
                         )}
@@ -432,6 +438,8 @@ export function ParentDashboardClient({
                         <span className="text-[10px] font-bold uppercase tracking-wider block text-slate-400 truncate">
                           {item.type === "PENDING_REPORT"
                             ? (locale === "en" ? "Urgent: Lesson Review" : "Validation de séance • Prioritaire")
+                            : item.type === "PENDING_PAYMENT"
+                            ? (locale === "en" ? "Payment Required" : "Paiement en attente • Prioritaire")
                             : (locale === "en" ? "Tutoring Request Needed" : "Demande de cours à créer")}
                         </span>
                         <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 line-clamp-1">
@@ -444,10 +452,12 @@ export function ParentDashboardClient({
                       className={`text-[9px] font-black px-2 py-0.5 rounded-full shrink-0 uppercase tracking-wider ${
                         item.type === "PENDING_REPORT"
                           ? "bg-amber-100 text-amber-800 border border-amber-300"
+                          : item.type === "PENDING_PAYMENT"
+                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                           : "bg-blue-100 text-blue-800 border border-blue-200"
                       }`}
                     >
-                      {item.type === "PENDING_REPORT" ? "Urgent" : "Action"}
+                      {item.type === "PENDING_REPORT" ? "Urgent" : item.type === "PENDING_PAYMENT" ? "Paiement" : "Action"}
                     </span>
                   </div>
 
@@ -471,6 +481,23 @@ export function ParentDashboardClient({
                         </p>
                       )}
                     </div>
+                  ) : item.type === "PENDING_PAYMENT" ? (
+                    <div className="text-xs text-slate-600 space-y-1 bg-white/80 p-2.5 rounded-2xl border border-emerald-100">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-semibold text-slate-700">
+                          Élève : <strong className="text-slate-900">{item.studentName}</strong>
+                        </span>
+                        <span className="text-slate-500">
+                          Matière : <strong className="text-slate-800">{item.subjectName}</strong>
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500">
+                        Professeur : <span className="font-medium text-slate-700">{item.teacherName}</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-800 leading-relaxed pt-0.5">
+                        {item.descriptionFr}
+                      </p>
+                    </div>
                   ) : (
                     <p className="text-xs text-slate-600 leading-relaxed bg-white/80 p-2.5 rounded-2xl border border-blue-100">
                       {locale === "en" ? item.descriptionEn : item.descriptionFr}
@@ -483,6 +510,8 @@ export function ParentDashboardClient({
                   <span className="text-[10px] text-slate-400">
                     {item.type === "PENDING_REPORT"
                       ? (locale === "en" ? "Direct validation & payout release" : "Déblocage sécurisé de la rémunération")
+                      : item.type === "PENDING_PAYMENT"
+                      ? (locale === "en" ? "Secure class prepayment" : "Fonds prépayés sécurisés")
                       : (locale === "en" ? "Fast teacher matching" : "Mise en relation certifiée")}
                   </span>
 
@@ -491,6 +520,8 @@ export function ParentDashboardClient({
                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs ${
                       item.type === "PENDING_REPORT"
                         ? "bg-amber-600 hover:bg-amber-700 text-white"
+                        : item.type === "PENDING_PAYMENT"
+                        ? "bg-[#16385c] hover:bg-[#1f4a7a] text-white"
                         : "bg-[#122b49] hover:bg-[#1b3d66] text-white"
                     }`}
                   >

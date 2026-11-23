@@ -183,8 +183,8 @@ export function LightSidebar({ user }: LightSidebarProps) {
           activeText: "text-amber-900",
         },
         {
-          label: t("dashboard.nav.teacherEarnings", "Gains (Part 85%)"),
-          href: "/teacher/dashboard#earnings",
+          label: t("dashboard.nav.teacherEarnings", "Mes revenus"),
+          href: "/teacher/finances",
           icon: Wallet,
           iconColor: "text-teal-600",
           iconBg: "bg-teal-50",
@@ -278,8 +278,8 @@ export function LightSidebar({ user }: LightSidebarProps) {
           activeText: "text-purple-900",
         },
         {
-          label: t("dashboard.nav.adminFinances", "Séquestre & 15% Comm."),
-          href: "/admin/dashboard#finances",
+          label: t("dashboard.nav.adminFinances", "Comptabilité & Règlements"),
+          href: "/admin/finances",
           icon: ShieldCheck,
           iconColor: "text-teal-600",
           iconBg: "bg-teal-50",
@@ -373,8 +373,8 @@ export function LightSidebar({ user }: LightSidebarProps) {
         activeText: "text-purple-900",
       },
       {
-        label: t("dashboard.nav.parentPayments", "Paiements & Séquestre"),
-        href: "/parent/dashboard#payments",
+        label: t("dashboard.nav.parentPayments", "Paiements & Reçus"),
+        href: "/parent/payments",
         icon: ShieldCheck,
         iconColor: "text-teal-600",
         iconBg: "bg-teal-50",

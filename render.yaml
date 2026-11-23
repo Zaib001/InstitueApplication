@@ -43,7 +43,7 @@ services:
 
 databases:
   - name: monsieur-fanyi-db
-    plan: free
+    plan: starter
     region: frankfurt
     databaseName: monsieur_fanyi
     user: monsieur_fanyi_user

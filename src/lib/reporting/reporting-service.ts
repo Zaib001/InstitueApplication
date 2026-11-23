@@ -4,12 +4,14 @@ import {
   LessonAttendance,
   ReportStatus,
   SessionStatus,
+  SessionEarningsStatus,
   TeacherVerificationStatus,
   UserRole,
   NotificationEventType,
   NotificationPriority,
 } from "@prisma/client";
 import { NotificationService } from "@/lib/notifications/notification-service";
+import { EarningsEligibilityService } from "@/lib/finance/earnings-eligibility-service";
 
 export class ReportingServiceError extends Error {
   statusCode: number;
@@ -595,7 +597,32 @@ export class ReportingService {
         },
       });
 
-      return { approval, report: updatedReport, session: updatedSession };
+      // 6. Connect to Milestone 3 Financial Foundation: Release Teacher Earnings if Funded
+      let earningsResult: any = null;
+      try {
+        const funding = await tx.classroomFunding.findUnique({
+          where: { classroomId: session.classroomId },
+        });
+
+        if (funding && funding.status === "FUNDED" && funding.availableBalanceGnf > 0) {
+          earningsResult = await EarningsEligibilityService.releaseSessionEarnings(
+            sessionId,
+            actorUserId,
+            tx
+          );
+        } else {
+          // If unfunded, leave session as PENDING_VALIDATION for earnings
+          await tx.lessonSession.update({
+            where: { id: sessionId },
+            data: { earningsStatus: SessionEarningsStatus.PENDING_VALIDATION },
+          });
+        }
+      } catch (earningsErr) {
+        // Log financial eligibility deferral without failing pedagogical approval
+        console.warn("Notice: Earnings release deferred on lesson approval:", earningsErr);
+      }
+
+      return { approval, report: updatedReport, session: updatedSession, earnings: earningsResult };
     });
 
     return result;

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Monsieur Fanyi — Template Instagram Carré 1080x1080</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mf-navy: #10233F;
+      --mf-navy-dark: #071322;
+      --mf-gold: #F59E0B;
+      --mf-gold-pill: #F9C450;
+      --mf-blue: #2563EB;
+      --mf-teal: #0D9488;
+      --mf-white: #FFFFFF;
+      --mf-muted: #94A3B8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1E293B;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Le conteneur exact 1080x1080 px */
+    .post-canvas {
+      width: 1080px;
+      height: 1080px;
+      position: relative;
+      background: var(--mf-navy-dark);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 70px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Arrière-plan photo avec masque dégradé cinématographique */
+    .background-photo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 65%;
+      height: 100%;
+      background: url('../../03-Homepage-Visuals/hero_student_ultra_hd_4k.jpg') no-repeat right center;
+      background-size: cover;
+      z-index: 1;
+    }
+
+    .vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #071322 45%, rgba(7, 19, 34, 0.85) 65%, rgba(7, 19, 34, 0.25) 100%);
+      z-index: 2;
+    }
+
+    .content {
+      position: relative;
+      z-index: 3;
+      max-width: 620px;
+    }
+
+    /* Logo officiel */
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .brand-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-text h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 32px;
+      color: var(--mf-white);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .brand-text h1 span { color: var(--mf-gold); }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--mf-muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    /* Tag pill */
+    .pill-badge {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--mf-gold);
+      color: var(--mf-gold);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 25px;
+    }
+
+    /* Titre éditable */
+    .headline {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 48px;
+      color: var(--mf-white);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+
+    .headline .highlight { color: var(--mf-gold-pill); }
+
+    /* Citation manuscrite */
+    .handwriting {
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 44px;
+      color: var(--mf-gold);
+      margin-bottom: 30px;
+      display: block;
+    }
+
+    /* Liste de points forts */
+    .features-list {
+      list-style: none;
+      margin-bottom: 40px;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--mf-white);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .features-list li .bullet {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--mf-teal);
+      color: var(--mf-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Bouton d'action */
+    .cta-button {
+      display: inline-block;
+      padding: 18px 36px;
+      border-radius: 9999px;
+      background: var(--mf-gold-pill);
+      color: #0F172A;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      text-decoration: none;
+      box-shadow: 0 10px 25px -5px rgba(249, 196, 80, 0.4);
+    }
+
+    /* Footer contact */
+    .post-footer {
+      position: relative;
+      z-index: 3;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--mf-white);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .post-footer .phone { color: var(--mf-gold); }
+    .post-footer .location { color: var(--mf-muted); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <!-- Le canevas de création éditable -->
+  <div class="post-canvas">
+    
+    <div class="background-photo"></div>
+    <div class="vignette-overlay"></div>
+
+    <div class="content">
+      <!-- Logo officiel -->
+      <div class="brand-logo">
+        <div class="brand-badge">
+          <svg width="40" height="40" viewBox="0 0 36 36" fill="none">
+            <path d="M6 24C10 21 15 21 18 24C21 21 26 21 30 24V11C26 8 21 8 18 11C15 8 10 8 6 11V24Z" fill="#F59E0B"/>
+            <path d="M18 11V24" stroke="#D97706" stroke-width="1.5"/>
+            <path d="M18 5L7 10L18 15L29 10L18 5Z" fill="#FFFFFF"/>
+            <path d="M11 12.5V17C11 19 14 20.5 18 20.5C22 20.5 25 19 25 17V12.5" stroke="#FFFFFF" stroke-width="1.5"/>
+            <path d="M27 11V18" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Monsieur<span>Fanyi</span></h1>
+          <p>Le bon prof, au bon moment</p>
+        </div>
+      </div>
+
+      <!-- Badge de campagne (Éditable) -->
+      <div class="pill-badge" contenteditable="true">✦ Officiellement en ligne</div>
+
+      <!-- Titre principal (Éditable) -->
+      <h2 class="headline" contenteditable="true">
+        Le soutien scolaire<br>
+        d'excellence arrive<br>
+        <span class="highlight">à Conakry.</span>
+      </h2>
+
+      <!-- Surlignage manuscrit (Éditable) -->
+      <span class="handwriting" contenteditable="true">« Chaque enfant peut réussir. »</span>
+
+      <!-- Liste des bénéfices (Éditable) -->
+      <ul class="features-list">
+        <li contenteditable="true"><span class="bullet">✓</span> Enseignants diplômés rigoureusement sélectionnés</li>
+        <li contenteditable="true"><span class="bullet">✓</span> Carnet de progression avec bilans séance par séance</li>
+        <li contenteditable="true"><span class="bullet">✓</span> Paiements protégés Orange Money & MTN Mobile Money</li>
+      </ul>
+
+      <!-- Bouton d'action (Éditable) -->
+      <a href="https://monsieurfanyi.com" class="cta-button" contenteditable="true">Réserver un cours particulier →</a>
+    </div>
+
+    <!-- Pied de visuel officiel -->
+    <div class="post-footer">
+      <span class="phone">📞 +224 612 365 314</span>
+      <span class="website">monsieurfanyi.com</span>
+      <span class="location">Conakry, République de Guinée</span>
+    </div>
+
+  </div>
+
+</body>
+</html>
+

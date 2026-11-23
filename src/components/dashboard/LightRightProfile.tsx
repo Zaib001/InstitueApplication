@@ -285,7 +285,7 @@ export function LightRightProfile({ user }: LightRightProfileProps) {
                 ? t("dashboard.teacherEscrowTitle", "Reversement Mobile Money 85%")
                 : user.role === "ADMIN"
                 ? t("dashboard.adminEscrowTitle", "Surveillance Plateforme 15/85")
-                : t("dashboard.escrowTitle", "Paiement Séquestre Garanti")}
+                : t("dashboard.escrowTitle", "Fonds Prépayés Sécurisés")}
             </h4>
             <p className="text-[11px] text-slate-600 leading-relaxed">
               {user.role === "TEACHER"
@@ -296,7 +296,7 @@ export function LightRightProfile({ user }: LightRightProfileProps) {
                 : user.role === "ADMIN"
                 ? t(
                     "dashboard.adminEscrowDesc",
-                    "Contrôle en temps réel du séquestre bancaire et des déblocages Orange / MTN."
+                    "Contrôle en temps réel des provisions affectées aux cours et des déblocages Orange / MTN."
                   )
                 : t(
                     "dashboard.escrowDesc",
@@ -331,8 +331,8 @@ export function LightRightProfile({ user }: LightRightProfileProps) {
                   {user.role === "TEACHER"
                     ? (locale === "en" ? "85% Earnings Terms & Mobile Payouts" : "Modalités de Rémunération 85%")
                     : user.role === "ADMIN"
-                    ? (locale === "en" ? "Escrow & 15% Platform Commission" : "Séquestre & Commission 15%")
-                    : t("dashboard.escrowModalTitle", "Fonctionnement du Séquestre Protecteur")}
+                    ? (locale === "en" ? "Provisions & 15% Platform Commission" : "Provisions & Commission 15%")
+                    : t("dashboard.escrowModalTitle", "Fonctionnement des Provisions Pédagogiques")}
                 </h3>
               </div>
               <button

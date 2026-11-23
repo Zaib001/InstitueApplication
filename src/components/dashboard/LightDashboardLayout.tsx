@@ -33,7 +33,7 @@ export function LightDashboardLayout({
     hideRightProfile !== undefined ? !hideRightProfile : isDashboardRoute;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col antialiased">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col antialiased overflow-x-hidden">
       {/* Mobile Top Header (Small Screens Only) */}
       <header className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -79,7 +79,7 @@ export function LightDashboardLayout({
         )}
 
         {/* Center Main Dynamic Content */}
-        <main className="flex-1 min-w-0 bg-[#f8fafc] flex flex-col">
+        <main className="flex-1 min-w-0 w-full bg-[#f8fafc] flex flex-col overflow-x-hidden">
           {children}
         </main>
 

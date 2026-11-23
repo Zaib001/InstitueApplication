@@ -242,17 +242,27 @@ export function ClassroomPackageModal({ data, onClose }: ClassroomPackageModalPr
           )}
 
           {/* Advance Payment Security Policy Notice */}
-          <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 space-y-1">
+          <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 space-y-1.5">
             <span className="font-bold flex items-center gap-1.5 text-xs">
               <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>{t("classes.escrowNoticeTitle", "Séquestre & Sécurité Financière :")}</span>
+              <span>{t("classes.escrowNoticeTitle", "Provision Pédagogique & Règlements :")}</span>
             </span>
             <p className="leading-relaxed text-[11px]">
               {t(
                 "classes.escrowNoticeDesc",
-                "Les fonds restent consignés sur le compte de la classe et ne sont débloqués qu'après validation parentale de chaque séance dispensée."
+                "Les fonds sont affectés à la provision de la classe et ne sont débloqués à l'enseignant qu'après validation parentale de chaque séance dispensée."
               )}
             </p>
+            <div className="pt-1 border-t border-amber-200/60 text-[10.5px] text-amber-800">
+              <span className="font-semibold block mb-0.5">Moyens de paiement (Milestone 3 — En cours de configuration) :</span>
+              <ul className="list-disc pl-4 space-y-0.5">
+                <li><strong>Guinée :</strong> Orange Money & MTN Mobile Money direct en GNF</li>
+                <li><strong>Diaspora (France, Europe, International) :</strong> Cartes bancaires Visa et Mastercard sécurisées</li>
+              </ul>
+              <span className="block mt-1 text-[10px] text-amber-700 italic">
+                En attendant la mise en production de la passerelle en direct, le règlement s'effectue via votre conseiller Monsieur Fanyi.
+              </span>
+            </div>
           </div>
         </div>
 

@@ -156,7 +156,7 @@ export function SessionDetailModal({
               {session.isFunded ? (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                   <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" />
-                  <span>{locale === "en" ? "Funded & Escrowed" : "Financée & Séquestrée"}</span>
+                  <span>{locale === "en" ? "Funded & Provisioned" : "Financée & Provisionnée"}</span>
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">

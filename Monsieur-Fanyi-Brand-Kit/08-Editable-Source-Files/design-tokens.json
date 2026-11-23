@@ -1,0 +1,87 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "name": "Monsieur Fanyi Design Tokens",
+  "version": "1.0.0",
+  "description": "Design tokens officiels de la plateforme de soutien scolaire Monsieur Fanyi en Guinée",
+  "color": {
+    "brand": {
+      "navy": {
+        "primary": { "value": "#10233F", "type": "color", "description": "Bleu marine de fondation et d'autorité académique" },
+        "logo": { "value": "#152E4D", "type": "color", "description": "Toque du logo et mot Monsieur" },
+        "dark": { "value": "#0B1526", "type": "color", "description": "Surfaces très sombres et fonds de contraste" },
+        "hero": { "value": "#071322", "type": "color", "description": "Vignette cinématographique du Hero" }
+      },
+      "gold": {
+        "amber": { "value": "#F59E0B", "type": "color", "description": "Livre doré du savoir, mot Fanyi, étoiles d'avis" },
+        "pill": { "value": "#F9C450", "type": "color", "description": "Boutons d'incitation majeurs et surlignages" },
+        "warm": { "value": "#E9B44C", "type": "color", "description": "Dorure d'excellence et éléments de prestige" },
+        "spine": { "value": "#D97706", "type": "color", "description": "Reliure du livre ouvert" }
+      },
+      "blue": {
+        "primary": { "value": "#2563EB", "type": "color", "description": "Bleu d'action et liens interactifs" },
+        "deep": { "value": "#1D4ED8", "type": "color", "description": "Survol des boutons bleus" },
+        "light": { "value": "#3B82F6", "type": "color", "description": "Accents de texte sur fond sombre" },
+        "surface": { "value": "#EFF6FF", "type": "color", "description": "Fond doux pour cartes bleues" }
+      },
+      "teal": {
+        "primary": { "value": "#0D9488", "type": "color", "description": "Pédagogie, suivi et conformité des programmes" },
+        "dark": { "value": "#0F766E", "type": "color", "description": "Accents sombres" },
+        "light": { "value": "#14B8A6", "type": "color", "description": "Badges de validation" }
+      },
+      "neutral": {
+        "charcoal": { "value": "#0F172A", "type": "color", "description": "Texte principal haute lisibilité" },
+        "muted": { "value": "#64748B", "type": "color", "description": "Texte secondaire et métadonnées" },
+        "subtle": { "value": "#94A3B8", "type": "color", "description": "Bordures douces et texte atténué" },
+        "border": { "value": "#E2E8F0", "type": "color", "description": "Lignes de séparation de cartes" },
+        "surface": { "value": "#F8FAFC", "type": "color", "description": "Arrière-plan doux du site" },
+        "white": { "value": "#FFFFFF", "type": "color", "description": "Blanc pur" }
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "heading": { "value": "Plus Jakarta Sans, system-ui, sans-serif", "type": "fontFamily" },
+      "body": { "value": "DM Sans, Inter, system-ui, sans-serif", "type": "fontFamily" },
+      "serif": { "value": "Playfair Display, Georgia, serif", "type": "fontFamily" },
+      "handwriting": { "value": "Caveat, cursive", "type": "fontFamily" }
+    },
+    "fontSize": {
+      "hero": { "value": "54px", "type": "dimension" },
+      "h1": { "value": "42px", "type": "dimension" },
+      "h2": { "value": "32px", "type": "dimension" },
+      "h3": { "value": "24px", "type": "dimension" },
+      "bodyLarge": { "value": "18px", "type": "dimension" },
+      "body": { "value": "15px", "type": "dimension" },
+      "small": { "value": "12px", "type": "dimension" },
+      "tag": { "value": "10px", "type": "dimension" }
+    },
+    "fontWeight": {
+      "regular": { "value": "400", "type": "fontWeight" },
+      "medium": { "value": "500", "type": "fontWeight" },
+      "semibold": { "value": "600", "type": "fontWeight" },
+      "bold": { "value": "700", "type": "fontWeight" },
+      "extrabold": { "value": "800", "type": "fontWeight" }
+    }
+  },
+  "borderRadius": {
+    "sm": { "value": "6px", "type": "dimension" },
+    "md": { "value": "12px", "type": "dimension" },
+    "lg": { "value": "16px", "type": "dimension" },
+    "xl": { "value": "24px", "type": "dimension" },
+    "pill": { "value": "9999px", "type": "dimension" }
+  },
+  "elevation": {
+    "premium": { "value": "0 10px 30px -10px rgba(16, 35, 63, 0.08), 0 4px 6px -2px rgba(16, 35, 63, 0.04)", "type": "boxShadow" },
+    "hover": { "value": "0 20px 40px -15px rgba(16, 35, 63, 0.14), 0 8px 12px -3px rgba(16, 35, 63, 0.06)", "type": "boxShadow" },
+    "glowGold": { "value": "0 0 30px -5px rgba(229, 154, 56, 0.4)", "type": "boxShadow" }
+  },
+  "metadata": {
+    "slogan": "Le bon prof, au bon moment",
+    "phone": "+224 612 365 314",
+    "email": "contact@monsieurfanyi.com",
+    "url": "https://monsieurfanyi.com",
+    "location": "Conakry, Guinée",
+    "payments": ["Orange Money Guinée", "MTN Mobile Money"]
+  }
+}
+

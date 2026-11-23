@@ -52,7 +52,7 @@ export function StudentEmptyState({ onAddChild }: StudentEmptyStateProps) {
         </div>
         <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-600 space-y-1">
           <span className="font-bold text-slate-800 block">
-            {locale === "en" ? "3. Secure Escrow" : "3. Séquestre Garanti"}
+            {locale === "en" ? "3. Secure Payment" : "3. Paiement Sécurisé"}
           </span>
           <span className="text-[11px] text-slate-500 block leading-tight">
             {locale === "en"

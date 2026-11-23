@@ -97,11 +97,11 @@ export function PricingExplainer() {
           <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200/60 text-xs text-teal-900 flex items-start gap-3">
             <ShieldCheck className="w-5 h-5 text-brand-teal shrink-0 mt-0.5" aria-hidden="true" />
             <div>
-              <strong>{t("pricing.escrowTitle", "Séquestre Interne Protecteur :")}</strong>
+              <strong>{t("pricing.escrowTitle", "Provisions Pédagogiques Protégées :")}</strong>
               <p className="mt-0.5 text-[11px] leading-relaxed">
                 {t(
                   "pricing.escrowDesc",
-                  "Tant que vous ne cliquez pas sur « Confirmer » après la séance, les fonds restent conservés sur le compte de la classe. En cas de contestation, l'administrateur arbitre."
+                  "Tant que vous ne cliquez pas sur « Confirmer » après la séance, les fonds restent conservés sur le compte de la classe sous forme de provisions sécurisées. En cas de contestation, l'administrateur arbitre."
                 )}
               </p>
             </div>

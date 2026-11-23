@@ -113,6 +113,7 @@ export default async function ParentDashboardPage() {
     totaltutoringRequests,
     recentTutoringRequests,
     pendingValidationSessions,
+    pendingPaymentClassrooms,
   ] = await Promise.all([
     prisma.lessonSession.findMany({
       where: {
@@ -205,6 +206,26 @@ export default async function ParentDashboardPage() {
       orderBy: { scheduledStart: "desc" },
       take: 10,
     }),
+    // Classrooms Awaiting Prepayment
+    prisma.classroom.findMany({
+      where: {
+        studentId: { in: studentIds },
+        status: "PENDING_PAYMENT",
+      },
+      include: {
+        student: {
+          select: { id: true, fullName: true, gradeLevel: true },
+        },
+        teacherProfile: {
+          include: {
+            user: {
+              select: { id: true, fullName: true },
+            },
+          },
+        },
+      },
+      take: 5,
+    }),
   ]);
 
   // Construct Action Center Items (Authoritative DB records)
@@ -227,7 +248,25 @@ export default async function ParentDashboardPage() {
     actionHref: `/parent/reports?sessionId=${s.id}`,
   }));
 
-  // Priority 2: Registered Children without Tutoring Requests
+  // Priority 2: Classrooms Awaiting Prepayment
+  const paymentActions = pendingPaymentClassrooms.map((c) => ({
+    id: `payment-${c.id}`,
+    type: "PENDING_PAYMENT" as const,
+    priority: 1,
+    titleFr: `Paiement en attente : ${c.subjectName}`,
+    titleEn: `Payment pending: ${c.subjectName}`,
+    studentName: c.student.fullName,
+    teacherName: c.teacherProfile.user.fullName,
+    subjectName: c.subjectName,
+    gradeLevel: c.student.gradeLevel,
+    descriptionFr: `Le professeur ${c.teacherProfile.user.fullName} est prêt. Approvisionnez la classe pour démarrer les séances de cours.`,
+    descriptionEn: `Teacher ${c.teacherProfile.user.fullName} is assigned. Fund the classroom to start lessons.`,
+    actionLabelFr: "Payer les cours",
+    actionLabelEn: "Pay for Lessons",
+    actionHref: "/parent/classes",
+  }));
+
+  // Priority 3: Registered Children without Tutoring Requests
   const unrequestedChildren = formattedChildren.filter(
     (c) => !c.isArchived && c.requestStatus.state === "NO_REQUEST"
   );
@@ -248,8 +287,8 @@ export default async function ParentDashboardPage() {
     actionHref: `/parent/requests?action=new&studentId=${c.id}`,
   }));
 
-  // Combined and sorted by priority (reports first, then unsubmitted requests)
-  const actionCenterItems = [...reportActions, ...unrequestedActions];
+  // Combined and sorted by priority (reports and payments first, then unsubmitted requests)
+  const actionCenterItems = [...reportActions, ...paymentActions, ...unrequestedActions];
 
   const totalParentMinutes = parentCompletedSessions.reduce((acc, s) => acc + s.durationMinutes, 0);
   const parentHours = Math.floor(totalParentMinutes / 60);

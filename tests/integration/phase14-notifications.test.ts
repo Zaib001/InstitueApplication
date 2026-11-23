@@ -274,19 +274,22 @@ describe("Phase 14: Centralized Notification System, Outbox & Automated Reminder
       message: "Votre dossier enseignant a été validé.",
     });
 
-    // Flush outbox queue completely to ensure teacher verified email is processed
-    let flushCycles = 5;
-    while (flushCycles-- > 0) {
-      const res = await OutboxWorker.processOutbox(50);
-      if (res.processed === 0) break;
-    }
-
-    // Check teacher outbox status
-    const verifiedOutbox = await prisma.emailOutbox.findFirst({
+    // Find the specific outbox item for this test run
+    const targetOutbox = await prisma.emailOutbox.findFirst({
       where: {
         recipientEmail: `teacher.p14.${ts}@monsieurfanyi.gn`,
         eventType: NotificationEventType.TEACHER_VERIFIED,
       },
+    });
+
+    expect(targetOutbox).toBeDefined();
+
+    // Process the specific item (or batch) to guarantee processing despite concurrent test suites
+    await OutboxWorker.processSingleOutboxItem(targetOutbox!.id);
+
+    // Check teacher outbox status
+    const verifiedOutbox = await prisma.emailOutbox.findUnique({
+      where: { id: targetOutbox!.id },
     });
 
     expect(verifiedOutbox).toBeDefined();

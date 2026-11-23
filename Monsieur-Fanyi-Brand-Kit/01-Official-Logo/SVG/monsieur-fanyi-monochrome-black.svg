@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120" fill="none">
+  <defs>
+    <style>
+      .title-mono-black { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 800; font-size: 40px; fill: #000000; letter-spacing: -0.03em; }
+      .sub-mono-black { font-family: 'DM Sans', system-ui, sans-serif; font-weight: 500; font-style: italic; font-size: 15px; fill: #333333; letter-spacing: -0.01em; }
+    </style>
+  </defs>
+  <g transform="translate(15, 15)">
+    <rect width="90" height="90" rx="22" fill="#000000" fill-opacity="0.08" />
+    <g transform="translate(10, 10) scale(1.944)">
+      <path d="M6 24C10 21 15 21 18 24C21 21 26 21 30 24V11C26 8 21 8 18 11C15 8 10 8 6 11V24Z" fill="#000000" />
+      <path d="M18 11V24" stroke="#FFFFFF" stroke-width="1.5" />
+      <path d="M18 5L7 10L18 15L29 10L18 5Z" fill="#000000" />
+      <path d="M11 12.5V17C11 19 14 20.5 18 20.5C22 20.5 25 19 25 17V12.5" stroke="#000000" stroke-width="1.5" fill="none" />
+      <path d="M27 11V18" stroke="#000000" stroke-width="1.5" stroke-linecap="round" />
+    </g>
+  </g>
+  <g transform="translate(125, 20)">
+    <text x="0" y="44" class="title-mono-black">MonsieurFanyi</text>
+    <text x="2" y="70" class="sub-mono-black">Le bon prof, au bon moment</text>
+  </g>
+</svg>

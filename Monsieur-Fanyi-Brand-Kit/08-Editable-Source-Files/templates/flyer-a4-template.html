@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Monsieur Fanyi — Template Flyer Imprimé A4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mf-navy: #10233F;
+      --mf-navy-dark: #071322;
+      --mf-gold: #F59E0B;
+      --mf-gold-pill: #F9C450;
+      --mf-blue: #2563EB;
+      --mf-teal: #0D9488;
+      --mf-white: #FFFFFF;
+      --mf-charcoal: #0F172A;
+      --mf-muted: #64748B;
+      --mf-surface: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    body {
+      background: #334155;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    /* Format A4 exact : 210mm x 297mm (794px x 1123px à 96dpi, ou 2480px x 3508px à 300dpi) */
+    .a4-sheet {
+      width: 210mm;
+      height: 297mm;
+      background: var(--mf-surface);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    /* En-tête bleu marine */
+    .flyer-header {
+      background: var(--mf-navy);
+      height: 64mm;
+      position: relative;
+      padding: 8mm 12mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--mf-white);
+    }
+
+    .header-left {
+      max-width: 110mm;
+      z-index: 2;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4mm;
+    }
+
+    .brand-row h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 20pt;
+      line-height: 1;
+    }
+
+    .brand-row h1 span { color: var(--mf-gold); }
+
+    .header-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 16pt;
+      line-height: 1.15;
+      color: var(--mf-white);
+    }
+
+    .header-title .gold { color: var(--mf-gold-pill); }
+
+    .header-quote {
+      font-family: 'Caveat', cursive;
+      font-size: 15pt;
+      color: var(--mf-gold);
+      margin-top: 2mm;
+    }
+
+    .header-photo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 90mm;
+      height: 100%;
+      background: url('../../03-Homepage-Visuals/hero_student_ultra_hd_4k.jpg') no-repeat right center;
+      background-size: cover;
+      z-index: 1;
+    }
+
+    .header-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #10233F 55%, rgba(16, 35, 63, 0.8) 75%, transparent 100%);
+      z-index: 1;
+    }
+
+    .accent-bar {
+      height: 2mm;
+      background: var(--mf-gold);
+    }
+
+    /* Grille Principale 2 Colonnes */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6mm;
+      padding: 6mm 12mm;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--mf-white);
+      border-radius: 4mm;
+      padding: 5mm;
+      border: 1px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-header {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 11pt;
+      margin-bottom: 4mm;
+      padding-bottom: 2mm;
+      border-bottom: 1.5px solid #F1F5F9;
+    }
+
+    .card.parents .card-header { color: var(--mf-blue); border-color: rgba(37, 99, 235, 0.2); }
+    .card.teachers .card-header { color: var(--mf-gold); border-color: rgba(245, 158, 11, 0.3); }
+
+    .feature-item {
+      margin-bottom: 3mm;
+    }
+
+    .feature-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 9.5pt;
+      color: var(--mf-navy);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .feature-desc {
+      font-size: 8pt;
+      color: #475569;
+      line-height: 1.35;
+      margin-top: 1mm;
+      padding-left: 3.5mm;
+    }
+
+    .card-btn {
+      display: block;
+      text-align: center;
+      padding: 2.5mm;
+      border-radius: 3mm;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 8pt;
+      text-decoration: none;
+      margin-top: 3mm;
+    }
+
+    .card.parents .card-btn { background: var(--mf-navy); color: var(--mf-white); }
+    .card.teachers .card-btn { background: var(--mf-gold-pill); color: #0F172A; }
+
+    /* Bandeau Niveaux et Matières */
+    .levels-banner {
+      background: var(--mf-navy-dark);
+      color: var(--mf-white);
+      margin: 0 12mm 4mm 12mm;
+      border-radius: 3mm;
+      padding: 3mm 6mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7.5pt;
+    }
+
+    .levels-banner strong {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--mf-gold-pill);
+      font-size: 8pt;
+    }
+
+    /* Footer Contacts & Paiements */
+    .flyer-footer {
+      background: #0B1526;
+      border-top: 2px solid var(--mf-gold);
+      padding: 4mm 12mm;
+      color: var(--mf-white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7.5pt;
+    }
+
+    .footer-left p { margin-bottom: 1mm; }
+    .footer-badges { display: flex; gap: 4mm; margin-top: 1.5mm; }
+    .badge {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1mm 3mm;
+      border-radius: 2mm;
+      font-size: 7pt;
+      font-weight: 600;
+    }
+    .badge.orange { color: #FB923C; border: 0.5px solid #FB923C; }
+    .badge.mtn { color: #FACC15; border: 0.5px solid #FACC15; }
+
+    .footer-contacts {
+      text-align: right;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .footer-contacts .phone {
+      font-size: 10pt;
+      font-weight: 800;
+      color: var(--mf-gold-pill);
+    }
+
+    .footer-contacts .website {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: var(--mf-white);
+    }
+
+    @media print {
+      body { padding: 0; background: none; }
+      .a4-sheet { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="a4-sheet">
+
+    <!-- En-tête -->
+    <div>
+      <div class="flyer-header">
+        <div class="header-left">
+          <div class="brand-row">
+            <h1>Monsieur<span>Fanyi</span></h1>
+          </div>
+          <div class="header-title" contenteditable="true">
+            L'Excellence Scolaire<br>
+            <span class="gold">à portée de main en Guinée.</span>
+          </div>
+          <div class="header-quote" contenteditable="true">
+            « L'éducation est la seule arme pour s'en sortir. »
+          </div>
+        </div>
+        <div class="header-gradient"></div>
+        <div class="header-photo"></div>
+      </div>
+      <div class="accent-bar"></div>
+    </div>
+
+    <!-- Grille Parents vs Enseignants -->
+    <div class="main-grid">
+
+      <!-- Colonne Parents -->
+      <div class="card parents">
+        <div>
+          <div class="card-header" contenteditable="true">✦ POUR LES PARENTS D'ÉLÈVES</div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">★ Professeurs Certifiés</div>
+            <div class="feature-desc" contenteditable="true">Sélection rigoureuse sur diplômes universitaires, casier judiciaire et pédagogie.</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">★ Carnet de Progression Digital</div>
+            <div class="feature-desc" contenteditable="true">Suivi précis séance après séance : bilans, devoirs et recommandations.</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">★ Séquestre & Paiements Sécurisés</div>
+            <div class="feature-desc" contenteditable="true">Fonds protégés via Orange Money & MTN. Vous ne payez qu'après validation.</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">★ Pour la Diaspora Guinéenne</div>
+            <div class="feature-desc" contenteditable="true">Financez les cours de vos proches depuis l'étranger avec un contrôle total.</div>
+          </div>
+        </div>
+        <a href="https://monsieurfanyi.com" class="card-btn" contenteditable="true">Réserver un cours sur monsieurfanyi.com →</a>
+      </div>
+
+      <!-- Colonne Enseignants -->
+      <div class="card teachers">
+        <div>
+          <div class="card-header" contenteditable="true">✦ POUR LES ENSEIGNANTS QUALIFIÉS</div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">✓ 85% de Rémunération Nette</div>
+            <div class="feature-desc" contenteditable="true">Le modèle le plus équitable et le plus valorisant de Guinée.</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">✓ Liberté Totale de Planning</div>
+            <div class="feature-desc" contenteditable="true">Choisissez vos créneaux, vos communes d'intervention et vos matières.</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">✓ Paiements Ponctuels Garantis</div>
+            <div class="feature-desc" contenteditable="true">Versement direct fiable sur votre compte Orange Money ou MTN.</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-title" contenteditable="true">✓ Valorisation de Votre Expertise</div>
+            <div class="feature-desc" contenteditable="true">Construisez votre réputation grâce aux évaluations des familles.</div>
+          </div>
+        </div>
+        <a href="https://monsieurfanyi.com" class="card-btn" contenteditable="true">Postuler comme enseignant →</a>
+      </div>
+
+    </div>
+
+    <!-- Bandeau Niveaux -->
+    <div class="levels-banner">
+      <div><strong>PROGRAMMES GUINÉENS :</strong> Primaire (1ère-6ème) • Collège (Brevet 7ème-10ème) • Lycée (Baccalauréat 11ème-Terminale)</div>
+      <div><strong>DISCIPLINES :</strong> Maths • Français • Physiques • Chimie • Anglais • SVT</div>
+    </div>
+
+    <!-- Pied de Page Officiel -->
+    <div class="flyer-footer">
+      <div class="footer-left">
+        <p><strong>Monsieur Fanyi Éducation</strong> — Conakry, République de Guinée</p>
+        <p>Plateforme agréée de cours particuliers à domicile et en ligne.</p>
+        <div class="footer-badges">
+          <span class="badge orange">📱 Orange Money Guinée</span>
+          <span class="badge mtn">📱 MTN Mobile Money</span>
+        </div>
+      </div>
+      <div class="footer-contacts">
+        <div class="phone">📞 +224 612 365 314</div>
+        <div class="website">🌐 https://monsieurfanyi.com</div>
+        <div>✉ contact@monsieurfanyi.com</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
+

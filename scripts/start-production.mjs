@@ -16,20 +16,24 @@ console.log("-------------------------------------------------------------");
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
 if (hasDatabase) {
-  console.log("📦 Synchronizing database schema with Prisma (db push)...");
-  try {
-    const dbPush = spawnSync("npx", ["prisma", "db", "push", "--skip-generate"], {
-      stdio: "inherit",
-      shell: true,
-      env: process.env,
-    });
-    if (dbPush.status === 0) {
-      console.log("✅ Database schema synchronized successfully.");
-    } else {
-      console.warn("⚠️ Database sync returned non-zero status. Continuing startup...");
+  if (process.env.APPLY_MIGRATIONS_ON_STARTUP === "true") {
+    console.log("📦 Applying pending Prisma migrations (prisma migrate deploy)...");
+    try {
+      const dbMigrate = spawnSync("npx", ["prisma", "migrate", "deploy"], {
+        stdio: "inherit",
+        shell: true,
+        env: process.env,
+      });
+      if (dbMigrate.status === 0) {
+        console.log("✅ Database migrations applied successfully.");
+      } else {
+        console.warn("⚠️ Database migrate returned non-zero status. Continuing startup...");
+      }
+    } catch (err) {
+      console.error("⚠️ Failed to execute prisma migrate deploy:", err);
     }
-  } catch (err) {
-    console.error("⚠️ Failed to execute prisma db push:", err);
+  } else {
+    console.log("ℹ️ Skipping automatic migrations on startup (controlled deployment policy).");
   }
 
   console.log("🌱 Verifying and seeding master data (Subjects & Grade Levels)...");

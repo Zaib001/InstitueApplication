@@ -92,7 +92,7 @@ export default function CGUPage() {
               </blockquote>
               <div className="space-y-2 text-xs text-amber-950">
                 <p>
-                  <strong>Portée et Justification :</strong> La plateforme investit des ressources considérables dans le recrutement, la vérification des diplômes et antécédents des professeurs, l&apos;assistance téléphonique et le développement d&apos;outils de suivi pédagogique. Le contournement prive la plateforme de ses moyens opérationnels et prive les utilisateurs de la protection du séquestre de paiement, de l&apos;assurance remplacement et du suivi du Carnet de Progression.
+                  <strong>Portée et Justification :</strong> La plateforme investit des ressources considérables dans le recrutement, la vérification des diplômes et antécédents des professeurs, l&apos;assistance téléphonique et le développement d&apos;outils de suivi pédagogique. Le contournement prive la plateforme de ses moyens opérationnels et prive les utilisateurs de la protection du compte prépayé de cours, de l&apos;assurance remplacement et du suivi du Carnet de Progression.
                 </p>
                 <p>
                   <strong>Sanctions applicables :</strong> En cas de manquement constaté à cette obligation, Monsieur Fanyi se réserve le droit de suspendre ou clôturer immédiatement les comptes concernés, de réclamer le remboursement des commissions dues au titre des prestations réalisées ainsi que des dommages-intérêts forfaitaires conformément au droit commercial guinéen.
@@ -108,7 +108,7 @@ export default function CGUPage() {
               Modalités Financières & Rémunération
             </h2>
             <p>
-              Les tarifs des cours sont transparents et exprimés en Francs Guinéens (GNF). Les paiements sont sécurisés par les opérateurs de Mobile Money agréés en République de Guinée (Orange Money Guinée et MTN Mobile Money). Les fonds sont conservés sous séquestre sécurisé jusqu&apos;à la confirmation effective de la séance par le parent d&apos;élève.
+              Les tarifs des cours sont transparents et exprimés en Francs Guinéens (GNF). Les paiements sont effectués via les opérateurs de Mobile Money agréés en République de Guinée (Orange Money Guinée et MTN Mobile Money) ou carte bancaire. Les fonds prépayés sont affectés aux cours et débloqués au professeur après validation effective de la séance par le parent d&apos;élève.
             </p>
             <p>
               La plateforme prélève une commission de service de 15% sur les prestations pour couvrir les frais de fonctionnement, de vérification des enseignants et d&apos;infrastructure technologique. L&apos;enseignant perçoit 85% net du montant de la séance validée.

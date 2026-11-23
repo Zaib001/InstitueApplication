@@ -9,6 +9,7 @@ import {
   Clock,
   ExternalLink,
   Eye,
+  FileText,
   GraduationCap,
   Home,
   Laptop,
@@ -29,6 +30,10 @@ import {
   ClassroomPackageModal,
   PackageModalData,
 } from "@/components/classroom/ClassroomPackageModal";
+import {
+  ParentCheckoutModal,
+  CheckoutClassroomData,
+} from "@/components/classroom/ParentCheckoutModal";
 
 export interface ParentClassroomData {
   id: string;
@@ -84,6 +89,7 @@ interface ParentClassesClientProps {
 export function ParentClassesClient({ classrooms }: ParentClassesClientProps) {
   const { t, locale } = useTranslation();
   const [selectedPackageData, setSelectedPackageData] = useState<PackageModalData | null>(null);
+  const [selectedCheckoutData, setSelectedCheckoutData] = useState<CheckoutClassroomData | null>(null);
 
   // Filters state
   const [typeFilter, setTypeFilter] = useState<"ALL" | "MARKETPLACE" | "ASSISTED">("ALL");
@@ -329,12 +335,12 @@ export function ParentClassesClient({ classrooms }: ParentClassesClientProps) {
                       {isPendingPayment ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
                           <Clock className="w-3 h-3 text-amber-600" />
-                          <span>{t("classes.statusPendingPayment", "En attente de paiement")}</span>
+                          <span>Paiement en attente</span>
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                           <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                          <span>{t("classes.statusActive", "Classe Active")}</span>
+                          <span>Paiement confirmé (Classe Active)</span>
                         </span>
                       )}
                     </div>
@@ -426,15 +432,18 @@ export function ParentClassesClient({ classrooms }: ParentClassesClientProps) {
                   {isPendingPayment && (
                     <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/70 text-amber-900 text-xs flex items-start gap-2">
                       <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <div>
+                      <div className="space-y-1">
                         <span className="font-semibold block">
                           {t("classes.prepaymentNoticeTitle", "Prépaiement en attente :")}
                         </span>
-                        <span>
+                        <span className="block text-[11px] leading-relaxed">
                           {t(
                             "classes.prepaymentNoticeDesc",
-                            "Les cours ne peuvent débuter qu'après le versement de la provision. Votre conseiller Monsieur Fanyi vous contactera pour valider le versement sécurisé."
+                            "Les cours débutent dès le versement de la provision affectée aux cours. Passerelles Orange Money, MTN Mobile Money et Cartes bancaires (Visa/Mastercard) en cours de configuration."
                           )}
+                        </span>
+                        <span className="block text-[10px] text-amber-700 font-medium">
+                          Votre conseiller Monsieur Fanyi (+224 612 365 314) reste disponible pour toute assistance.
                         </span>
                       </div>
                     </div>
@@ -458,6 +467,42 @@ export function ParentClassesClient({ classrooms }: ParentClassesClientProps) {
                   )}
 
                   <div className="flex items-center gap-2">
+                    {isPendingPayment ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSelectedCheckoutData({
+                            classroomId: c.id,
+                            subjectName: c.subjectName,
+                            studentName: c.student.fullName,
+                            teacherName: c.teacher.fullName,
+                            monthlyRateGnf: c.monthlyRateGnf || 800000,
+                            hourlyRateGnf: c.hourlyRateGnf || undefined,
+                            packageDetails: pkg
+                              ? {
+                                  totalAmountGnf: pkg.totalAmountGnf,
+                                  sessionsCount: pkg.sessionsCount,
+                                  minutesPerSession: pkg.minutesPerSession,
+                                  pricingType: pkg.pricingType,
+                                }
+                              : null,
+                          })
+                        }
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-[#16385c] hover:bg-[#112d4a] transition-all shadow-xs cursor-pointer"
+                      >
+                        <Wallet className="w-3.5 h-3.5 text-amber-300" />
+                        <span>Payer les cours</span>
+                      </button>
+                    ) : (
+                      <Link
+                        href="/parent/payments"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Voir le reçu</span>
+                      </Link>
+                    )}
+
                     <Link
                       href={`/parent/calendar?classroomId=${c.id}`}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#16385c] bg-slate-100 hover:bg-slate-200 transition-colors"
@@ -499,6 +544,18 @@ export function ParentClassesClient({ classrooms }: ParentClassesClientProps) {
         <ClassroomPackageModal
           data={selectedPackageData}
           onClose={() => setSelectedPackageData(null)}
+        />
+      )}
+
+      {/* Sandbox Checkout Modal */}
+      {selectedCheckoutData && (
+        <ParentCheckoutModal
+          data={selectedCheckoutData}
+          onClose={() => setSelectedCheckoutData(null)}
+          onSuccess={() => {
+            setSelectedCheckoutData(null);
+            window.location.reload();
+          }}
         />
       )}
     </div>

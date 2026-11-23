@@ -1,0 +1,35 @@
+/* ===================================================
+   MONSIEUR FANYI — DESIGN SYSTEM COLOR TOKENS
+   Plateforme officielle de soutien scolaire en Guinée
+   =================================================== */
+
+:root {
+  /* Primaires */
+  --mf-navy-primary: #10233F;
+  --mf-navy-logo: #152E4D;
+  --mf-navy-dark: #0B1526;
+  
+  /* Actions & Pédagogie */
+  --mf-blue-primary: #2563EB;
+  --mf-blue-deep: #1D4ED8;
+  --mf-blue-light: #3B82F6;
+  --mf-blue-surface: #EFF6FF;
+
+  /* Or, Savoir & Accents */
+  --mf-gold-amber: #F59E0B;
+  --mf-gold-pill: #F9C450;
+  --mf-gold-warm: #E9B44C;
+  --mf-gold-spine: #D97706;
+
+  /* Pédagogie & Croissance */
+  --mf-teal-primary: #0D9488;
+  --mf-teal-dark: #0F766E;
+  --mf-teal-light: #14B8A6;
+
+  /* Neutres */
+  --mf-text-charcoal: #0F172A;
+  --mf-text-muted: #64748B;
+  --mf-text-subtle: #94A3B8;
+  --mf-surface-warm: #F8FAFC;
+  --mf-white: #FFFFFF;
+}

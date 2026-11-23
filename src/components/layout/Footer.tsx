@@ -36,7 +36,7 @@ export function Footer() {
             </div>
             <div>
               <span className="font-bold text-white block">Paiements Sécurisés & Traçables en Guinée</span>
-              <span className="text-slate-400">Fonds conservés sous séquestre jusqu'à validation de la séance</span>
+              <span className="text-slate-400">Fonds sécurisés en provisions jusqu'à validation de la séance</span>
             </div>
           </div>
 

@@ -384,7 +384,7 @@ export function TeacherPricingManager({
                   {formatGnf(calculationResult.totalPlatformCommissionGnf)}
                 </span>
                 <span className="text-[10px] text-blue-600">
-                  {t("pricingManager.platformCommissionDesc", "Séquestre, modération & suivi")}
+                  {t("pricingManager.platformCommissionDesc", "Supervision, modération & suivi")}
                 </span>
               </div>
 

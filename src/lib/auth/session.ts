@@ -151,6 +151,7 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
     };
   } catch (error: any) {
     if (error?.digest === "DYNAMIC_SERVER_USAGE") throw error;
+    if (error?.message?.includes("outside a request scope")) return null;
     console.error("Error retrieving current user:", error);
     return null;
   }

@@ -163,9 +163,95 @@ enum DisputeStatus {
 
 enum PayoutStatus {
   REQUESTED
+  RESERVED
+  APPROVED
   PROCESSING
   PAID
   FAILED
+  CANCELLED
+  RECONCILIATION_PENDING
+  RECONCILED
+}
+
+// ----------------------------------------------------
+// MILESTONE 3: ENTERPRISE FINANCIAL ARCHITECTURE ENUMS
+// ----------------------------------------------------
+
+enum PaymentProviderName {
+  DJOMY
+  CINETPAY
+  FEDAPAY
+  ORANGE_MONEY
+  MTN_MOMO
+  MANUAL_BANK_TRANSFER
+}
+
+enum PaymentIntentStatus {
+  CREATED
+  PENDING
+  SUCCEEDED
+  FAILED
+  EXPIRED
+  CANCELLED
+  REQUIRES_RECONCILIATION
+  REFUNDED
+}
+
+enum PaymentTransactionStatus {
+  INITIATED
+  CONFIRMED
+  FAILED
+  REVERSED
+  REFUNDED
+}
+
+enum ClassroomFundingStatus {
+  UNFUNDED
+  PARTIALLY_FUNDED
+  FUNDED
+  PARTIALLY_REFUNDED
+  REFUNDED
+}
+
+enum SessionEarningsStatus {
+  NOT_ELIGIBLE
+  PENDING_VALIDATION
+  ELIGIBLE
+  RESERVED_FOR_PAYOUT
+  PAID
+  REVERSED
+}
+
+enum TeacherPayoutStatus {
+  REQUESTED
+  APPROVED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum LedgerAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum LedgerEntryDirection {
+  DEBIT
+  CREDIT
+}
+
+enum JournalReferenceType {
+  PARENT_PAYMENT_CLEARING
+  CLASSROOM_PREPAYMENT_FUNDING
+  LESSON_VALIDATION_EARNING
+  TEACHER_PAYOUT_DISBURSEMENT
+  REFUND_SETTLEMENT
+  GATEWAY_FEE_EXPENSE
+  COMPENSATING_ADJUSTMENT
 }
 
 enum NotificationEventType {
@@ -210,9 +296,19 @@ enum NotificationEventType {
   PAYMENT_CONFIRMED
   PAYMENT_FAILED
   PACKAGE_FUNDED
+  PAYMENT_RECONCILIATION_REQUIRED
+  EARNINGS_ELIGIBLE
+  EARNINGS_REVERSED
   PAYOUT_PENDING
   PAYOUT_COMPLETED
+  PAYOUT_REQUESTED
+  PAYOUT_APPROVED
+  PAYOUT_REJECTED
+  PAYOUT_DISBURSED
+  PAYOUT_FAILED
+  REFUND_REQUESTED
   REFUND_PROCESSED
+  RECONCILIATION_EXCEPTION
 }
 
 enum NotificationPriority {
@@ -261,6 +357,10 @@ model User {
   adminAssignedClassrooms Classroom[]              @relation("AdminAssignedClassrooms")
   invitationTokens        AccountInvitationToken[]
   legalAcceptances        LegalAcceptance[]
+
+  // Milestone 3 Enterprise Financial Architecture
+  paymentIntents          PaymentIntent[]          @relation("ParentPaymentIntents")
+  financialAuditEvents    FinancialAuditEvent[]    @relation("UserFinancialAudits")
 
   @@index([role])
   @@index([email])
@@ -398,6 +498,7 @@ model TeacherProfile {
   classrooms           Classroom[]
   earnings             TeacherEarning[]
   payouts              Payout[]
+  payoutDestinations   TeacherPayoutDestination[]
   ratings              Rating[]
   homework             HomeworkAssignment[]
   assessments          AcademicAssessment[]
@@ -591,6 +692,9 @@ model Classroom {
   homework             HomeworkAssignment[]
   assessments          AcademicAssessment[]
   progressObservations SubjectProgressObservation[]
+  funding              ClassroomFunding?
+  paymentIntents       PaymentIntent[]
+  refundCases          RefundCase[]
 
   @@index([teacherProfileId])
   @@index([studentId])
@@ -619,8 +723,9 @@ model LessonSession {
   allocatedAmountGnf     Int              @default(0)
   platformCommissionGnf  Int              @default(0)
   teacherNetGnf          Int              @default(0)
-  isFunded               Boolean          @default(false)
-  status                 SessionStatus    @default(SCHEDULED)
+  isFunded               Boolean               @default(false)
+  status                 SessionStatus         @default(SCHEDULED)
+  earningsStatus         SessionEarningsStatus @default(NOT_ELIGIBLE)
 
   // Audit reprogrammation
   rescheduledFromStart DateTime?
@@ -840,8 +945,10 @@ model TutoringPackage {
   createdAt                  DateTime         @default(now())
   updatedAt                  DateTime         @updatedAt
 
-  orders   PaymentOrder[]
-  sessions LessonSession[]
+  orders         PaymentOrder[]
+  sessions       LessonSession[]
+  fundings       ClassroomFunding[]
+  paymentIntents PaymentIntent[]
 
   @@index([classroomId])
   @@index([status])
@@ -935,23 +1042,56 @@ model TeacherEarning {
   @@index([isPaidOut])
 }
 
+model TeacherPayoutDestination {
+  id                 String         @id @default(cuid())
+  teacherProfileId   String
+  teacherProfile     TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Cascade)
+  operator           String         // ORANGE_MONEY, MTN_MOMO
+  phone              String         // E.164 (+224...)
+  accountHolderName  String
+  verificationStatus String         @default("PENDING") // PENDING, VERIFIED, REJECTED
+  verifiedAt         DateTime?
+  isDefault          Boolean        @default(false)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  payouts            Payout[]
+
+  @@index([teacherProfileId])
+  @@index([operator])
+  @@index([isDefault])
+}
+
 model Payout {
-  id               String         @id @default(cuid())
-  teacherProfileId String
-  teacherProfile   TeacherProfile @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
-  amountGnf        Int
-  paymentReference String         @unique // Référence opérateur unique pour bloquer le double-versement
-  beneficiaryName  String
-  beneficiaryPhone String
-  channel          String // ORANGE_MONEY, MTN_MOMO, CASH, BANK
-  status           PayoutStatus   @default(PAID)
-  recordedByAdmin  String
-  createdAt        DateTime       @default(now())
+  id                      String                    @id @default(cuid())
+  teacherProfileId        String
+  teacherProfile          TeacherProfile            @relation(fields: [teacherProfileId], references: [id], onDelete: Restrict)
+  destinationId           String?
+  destination             TeacherPayoutDestination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  amountGnf               Int
+  paymentReference        String                    @unique // Référence opérateur unique pour bloquer le double-versement
+  beneficiaryName         String
+  beneficiaryPhone        String
+  channel                 String // ORANGE_MONEY, MTN_MOMO, CASH, BANK
+  disbursementMode        String                    @default("MANUAL_ADMIN_RECORDED") // MANUAL_ADMIN_RECORDED | PROVIDER_AUTOMATED
+  status                  PayoutStatus              @default(REQUESTED)
+  recordedByAdmin         String
+  approvedBy              String?
+  approvedAt              DateTime?
+  notes                   String?
+  rejectionReason         String?
+  providerDisbursementRef String?
+  reconciledAt            DateTime?
+  reconciledBy            String?
+  createdAt               DateTime                  @default(now())
 
   earnings TeacherEarning[]
 
   @@index([teacherProfileId])
   @@index([paymentReference])
+  @@index([status])
+  @@index([disbursementMode])
+  @@index([destinationId])
 }
 
 model PaymentLedgerEntry {
@@ -967,6 +1107,204 @@ model PaymentLedgerEntry {
 
   @@index([orderId])
   @@index([type])
+}
+
+// ----------------------------------------------------
+// MILESTONE 3: ENTERPRISE FINANCIAL ARCHITECTURE & PAYMENT FOUNDATION
+// ----------------------------------------------------
+
+model PaymentProviderConfig {
+  id                         String              @id @default(cuid())
+  provider                   PaymentProviderName @unique
+  displayName                String
+  isActive                   Boolean             @default(false)
+  isSandbox                  Boolean             @default(true)
+  supportedCurrencies        String[]            @default(["GNF"])
+  supportedChannels          String[]            @default([])
+  supportsInternationalCards Boolean             @default(false)
+  supportsOrangeMoney        Boolean             @default(false)
+  supportsMtnMomo            Boolean             @default(false)
+  supportsDisbursements      Boolean             @default(false)
+  supportsRefunds            Boolean             @default(false)
+  configurationNotes         String?
+  createdAt                  DateTime            @default(now())
+  updatedAt                  DateTime            @updatedAt
+}
+
+model PaymentIntent {
+  id                 String              @id @default(cuid())
+  intentReference    String              @unique // ex: pi_179462...
+  parentUserId       String
+  parentUser         User                @relation("ParentPaymentIntents", fields: [parentUserId], references: [id], onDelete: Cascade)
+  classroomId        String?
+  classroom          Classroom?          @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  packageId          String?
+  package            TutoringPackage?    @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  amountGnf          Int                 // Strict integer amount in GNF (Total charged including parent fee)
+  courseAmountGnf    Int?                // Tutoring principal amount in GNF (Base lesson funds)
+  parentFeeGnf       Int                 @default(0) // Parent payment processing fee contribution (min 2%)
+  customerAmount     Int?                // Amount in customer currency integer units (e.g. cents)
+  customerCurrency   String              @default("GNF")
+  settlementCurrency String              @default("GNF")
+  exchangeRate       Float?              // Provider supplied converted rate if applicable
+  provider           PaymentProviderName
+  providerReference  String?
+  selectedMethod     String?             // "VISA_MASTERCARD", "ORANGE_MONEY", "MTN_MOMO"
+  status             PaymentIntentStatus @default(CREATED)
+  idempotencyKey     String              @unique
+  expiresAt          DateTime
+  metadataJson       String?
+  failureReason      String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  transactions       PaymentTransaction[]
+  classroomFunding   ClassroomFunding[]
+
+  @@index([parentUserId])
+  @@index([classroomId])
+  @@index([packageId])
+  @@index([status])
+  @@index([idempotencyKey])
+  @@index([intentReference])
+}
+
+model PaymentTransaction {
+  id                    String                   @id @default(cuid())
+  transactionReference  String                   @unique // ex: ptx_179462...
+  intentId              String
+  intent                PaymentIntent            @relation(fields: [intentId], references: [id], onDelete: Cascade)
+  providerTransactionId String?
+  provider              PaymentProviderName
+  originalAmount        Int                      // In customer currency integer units
+  currency              String
+  settledAmountGnf      Int                      // In integer GNF
+  providerFeeGnf        Int                      @default(0)
+  netAmountGnf          Int                      // settledAmountGnf - providerFeeGnf
+  status                PaymentTransactionStatus @default(INITIATED)
+  verifiedAt            DateTime?
+  rawPayloadJson        String?
+  idempotencyKey        String                   @unique
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+
+  @@index([intentId])
+  @@index([providerTransactionId])
+  @@index([status])
+  @@index([transactionReference])
+}
+
+model LedgerAccount {
+  id        String            @id @default(cuid())
+  code      String            @unique // e.g. "1010_PARENT_CLEARING", "2010_UNALLOCATED_ESCROW", "2020_CLASSROOM_FUNDS", "2030_TEACHER_PAYABLE", "4010_PLATFORM_COMMISSION", "5010_PROVIDER_FEES", "2040_PAYOUT_LIABILITY", "2050_REFUND_CLEARING"
+  name      String
+  type      LedgerAccountType
+  currency  String            @default("GNF")
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+
+  entries   LedgerEntry[]
+
+  @@index([code])
+  @@index([type])
+}
+
+model LedgerJournal {
+  id            String               @id @default(cuid())
+  journalNumber String               @unique // ex: jnl_179462...
+  referenceType JournalReferenceType
+  referenceId   String               // ID of the transaction, session, payout, or refund
+  description   String
+  currency      String               @default("GNF")
+  postedAt      DateTime             @default(now())
+  postedBy      String               // Actor ID or "SYSTEM"
+  isBalanced    Boolean              @default(true)
+  totalDebit    Int
+  totalCredit   Int
+
+  entries       LedgerEntry[]
+
+  @@index([journalNumber])
+  @@index([referenceType, referenceId])
+  @@index([postedAt])
+}
+
+model LedgerEntry {
+  id        String               @id @default(cuid())
+  journalId String
+  journal   LedgerJournal        @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  accountId String
+  account   LedgerAccount        @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  direction LedgerEntryDirection // DEBIT | CREDIT
+  amount    Int                  // Positive integer amount
+  currency  String               @default("GNF")
+  createdAt DateTime             @default(now())
+
+  @@index([journalId])
+  @@index([accountId])
+}
+
+model ClassroomFunding {
+  id                   String                 @id @default(cuid())
+  classroomId          String                 @unique
+  classroom            Classroom              @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  packageId            String?
+  package              TutoringPackage?       @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  parentUserId         String
+  totalFundedAmountGnf Int                    @default(0)
+  allocatedAmountGnf   Int                    @default(0)
+  refundedAmountGnf    Int                    @default(0)
+  availableBalanceGnf  Int                    @default(0)
+  status               ClassroomFundingStatus @default(UNFUNDED)
+  fundedAt             DateTime?
+  lastPaymentIntentId  String?
+  lastPaymentIntent    PaymentIntent?         @relation(fields: [lastPaymentIntentId], references: [id], onDelete: SetNull)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  @@index([classroomId])
+  @@index([parentUserId])
+  @@index([status])
+}
+
+model CommissionPolicy {
+  id               String   @id @default(cuid())
+  version          String   @unique // ex: "POL-2026-V1"
+  platformPercent  Int      @default(15) // e.g. 15 or 20
+  teacherPercent   Int      @default(85) // e.g. 85 or 80
+  description      String
+  effectiveFrom    DateTime
+  isActive         Boolean  @default(true)
+  isLocked         Boolean  @default(true) // Once created, immutable
+  createdByAdminId String
+  createdAt        DateTime @default(now())
+
+  @@index([version])
+  @@index([isActive])
+  @@index([effectiveFrom])
+}
+
+model FinancialAuditEvent {
+  id                String   @id @default(cuid())
+  correlationId     String
+  actorId           String
+  actorRole         String
+  actorUserId       String?
+  actorUser         User?    @relation("UserFinancialAudits", fields: [actorUserId], references: [id], onDelete: SetNull)
+  action            String
+  entityType        String
+  entityId          String
+  previousStateJson String?
+  newStateJson      String?
+  ipAddress         String?
+  metadataJson      String?
+  createdAt         DateTime @default(now())
+
+  @@index([correlationId])
+  @@index([actorId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }
 
 model Rating {
@@ -1116,8 +1454,10 @@ model Attachment {
 
 model RefundCase {
   id                 String         @id @default(cuid())
-  orderId            String
-  order              PaymentOrder   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId            String?
+  order              PaymentOrder?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  classroomId        String?
+  classroom          Classroom?     @relation(fields: [classroomId], references: [id], onDelete: SetNull)
   sessionId          String?
   session            LessonSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
   disputeId          String?        @unique
@@ -1132,6 +1472,7 @@ model RefundCase {
   updatedAt          DateTime       @updatedAt
 
   @@index([orderId])
+  @@index([classroomId])
   @@index([status])
 }
 

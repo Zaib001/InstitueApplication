@@ -251,7 +251,7 @@ function LoginContent() {
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />
-              <span>{t("auth.sidePoint2", "Séquestre protecteur Orange / MTN")}</span>
+              <span>{t("auth.sidePoint2", "Paiement sécurisé Orange / MTN")}</span>
             </div>
             <div className="flex items-center gap-2 text-slate-200">
               <CheckCircle2 className="w-4 h-4 text-[#e59a38]" />

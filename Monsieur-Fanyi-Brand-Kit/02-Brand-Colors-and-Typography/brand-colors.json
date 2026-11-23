@@ -1,0 +1,106 @@
+{
+  "brand": "Monsieur Fanyi",
+  "version": "1.0",
+  "palette": [
+    {
+      "id": "navy-primary",
+      "name": "Bleu Marine Prestige",
+      "role": "Couleur maîtresse — Confiance académique, rigueur et autorité",
+      "hex": "#10233F",
+      "rgb": "rgb(16, 35, 63)",
+      "cmyk": "C:95 M:75 Y:40 K:50",
+      "hsl": "hsl(216, 60%, 15%)",
+      "usage": "Headers, titres majeurs, navigation, cartes d'autorité"
+    },
+    {
+      "id": "navy-logo",
+      "name": "Bleu Marine Logo",
+      "role": "Couleur du mot 'Monsieur' et de la toque académique",
+      "hex": "#152E4D",
+      "rgb": "rgb(21, 46, 77)",
+      "cmyk": "C:92 M:70 Y:35 K:45",
+      "hsl": "hsl(213, 57%, 19%)",
+      "usage": "Toque académique, mot 'Monsieur' dans le wordmark officiel"
+    },
+    {
+      "id": "blue-primary",
+      "name": "Bleu Pédagogique",
+      "role": "Couleur d'action — Clarté, dynamisme et liens interactifs",
+      "hex": "#2563EB",
+      "rgb": "rgb(37, 99, 235)",
+      "cmyk": "C:84 M:65 Y:0 K:0",
+      "hsl": "hsl(221, 83%, 53%)",
+      "usage": "Boutons d'action secondaire, liens actifs, jauges de progression"
+    },
+    {
+      "id": "gold-amber",
+      "name": "Or Solaire / Ambre",
+      "role": "Couleur d'excellence — Livre du savoir, succès et notation",
+      "hex": "#F59E0B",
+      "rgb": "rgb(245, 158, 11)",
+      "cmyk": "C:0 M:40 Y:100 K:0",
+      "hsl": "hsl(38, 92%, 50%)",
+      "usage": "Mot 'Fanyi', livre ouvert du logo, étoiles d'avis, badges d'excellence"
+    },
+    {
+      "id": "gold-pill",
+      "name": "Or Bouton Lumineux",
+      "role": "Couleur d'incitation principale — Bouton 'Se connecter' & CTA",
+      "hex": "#F9C450",
+      "rgb": "rgb(249, 196, 80)",
+      "cmyk": "C:0 M:23 Y:75 K:0",
+      "hsl": "hsl(41, 93%, 65%)",
+      "usage": "Boutons pills d'accès rapide, surlignages manuscrits ('la seule arme')"
+    },
+    {
+      "id": "teal-pedagogy",
+      "name": "Sarcelle Croissance",
+      "role": "Couleur d'accompagnement — Suivi personnalisé et pédagogie",
+      "hex": "#0D9488",
+      "rgb": "rgb(13, 148, 136)",
+      "cmyk": "C:85 M:15 Y:50 K:15",
+      "hsl": "hsl(175, 84%, 32%)",
+      "usage": "Badges de conformité programme guinéen, jalons du carnet de bord"
+    },
+    {
+      "id": "charcoal-text",
+      "name": "Anthracite Haute Visibilité",
+      "role": "Texte principal — Lisibilité maximale et contraste optimal",
+      "hex": "#0F172A",
+      "rgb": "rgb(15, 23, 42)",
+      "cmyk": "C:80 M:70 Y:50 K:70",
+      "hsl": "hsl(222, 47%, 11%)",
+      "usage": "Corps de texte principal, titrages de contenu, labels d'interface"
+    },
+    {
+      "id": "muted-slate",
+      "name": "Gris Ardoise Neutre",
+      "role": "Texte secondaire — Métadonnées, sous-titres et bordures",
+      "hex": "#64748B",
+      "rgb": "rgb(100, 116, 139)",
+      "cmyk": "C:55 M:40 Y:30 K:10",
+      "hsl": "hsl(215, 16%, 47%)",
+      "usage": "Slogan 'Le bon prof, au bon moment', dates, mentions d'aide"
+    },
+    {
+      "id": "surface-warm",
+      "name": "Blanc Cassé Fond de Page",
+      "role": "Arrière-plan doux — Chaleur visuelle et confort de lecture",
+      "hex": "#F8FAFC",
+      "rgb": "rgb(248, 250, 252)",
+      "cmyk": "C:2 M:1 Y:0 K:0",
+      "hsl": "hsl(210, 40%, 98%)",
+      "usage": "Fond de page principal, surfaces de contraste doux"
+    },
+    {
+      "id": "pure-white",
+      "name": "Blanc Pur",
+      "role": "Surfaces de cartes et conteneurs d'élévation",
+      "hex": "#FFFFFF",
+      "rgb": "rgb(255, 255, 255)",
+      "cmyk": "C:0 M:0 Y:0 K:0",
+      "hsl": "hsl(0, 0%, 100%)",
+      "usage": "Cartes blanches, conteneurs surélevés, texte sur fond sombre"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 300" width="360" height="300" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@800&amp;family=DM+Sans:ital,wght@1,500&amp;display=swap');
+      .stacked-title-monsieur-dark { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 36px; fill: #FFFFFF; letter-spacing: -0.03em; text-anchor: middle; }
+      .stacked-title-fanyi-dark { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; font-weight: 800; font-size: 36px; fill: #F59E0B; letter-spacing: -0.03em; }
+      .stacked-subtitle-dark { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; font-weight: 500; font-style: italic; font-size: 15px; fill: #94A3B8; letter-spacing: -0.01em; text-anchor: middle; }
+    </style>
+  </defs>
+  <!-- Logomark Badge Centered -->
+  <g id="badge-container" transform="translate(130, 24)">
+    <rect width="100" height="100" rx="24" fill="#FFFFFF" fill-opacity="0.10" />
+    <g id="mark" transform="translate(11, 11) scale(2.166)">
+      <path d="M6 24C10 21 15 21 18 24C21 21 26 21 30 24V11C26 8 21 8 18 11C15 8 10 8 6 11V24Z" fill="#F59E0B" />
+      <path d="M18 11V24" stroke="#D97706" stroke-width="1.5" />
+      <path d="M18 5L7 10L18 15L29 10L18 5Z" fill="#FFFFFF" />
+      <path d="M11 12.5V17C11 19 14 20.5 18 20.5C22 20.5 25 19 25 17V12.5" stroke="#FFFFFF" stroke-width="1.5" fill="none" />
+      <path d="M27 11V18" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" />
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="180" y="190" class="stacked-title-monsieur-dark">Monsieur<tspan class="stacked-title-fanyi-dark">Fanyi</tspan></text>
+  <text x="180" y="222" class="stacked-subtitle-dark">Le bon prof, au bon moment</text>
+  <text x="180" y="250" font-family="'DM Sans', sans-serif" font-weight="600" font-size="11px" fill="#64748B" letter-spacing="0.15em" text-anchor="middle">GUINÉE • ÉDUCATION</text>
+</svg>
