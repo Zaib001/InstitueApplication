@@ -45,6 +45,8 @@ if (hasDatabase) {
     });
     if (seedMaster.status === 0) {
       console.log("✅ Master data verified.");
+    } else {
+      console.warn(`⚠️ Master data seeding returned non-zero status (${seedMaster.status}). Continuing startup...`);
     }
   } catch (err) {
     console.warn("⚠️ Master data seeding skipped or failed:", err);
@@ -60,6 +62,8 @@ if (hasDatabase) {
       });
       if (adminBootstrap.status === 0) {
         console.log("✅ Administrator status checked.");
+      } else {
+        console.warn(`⚠️ Admin bootstrap returned non-zero status (${adminBootstrap.status}). Continuing startup...`);
       }
     } catch (err) {
       console.warn("⚠️ Admin bootstrap skipped or failed:", err);
