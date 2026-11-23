@@ -16,8 +16,6 @@ services:
         value: production
       - key: NODE_VERSION
         value: 20.18.0
-      - key: NODE_OPTIONS
-        value: "--max-old-space-size=460"
       - key: APPLY_MIGRATIONS_ON_STARTUP
         value: "false"
       - key: DATABASE_URL
