@@ -237,10 +237,10 @@ export default async function ParentDashboardPage() {
     titleFr: "Compte rendu en attente de validation",
     titleEn: "Lesson report awaiting validation",
     sessionId: s.id,
-    studentName: s.classroom.student.fullName,
-    teacherName: s.classroom.teacherProfile.user.fullName,
-    subjectName: s.classroom.subjectName,
-    lessonDate: s.scheduledStart.toISOString(),
+    studentName: s.classroom?.student?.fullName || "Élève",
+    teacherName: s.classroom?.teacherProfile?.user?.fullName || "Professeur assigné",
+    subjectName: s.classroom?.subjectName || "Cours",
+    lessonDate: s.scheduledStart ? s.scheduledStart.toISOString() : new Date().toISOString(),
     submittedDate: s.report?.submittedAt ? s.report.submittedAt.toISOString() : s.updatedAt.toISOString(),
     topicsExcerpt: s.report?.topicsCovered || null,
     actionLabelFr: "Consulter et valider",
@@ -249,22 +249,25 @@ export default async function ParentDashboardPage() {
   }));
 
   // Priority 2: Classrooms Awaiting Prepayment
-  const paymentActions = pendingPaymentClassrooms.map((c) => ({
-    id: `payment-${c.id}`,
-    type: "PENDING_PAYMENT" as const,
-    priority: 1,
-    titleFr: `Paiement en attente : ${c.subjectName}`,
-    titleEn: `Payment pending: ${c.subjectName}`,
-    studentName: c.student.fullName,
-    teacherName: c.teacherProfile.user.fullName,
-    subjectName: c.subjectName,
-    gradeLevel: c.student.gradeLevel,
-    descriptionFr: `Le professeur ${c.teacherProfile.user.fullName} est prêt. Approvisionnez la classe pour démarrer les séances de cours.`,
-    descriptionEn: `Teacher ${c.teacherProfile.user.fullName} is assigned. Fund the classroom to start lessons.`,
-    actionLabelFr: "Payer les cours",
-    actionLabelEn: "Pay for Lessons",
-    actionHref: "/parent/classes",
-  }));
+  const paymentActions = pendingPaymentClassrooms.map((c) => {
+    const assignedTeacherName = c.teacherProfile?.user?.fullName || "Professeur en cours d'attribution";
+    return {
+      id: `payment-${c.id}`,
+      type: "PENDING_PAYMENT" as const,
+      priority: 1,
+      titleFr: `Paiement en attente : ${c.subjectName}`,
+      titleEn: `Payment pending: ${c.subjectName}`,
+      studentName: c.student?.fullName || "Élève",
+      teacherName: assignedTeacherName,
+      subjectName: c.subjectName,
+      gradeLevel: c.student?.gradeLevel || "",
+      descriptionFr: `Le professeur ${assignedTeacherName} est sélectionné. Approvisionnez la classe pour démarrer les séances de cours.`,
+      descriptionEn: `Teacher ${assignedTeacherName} is selected. Fund the classroom to start lessons.`,
+      actionLabelFr: "Payer les cours",
+      actionLabelEn: "Pay for Lessons",
+      actionHref: "/parent/classes",
+    };
+  });
 
   // Priority 3: Registered Children without Tutoring Requests
   const unrequestedChildren = formattedChildren.filter(
@@ -298,10 +301,12 @@ export default async function ParentDashboardPage() {
   const formattedUpcoming = upcomingParentSession
     ? {
         id: upcomingParentSession.id,
-        childName: upcomingParentSession.classroom.student.fullName,
-        subjectName: upcomingParentSession.classroom.subjectName,
-        teacherName: upcomingParentSession.classroom.teacherProfile.user.fullName,
-        scheduledText: `Aujourd'hui, ${upcomingParentSession.scheduledStart.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
+        childName: upcomingParentSession.classroom?.student?.fullName || "Élève",
+        subjectName: upcomingParentSession.classroom?.subjectName || "Cours",
+        teacherName: upcomingParentSession.classroom?.teacherProfile?.user?.fullName || "Professeur",
+        scheduledText: upcomingParentSession.scheduledStart
+          ? `Aujourd'hui, ${upcomingParentSession.scheduledStart.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+          : "Planifié",
         locationText: "À domicile (Kipé, Conakry)",
       }
     : null;

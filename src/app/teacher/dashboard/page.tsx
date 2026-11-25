@@ -111,7 +111,7 @@ export default async function TeacherDashboardPage() {
     : [];
 
   // Calculate real net earnings (85% rule) exclusively from verified earnings records
-  const totalTeacherNet = teacherProfile?.earnings.reduce((sum, e) => sum + e.teacherNetGnf, 0) || 0;
+  const totalTeacherNet = (teacherProfile?.earnings || []).reduce((sum, e) => sum + e.teacherNetGnf, 0);
   const formattedNetEarnings = new Intl.NumberFormat("fr-GN").format(totalTeacherNet) + " GNF";
 
   // Marketplace opportunity & application metrics for teacher dashboard
@@ -171,9 +171,13 @@ export default async function TeacherDashboardPage() {
   const formattedUpcomingClass = upcomingSession
     ? {
       id: upcomingSession.id,
-      title: upcomingSession.classroom.subjectName,
-      scheduledText: `Aujourd'hui, ${upcomingSession.scheduledStart.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
-      participant: `Élève : ${upcomingSession.classroom.student.fullName}`,
+      title: upcomingSession.classroom?.subjectName || "Séance de cours",
+      scheduledText: upcomingSession.scheduledStart
+        ? `Aujourd'hui, ${upcomingSession.scheduledStart.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+        : "Planifié",
+      participant: upcomingSession.classroom?.student?.fullName
+        ? `Élève : ${upcomingSession.classroom.student.fullName}`
+        : "Élève",
       rateOrEarningsText: `${new Intl.NumberFormat("fr-GN").format(Math.round((teacherProfile?.hourlyRateGnf || 100000) * 0.85))} GNF / séance`,
       locationText: teacherProfile?.serviceArea ? `À domicile (${teacherProfile.serviceArea})` : "À domicile (Conakry)",
     }

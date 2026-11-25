@@ -27,10 +27,24 @@ if (hasDatabase) {
       if (dbMigrate.status === 0) {
         console.log("✅ Database migrations applied successfully.");
       } else {
-        console.warn("⚠️ Database migrate returned non-zero status. Continuing startup...");
+        console.warn("⚠️ Database migrate returned non-zero status. Synchronizing schema via prisma db push...");
+        spawnSync("npx", ["prisma", "db", "push", "--skip-generate"], {
+          stdio: "inherit",
+          shell: true,
+          env: process.env,
+        });
       }
     } catch (err) {
-      console.error("⚠️ Failed to execute prisma migrate deploy:", err);
+      console.error("⚠️ Failed to execute prisma migrate deploy, falling back to db push:", err);
+      try {
+        spawnSync("npx", ["prisma", "db", "push", "--skip-generate"], {
+          stdio: "inherit",
+          shell: true,
+          env: process.env,
+        });
+      } catch (pushErr) {
+        console.error("⚠️ Failed to execute prisma db push:", pushErr);
+      }
     }
   } else {
     console.log("ℹ️ Skipping automatic migrations on startup (controlled deployment policy).");

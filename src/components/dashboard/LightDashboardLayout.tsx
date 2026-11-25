@@ -53,7 +53,7 @@ export function LightDashboardLayout({
         <div className="flex items-center gap-2">
           <NotificationBell variant="light" />
           <div className="w-8 h-8 rounded-full bg-[#16385c] text-white flex items-center justify-center text-xs font-bold">
-            {user.fullName.charAt(0).toUpperCase()}
+            {(user?.fullName || user?.email || "U").charAt(0).toUpperCase()}
           </div>
         </div>
       </header>

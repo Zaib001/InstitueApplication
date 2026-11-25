@@ -97,8 +97,8 @@ export default async function AdminDashboardPage() {
   const realAdminCourses = pendingTeachersList.length
     ? pendingTeachersList.map((tp) => ({
         id: tp.id,
-        title: `${tp.user.fullName} — ${tp.subjects.map((s) => s.subject.name).join(", ") || "Dossier Enseignant"} (${tp.city})`,
-        lessonsCount: tp.documents.length,
+        title: `${tp.user?.fullName || "Candidat"} — ${tp.subjects?.map((s) => s.subject?.name).filter(Boolean).join(", ") || "Dossier Enseignant"} (${tp.city || "Guinée"})`,
+        lessonsCount: tp.documents?.length || 0,
         progressPercent: 75,
         linkUrl: `/admin/verifications/${tp.id}`,
       }))
@@ -124,11 +124,11 @@ export default async function AdminDashboardPage() {
             topPendingTeacher
               ? {
                   id: topPendingTeacher.id,
-                  name: topPendingTeacher.user.fullName,
+                  name: topPendingTeacher.user?.fullName || "Candidat Enseignant",
                   subject:
-                    topPendingTeacher.subjects.map((s) => s.subject.name).join(", ") ||
+                    topPendingTeacher.subjects?.map((s) => s.subject?.name).filter(Boolean).join(", ") ||
                     "Discipline scientifique",
-                  city: topPendingTeacher.city,
+                  city: topPendingTeacher.city || "Conakry",
                   degrees: topPendingTeacher.degrees || "Diplôme universitaire",
                   submittedAt: topPendingTeacher.submittedAt
                     ? new Date(topPendingTeacher.submittedAt).toISOString()
